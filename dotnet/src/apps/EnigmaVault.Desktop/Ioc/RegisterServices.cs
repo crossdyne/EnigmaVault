@@ -1,13 +1,13 @@
-﻿using EnigmaVault.Desktop.Services;
+﻿using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Cryptography;
+using Crossdyne.Security.Srp.Client;
+using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.Initializers;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using Microsoft.Extensions.DependencyInjection;
-using Quantropic.Security.Abstractions;
-using Quantropic.Security.Cryptography;
-using Quantropic.Security.Srp.Client;
 
 namespace EnigmaVault.Desktop.Ioc
 {

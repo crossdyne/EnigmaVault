@@ -80,7 +80,7 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/token-login", request, _jsonSerializerOptions);
+                var response = await _httpClient.PostAsJsonAsync("api/auth/refresh", request, _jsonSerializerOptions);
                 response.EnsureSuccessStatusCode();
 
                 var responseData = await response.Content.ReadFromJsonAsync<AuthResponse>();

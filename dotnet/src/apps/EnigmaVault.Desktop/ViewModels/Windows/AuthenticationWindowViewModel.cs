@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using Crossdyne.Security.Abstractions;
 using EnigmaVault.Authentication.ApiClient.HttpClients;
-using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;
@@ -9,7 +7,6 @@ using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Features.Authentication;
-using Quantropic.Security.Abstractions;
 
 namespace EnigmaVault.Desktop.ViewModels.Windows
 {

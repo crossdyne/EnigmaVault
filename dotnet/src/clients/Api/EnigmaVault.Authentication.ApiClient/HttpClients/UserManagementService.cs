@@ -21,7 +21,7 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesToken);
 
-                var responseMessage = await _httpClient.GetAsync("api/users/me");
+                var responseMessage = await _httpClient.GetAsync("api/v1/users/me");
 
                 responseMessage.EnsureSuccessStatusCode();
                 var userResponse = await responseMessage.Content.ReadFromJsonAsync<UserResponse>(_jsonSerializerOptions);
@@ -42,7 +42,7 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
         {
             try
             {
-                var responseMessage = await _httpClient.GetAsync($"api/users/public-encryption-info/{login}");
+                var responseMessage = await _httpClient.GetAsync($"api/v1/users/{login}/crypto/public");
                 responseMessage.EnsureSuccessStatusCode();
 
                 var userPublicInfo = await responseMessage.Content.ReadFromJsonAsync<UserPublicInfo>(_jsonSerializerOptions);

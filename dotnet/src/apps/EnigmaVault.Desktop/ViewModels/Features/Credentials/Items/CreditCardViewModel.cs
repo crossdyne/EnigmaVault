@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Crossdyne.Security.Abstractions;
 using EnigmaVault.Desktop.Models.Vaults;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using Quantropic.Security.Abstractions;
 using Shared.Contracts.Enums;
 
 namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
