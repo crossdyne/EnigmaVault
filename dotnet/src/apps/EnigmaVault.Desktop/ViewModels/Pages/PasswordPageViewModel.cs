@@ -1076,7 +1076,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetIcons()
         {
-            var result = await _iconService.GetAll(_userContext.Id);
+            var result = await _iconService.GetAll();
 
             if (result.IsFailure)
             {

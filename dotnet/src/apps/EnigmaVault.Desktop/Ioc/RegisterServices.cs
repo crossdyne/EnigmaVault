@@ -24,6 +24,7 @@ namespace EnigmaVault.Desktop.Ioc
             services.AddSingleton<ISrpClient, SrpClientService>();
             services.AddSingleton<IKeyDerivationService, KeyDerivationService>();
             services.AddSingleton<ICryptoServices, CryptoService>();
+            services.AddSingleton<IAuthenticationStateService, AuthenticationStateService>();
 
             return services;
         }
