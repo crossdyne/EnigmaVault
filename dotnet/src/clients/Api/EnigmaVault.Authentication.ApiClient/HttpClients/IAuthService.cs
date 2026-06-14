@@ -9,7 +9,6 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
     {
         Task<Result<SrpChallengeResponse>> GetSrpChallenge(SrpChallengeRequest request);
         Task<Result<AuthResponse>> VerifySrpProof(SrpVerifyRequest request);
-        Task<Result<AuthResponse?>> LoginByToken(LoginByTokenRequest request);
-        Task<Result<AuthResponse?>> Refresh(RefreshTokenRequest request);
+        Task<Result<AuthResponse?>> RefreshTokens(LoginByTokenRequest request);
     }
 }

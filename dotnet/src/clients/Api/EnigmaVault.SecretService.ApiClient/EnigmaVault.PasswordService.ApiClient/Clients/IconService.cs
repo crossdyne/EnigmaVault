@@ -46,11 +46,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<List<IconResponse>>> GetAll(string userId)
+        public async Task<Result<List<IconResponse>>> GetAll()
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_url}/{userId}"); 
+                var response = await _httpClient.GetAsync($"{_url}/all"); 
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<List<IconResponse>>(_jsonSerializerOptions) ?? [];

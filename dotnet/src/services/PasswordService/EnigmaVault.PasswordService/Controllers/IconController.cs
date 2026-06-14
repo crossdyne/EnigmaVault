@@ -1,4 +1,5 @@
-﻿using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreateCommon;
+﻿using System.Security.Claims;
+using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreateCommon;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreatePersonal;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.DeleteCommon;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.DeletePersonal;
@@ -7,6 +8,7 @@ using EnigmaVault.PasswordService.Application.Features.Icons.Commands.UpdatePers
 using EnigmaVault.PasswordService.Application.Features.Icons.Queries.GetAll;
 using EnigmaVault.PasswordService.Application.Features.Icons.Queries.GetPersonal;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;
 
@@ -31,9 +33,18 @@ namespace EnigmaVault.PasswordService.Controllers
         }
 
         [HttpPost("personal")]
+        [Authorize]
         public async Task<IActionResult> CreatePersonal([FromBody] CreateIconPersonalRequest request)
         {
-            var result = await _mediator.Send(new CreatePersonalIconCommand(Guid.Parse(request.UserId), request.SvgCode,request.Name, Guid.Parse(request.IconCategoryId)));
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+                return Unauthorized("User ID не найден в токене.");
+
+            if (!Guid.TryParse(userIdString, out var userIdGuid))
+                return BadRequest("Не верный User ID формат.");
+
+            var result = await _mediator.Send(new CreatePersonalIconCommand(userIdGuid, request.SvgCode,request.Name, Guid.Parse(request.IconCategoryId)));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(result.Value),
@@ -86,18 +97,36 @@ namespace EnigmaVault.PasswordService.Controllers
 
         /*--Get-------------------------------------------------------------------------------------------*/
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetAll([FromRoute] Guid userId)
+        [HttpGet("all")]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
         {
-            var result = await _mediator.Send(new GetAllIconQuery(userId));
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+                return Unauthorized("User ID не найден в токене.");
+
+            if (!Guid.TryParse(userIdString, out var userIdGuid))
+                return BadRequest("Не верный User ID формат.");
+
+            var result = await _mediator.Send(new GetAllIconQuery(userIdGuid));
 
             return Ok(result);
         }
 
-        [HttpGet("personal/{userId}")]
-        public async Task<IActionResult> GetAllPersonal([FromRoute] Guid userId)
+        [HttpGet("personal")]
+        [Authorize]
+        public async Task<IActionResult> GetAllPersonal()
         {
-            var result = await _mediator.Send(new GetAllPersonalIconQuery(userId));
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+                return Unauthorized("User ID не найден в токене.");
+
+            if (!Guid.TryParse(userIdString, out var userIdGuid))
+                return BadRequest("Не верный User ID формат.");
+
+            var result = await _mediator.Send(new GetAllPersonalIconQuery(userIdGuid));
 
             return Ok(result);
         }
