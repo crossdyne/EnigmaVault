@@ -36,8 +36,18 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
 
         public override void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoServices secureData, IUserContext context)
         {
-            var overview = secureData.DecryptData<OverviewPayload>(encryptedOverView, context.Dek);
-            var details = secureData.DecryptData<ApiKey>(encryptedDetails, context.Dek);
+            OverviewPayload overview;
+            ApiKey details;
+
+            try
+            {
+                overview = secureData.DecryptData<OverviewPayload>(encryptedOverView, context.Dek)!;
+                details = secureData.DecryptData<ApiKey>(encryptedDetails, context.Dek)!;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             if (details is null)
                 return;
@@ -46,7 +56,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             Url = overview?.Url;
             Note = overview?.Note;
             SvgCode = overview?.SvgIcon;
-
 
             ApiKey = details.Key;
             BaseUrl = details.BaseUrl;
