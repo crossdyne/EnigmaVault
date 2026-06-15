@@ -31,11 +31,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> DeletePersonalAsync(string userId, string id)
+        public async Task<Result<Unit>> DeletePersonalAsync(string id)
         {
             try
             {
-                HttpResponseMessage? response = await _httpClient.DeleteAsync($"personal/{userId}/{id}");
+                HttpResponseMessage? response = await _httpClient.DeleteAsync($"personal/{id}");
                 response.EnsureSuccessStatusCode();
 
                 return Unit.Value;

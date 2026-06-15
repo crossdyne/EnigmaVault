@@ -8,17 +8,17 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
     {
         Task<Result<string>> CreateAsync(CreateVaultItemRequest request);
         Task<Result<string>> UpdateAsync(UpdateVaultItemRequest request);
-        Task<Result<Unit>> AddToFavoritesAsync(string userId, string vaultId);
-        Task<Result<Unit>> RemoveFromFavoritesAsync(string userId, string vaultId);
-        Task<Result<Unit>> ArchiveAsync(string userId, string vaultId);
-        Task<Result<Unit>> UnArchiveAsync(string userId, string vaultId);
-        Task<Result<Unit>> DeleteAsync(string userId, string vaultId);
-        Task<Result<DateTime>> MoveToTrashAsync(string userId, string vaultId);
-        Task<Result<Unit>> RestoreFromTrashAsync(string userId, string vaultId);
-        Task<Result<Unit>> RestoreAllFromTrashAsync(string userId);
-        Task<Result<Unit>> EmptyTrashAsync(string userId);
-        Task<Result<List<EncryptedVaultResponse>>> GetAllAsync(string userId);
-        Task<Result<Unit>> AddTagAsync(string userId, string vaultId, string tagId);
-        Task<Result<Unit>> RemoveTagAsync(string userId, string vaultId, string tagId);
+        Task<Result<Unit>> AddToFavoritesAsync(string vaultId);
+        Task<Result<Unit>> RemoveFromFavoritesAsync(string vaultId);
+        Task<Result<Unit>> ArchiveAsync(string vaultId);
+        Task<Result<Unit>> UnArchiveAsync(string vaultId);
+        Task<Result<Unit>> DeleteAsync(string vaultId);
+        Task<Result<DateTime>> MoveToTrashAsync(string vaultId);
+        Task<Result<Unit>> RestoreFromTrashAsync(string vaultId);
+        Task<Result<Unit>> RestoreAllFromTrashAsync();
+        Task<Result<Unit>> EmptyTrashAsync();
+        Task<Result<List<EncryptedVaultResponse>>> GetAllAsync();
+        Task<Result<Unit>> AddTagAsync(string vaultId, string tagId);
+        Task<Result<Unit>> RemoveTagAsync(string vaultId, string tagId);
     }
 }

@@ -490,7 +490,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest(_userContext.Id, SelectedPasswordType.Key.ToString(), EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest(SelectedPasswordType.Key.ToString(), EncryptedOverView, EncryptedDetails));
 
             if (result.IsFailure)
             {
@@ -529,7 +529,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(_userContext.Id, SelectedEncryptedOverview!.Id, EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(SelectedEncryptedOverview!.Id, EncryptedOverView, EncryptedDetails));
 
             if (result.IsFailure)
             {
@@ -566,12 +566,12 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
             if (model.IsFavorite)
             {
-                var result = await _vaultService.RemoveFromFavoritesAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.RemoveFromFavoritesAsync(model.Id);
                 SetValue(result, false);
             }
             else
             {
-                var result = await _vaultService.AddToFavoritesAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.AddToFavoritesAsync(model.Id);
                 SetValue(result, true);
             }
         }
@@ -611,7 +611,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
             if (model.IsArchive)
             {
-                var result = await _vaultService.UnArchiveAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.UnArchiveAsync(model.Id);
                 SetValue(result, false);
 
                 if (ArchivedPasswords.Count <= 0)
@@ -619,7 +619,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             }
             else
             {
-                var result = await _vaultService.ArchiveAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.ArchiveAsync(model.Id);
                 SetValue(result, true);
             }
         }
@@ -636,7 +636,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (SelectedEncryptedOverview is null)
                 return;
 
-            var result = await _vaultService.AddTagAsync(_userContext.Id, SelectedEncryptedOverview.Id, tag.Id);
+            var result = await _vaultService.AddTagAsync(SelectedEncryptedOverview.Id, tag.Id);
 
             if (result.IsFailure)
             {
@@ -658,7 +658,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (SelectedEncryptedOverview is null)
                 return;
 
-            var result = await _vaultService.RemoveTagAsync(_userContext.Id, SelectedEncryptedOverview.Id, tag.Id);
+            var result = await _vaultService.RemoveTagAsync(SelectedEncryptedOverview.Id, tag.Id);
 
             if (result.IsFailure)
             {
@@ -679,7 +679,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanMoveToTrash))]
         private async Task MoveToTrash(CredentialsVaultViewModel model)
         {
-            var result = await _vaultService.MoveToTrashAsync(_userContext.Id, model.Id);
+            var result = await _vaultService.MoveToTrashAsync(model.Id);
 
             if (result.IsFailure)
             {
@@ -703,7 +703,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanRestoreTrash))]
         private async Task RestoreTrash(CredentialsVaultViewModel model)
         {
-            var result = await _vaultService.RestoreFromTrashAsync(_userContext.Id, model.Id);
+            var result = await _vaultService.RestoreFromTrashAsync(model.Id);
 
             if (result.IsFailure)
             {
@@ -732,7 +732,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (MessageBox.Show($"Вы точно хотите востановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
-            var result = await _vaultService.RestoreAllFromTrashAsync(_userContext.Id);
+            var result = await _vaultService.RestoreAllFromTrashAsync();
 
             if (result.IsFailure)
             {
@@ -762,7 +762,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (MessageBox.Show($"Вы точно хотите удалить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
-            var result = await _vaultService.EmptyTrashAsync(_userContext.Id);
+            var result = await _vaultService.EmptyTrashAsync();
 
             if (result.IsFailure)
             {
@@ -835,7 +835,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanCreateTag))]
         private async Task CreateTag()
         {
-            var result = await _tagService.CreateAsync(new CreateTagRequest(_userContext.Id, NameTag!, Helpers.ColorConverter.RgbToHex(int.Parse(Red), int.Parse(Green), int.Parse(Blue))));
+            var result = await _tagService.CreateAsync(new CreateTagRequest(NameTag!, Helpers.ColorConverter.RgbToHex(int.Parse(Red), int.Parse(Green), int.Parse(Blue))));
 
             if (result.IsFailure)
             {
@@ -896,7 +896,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanSaveIcon))]
         private async Task SaveIcon()
         {
-            var result = await _iconService.CreatePersonalAsync(new CreateIconPersonalRequest(_userContext.Id, SvgCode!, "Тестовое название", SelectedIconCategory!.Id));
+            var result = await _iconService.CreatePersonalAsync(new CreateIconPersonalRequest(SvgCode!, "Тестовое название", SelectedIconCategory!.Id));
 
             if (result.IsFailure)
             {
@@ -926,7 +926,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanSaveIconCategory))]
         private async Task SaveIconCategory()
         {
-            var result = await _iconCategoryService.CreatePersonalAsync(new CreateIconCategoryPersonalRequest(IconCategoryName!, Guid.Parse(_userContext.Id)));
+            var result = await _iconCategoryService.CreatePersonalAsync(new CreateIconCategoryPersonalRequest(IconCategoryName!));
 
             if (result.IsFailure)
             {
@@ -950,7 +950,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanUpdateIconCategorty))]
         private async Task UpdateIconCategorty(IconCategoryViewModel value)
         {
-            var result = await _iconCategoryService.UpdatePersonalAsync(new UpdatePersonalIconCategoryRequest(Guid.Parse(value.Id), Guid.Parse(_userContext.Id), value.Name));
+            var result = await _iconCategoryService.UpdatePersonalAsync(new UpdatePersonalIconCategoryRequest(Guid.Parse(value.Id), value.Name));
 
             if (result.IsFailure)
             {
@@ -985,7 +985,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand]
         private async Task DeleteIconCategory(IconCategoryViewModel value)
         {
-            var result = await _iconCategoryService.DeletePersonalAsync(_userContext.Id, value.Id);
+            var result = await _iconCategoryService.DeletePersonalAsync(value.Id);
 
             if (result.IsFailure)
             {
@@ -1035,7 +1035,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetEncreptedOverview()
         {
-            var result = await _vaultService.GetAllAsync(_userContext.Id);
+            var result = await _vaultService.GetAllAsync();
 
             if (result.IsFailure)
             {
@@ -1066,7 +1066,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetTags()
         {
-            var result = await _tagService.GetAll(_userContext.Id); 
+            var result = await _tagService.GetAll(); 
 
             foreach (var item in result.Value)
             {
@@ -1098,7 +1098,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetIconCategories()
         {
-            var result = await _iconCategoryService.GetAllAsync(_userContext.Id);
+            var result = await _iconCategoryService.GetAllAsync();
 
             foreach (var item in result.Value)
             {

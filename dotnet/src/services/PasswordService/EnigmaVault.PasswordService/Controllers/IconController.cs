@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreateCommon;
+﻿using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreateCommon;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.CreatePersonal;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.DeleteCommon;
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.DeletePersonal;
@@ -7,10 +6,12 @@ using EnigmaVault.PasswordService.Application.Features.Icons.Commands.UpdateComm
 using EnigmaVault.PasswordService.Application.Features.Icons.Commands.UpdatePersonal;
 using EnigmaVault.PasswordService.Application.Features.Icons.Queries.GetAll;
 using EnigmaVault.PasswordService.Application.Features.Icons.Queries.GetPersonal;
+using EnigmaVault.PasswordService.Extentions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;
+using System.Security.Claims;
 
 namespace EnigmaVault.PasswordService.Controllers
 {
@@ -23,6 +24,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Create----------------------------------------------------------------------------------------*/
 
         [HttpPost("common")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> CreateCommon([FromBody] CreateIconCommonRequest request)
         {
             var result = await _mediator.Send(new CreateCommonIconCommand(request.SvgCode, request.Name, Guid.Parse(request.IconCategoryId)));
@@ -36,15 +38,12 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> CreatePersonal([FromBody] CreateIconPersonalRequest request)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var extractResult = this.ExtactCredentials(User);
 
-            if (string.IsNullOrEmpty(userIdString))
-                return Unauthorized("User ID не найден в токене.");
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
 
-            if (!Guid.TryParse(userIdString, out var userIdGuid))
-                return BadRequest("Не верный User ID формат.");
-
-            var result = await _mediator.Send(new CreatePersonalIconCommand(userIdGuid, request.SvgCode,request.Name, Guid.Parse(request.IconCategoryId)));
+            var result = await _mediator.Send(new CreatePersonalIconCommand(extractResult.Value.UserId, request.SvgCode,request.Name, Guid.Parse(request.IconCategoryId)));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(result.Value),
@@ -54,6 +53,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Update----------------------------------------------------------------------------------------*/
 
         [HttpPatch("common")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> UpdateCommon([FromBody] UpdateCommonIconRequest request)
         {
             var result = await _mediator.Send(new UpdateCommonIconCommand(Guid.Parse(request.Id), request.Name, request.SvgCode, Guid.Parse(request.IconCategoryId)));
@@ -64,9 +64,15 @@ namespace EnigmaVault.PasswordService.Controllers
         }
 
         [HttpPatch("personal")]
+        [Authorize]
         public async Task<IActionResult> UpdatePersonal([FromBody] UpdatePersonalIconRequest request)
         {
-            var result = await _mediator.Send(new UpdatePersonalIconCommand(Guid.Parse(request.Id), Guid.Parse(request.UserId), request.Name, request.SvgCode, Guid.Parse(request.IconCategoryId)));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new UpdatePersonalIconCommand(Guid.Parse(request.Id), extractResult.Value.UserId, request.Name, request.SvgCode, Guid.Parse(request.IconCategoryId)));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(),
@@ -76,6 +82,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Delete----------------------------------------------------------------------------------------*/
 
         [HttpDelete("common/{id}")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> DeleteCommon([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new DeleteCommonIconCommand(id));
@@ -85,10 +92,16 @@ namespace EnigmaVault.PasswordService.Controllers
                 onFailure: errors => BadRequest(result.StringMessage));
         }
 
-        [HttpDelete("personal/{userId}/{id}")]
-        public async Task<IActionResult> DeletePersonal([FromRoute] Guid id, [FromRoute] Guid userId)
+        [HttpDelete("personal/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeletePersonal([FromRoute] Guid id)
         {
-            var result = await _mediator.Send(new DeletePersonalIconCommand(id, userId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new DeletePersonalIconCommand(id, extractResult.Value.UserId));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(),
@@ -101,15 +114,12 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var extractResult = this.ExtactCredentials(User);
 
-            if (string.IsNullOrEmpty(userIdString))
-                return Unauthorized("User ID не найден в токене.");
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
 
-            if (!Guid.TryParse(userIdString, out var userIdGuid))
-                return BadRequest("Не верный User ID формат.");
-
-            var result = await _mediator.Send(new GetAllIconQuery(userIdGuid));
+            var result = await _mediator.Send(new GetAllIconQuery(extractResult.Value.UserId));
 
             return Ok(result);
         }
@@ -118,15 +128,12 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllPersonal()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var extractResult = this.ExtactCredentials(User);
 
-            if (string.IsNullOrEmpty(userIdString))
-                return Unauthorized("User ID не найден в токене.");
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
 
-            if (!Guid.TryParse(userIdString, out var userIdGuid))
-                return BadRequest("Не верный User ID формат.");
-
-            var result = await _mediator.Send(new GetAllPersonalIconQuery(userIdGuid));
+            var result = await _mediator.Send(new GetAllPersonalIconQuery(extractResult.Value.UserId));
 
             return Ok(result);
         }

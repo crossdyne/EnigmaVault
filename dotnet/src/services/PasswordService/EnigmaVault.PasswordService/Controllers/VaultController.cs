@@ -12,7 +12,9 @@ using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Resto
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.UnArchive;
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Update;
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Queries.GetAll;
+using EnigmaVault.PasswordService.Extentions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;
 
@@ -27,10 +29,16 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Create----------------------------------------------------------------------------------------*/
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateVaultItemRequest request)
         {
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
             var command = new CreateVaultItemCommand(
-                     request.UserId,
+                     extractResult.Value.UserId,
                      request.PasswordType,
                      Convert.FromBase64String(request.EncryptedOverview),
                      Convert.FromBase64String(request.EncryptedDetails));
@@ -46,10 +54,16 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Update----------------------------------------------------------------------------------------*/
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] UpdateVaultItemRequest request)
         {
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
             var command = new UpdateVaultItemCommand(
-                Guid.Parse(request.UserId),
+                extractResult.Value.UserId,
                 Guid.Parse(request.VaultItemId),
                 Convert.FromBase64String(request.EncryptedOverview),
                 Convert.FromBase64String(request.EncryptedDetails));
@@ -62,10 +76,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok(result.Value);
         }
 
-        [HttpPatch("add-favorites/{userId}/{vaultId}")]
-        public async Task<IActionResult> AddToFavorites([FromRoute] Guid userId, [FromRoute] Guid vaultId)
+        [HttpPatch("add-favorites/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> AddToFavorites([FromRoute] Guid vaultId)
         {
-           var command = new AddToFavoritesVaultCommand(vaultId, userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new AddToFavoritesVaultCommand(vaultId, extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -75,10 +95,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("remove-favorites/{userId}/{vaultId}")]
-        public async Task<IActionResult> RemoveFromFavorites([FromRoute] Guid userId, [FromRoute] Guid vaultId)
+        [HttpPatch("remove-favorites/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveFromFavorites([FromRoute] Guid vaultId)
         {
-           var command = new RemoveFromFavoritesVaultCommand(vaultId, userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new RemoveFromFavoritesVaultCommand(vaultId, extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -88,10 +114,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("archive/{userId}/{vaultId}")]
-        public async Task<IActionResult> Archive([FromRoute] Guid userId, [FromRoute] Guid vaultId)
+        [HttpPatch("archive/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> Archive([FromRoute] Guid vaultId)
         {
-           var command = new ArchiveVaultCommand(vaultId, userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new ArchiveVaultCommand(vaultId, extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -101,10 +133,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("un-archive/{userId}/{vaultId}")]
-        public async Task<IActionResult> UnArchive([FromRoute] Guid userId, [FromRoute] Guid vaultId)
+        [HttpPatch("un-archive/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> UnArchive([FromRoute] Guid vaultId)
         {
-           var command = new UnArchiveVaultCommand(vaultId, userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new UnArchiveVaultCommand(vaultId, extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -116,10 +154,16 @@ namespace EnigmaVault.PasswordService.Controllers
 
         /*--Delete----------------------------------------------------------------------------------------*/
 
-        [HttpDelete("{userId}/{vaultId}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid userId, Guid vaultId)
+        [HttpDelete("{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid vaultId)
         {
-            var command = new DeleteVaultItemCommand(userId, vaultId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new DeleteVaultItemCommand(extractResult.Value.UserId, vaultId);
 
             var result = await _mediator.Send(command);
 
@@ -129,10 +173,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("empty-trash/{userId}")]
-        public async Task<IActionResult> EmptyTrash([FromRoute] Guid userId)
+        [HttpPatch("empty-trash")]
+        [Authorize]
+        public async Task<IActionResult> EmptyTrash()
         {
-            var command = new EmptyVaultsTrashCommand(userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new EmptyVaultsTrashCommand(extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -142,10 +192,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("move-to-trash/{userId}/{vaultId}")]
-        public async Task<IActionResult> MoveToTrash([FromRoute] Guid userId, Guid vaultId)
+        [HttpPatch("move-to-trash/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> MoveToTrash(Guid vaultId)
         {
-            var command = new MoveVaultToTrashCommand(userId, vaultId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new MoveVaultToTrashCommand(extractResult.Value.UserId, vaultId);
 
             var result = await _mediator.Send(command);
 
@@ -155,10 +211,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok(result.Value);
         }
 
-        [HttpPatch("restore-from-trash/{userId}/{vaultId}")]
-        public async Task<IActionResult> RestoreFronmTrash([FromRoute] Guid userId, Guid vaultId)
+        [HttpPatch("restore-from-trash/{vaultId}")]
+        [Authorize]
+        public async Task<IActionResult> RestoreFronmTrash(Guid vaultId)
         {
-            var command = new RestoreVaultFromTrashCommand(userId, vaultId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new RestoreVaultFromTrashCommand(extractResult.Value.UserId, vaultId);
 
             var result = await _mediator.Send(command);
 
@@ -168,10 +230,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("restore-all-from-trash/{userId}")]
-        public async Task<IActionResult> RestoreAllFronmTrash([FromRoute] Guid userId)
+        [HttpPatch("restore-all-from-trash")]
+        [Authorize]
+        public async Task<IActionResult> RestoreAllFronmTrash()
         {
-            var command = new RestoreAllVaultsFromTrashCommand(userId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new RestoreAllVaultsFromTrashCommand(extractResult.Value.UserId);
 
             var result = await _mediator.Send(command);
 
@@ -183,20 +251,32 @@ namespace EnigmaVault.PasswordService.Controllers
 
         /*--Get-------------------------------------------------------------------------------------------*/
 
-        [HttpGet("{userId}")]
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromRoute] Guid userId)
         {
-            var result = await _mediator.Send(new GetAllVaultsQuery(userId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new GetAllVaultsQuery(extractResult.Value.UserId));
 
             return Ok(result.Value);
         }
 
         /*--Tags------------------------------------------------------------------------------------------*/
 
-        [HttpPatch("add-tag/{userId}/{vaultId}/{tagId}")]
-        public async Task<IActionResult> AddTag([FromRoute] Guid userId, [FromRoute] Guid vaultId, [FromRoute] Guid tagId)
+        [HttpPatch("add-tag/{vaultId}/{tagId}")]
+        [Authorize]
+        public async Task<IActionResult> AddTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
-            var command = new AddTagToVaulItemCommand(userId, vaultId, tagId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new AddTagToVaulItemCommand(extractResult.Value.UserId, vaultId, tagId);
 
             var result = await _mediator.Send(command);
 
@@ -206,10 +286,16 @@ namespace EnigmaVault.PasswordService.Controllers
             return Ok();
         }
 
-        [HttpPatch("remove-tag/{userId}/{vaultId}/{tagId}")]
-        public async Task<IActionResult> RemoveTag([FromRoute] Guid userId, [FromRoute] Guid vaultId, [FromRoute] Guid tagId)
+        [HttpPatch("remove-tag/{vaultId}/{tagId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
-            var command = new RemoveTagFromVaulItemCommand(userId, vaultId, tagId);
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new RemoveTagFromVaulItemCommand(extractResult.Value.UserId, vaultId, tagId);
 
             var result = await _mediator.Send(command);
 

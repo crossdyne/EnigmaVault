@@ -8,7 +8,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
     {
         Task<Result<string>> CreatePersonalAsync(CreateIconCategoryPersonalRequest request);
         Task<Result<Unit>> UpdatePersonalAsync(UpdatePersonalIconCategoryRequest request);
-        Task<Result<Unit>> DeletePersonalAsync(string userId, string id);
-        Task<Result<List<IconCategoryResponse>>> GetAllAsync(string userId);
+        Task<Result<Unit>> DeletePersonalAsync(string id);
+        Task<Result<List<IconCategoryResponse>>> GetAllAsync();
     }
 }

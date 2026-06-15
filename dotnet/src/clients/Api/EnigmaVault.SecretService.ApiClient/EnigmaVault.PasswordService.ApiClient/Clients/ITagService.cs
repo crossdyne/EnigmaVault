@@ -6,7 +6,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
 {
     public interface ITagService
     {
-        Task<Result<List<TagResponse>>> GetAll(string userId);
+        Task<Result<List<TagResponse>>> GetAll();
         Task<Result<string>> CreateAsync(CreateTagRequest request);
         Task<Result> DeleteAsync(string id);
         Task<Result> UpdateAsync(UpdateTagRequest request);
