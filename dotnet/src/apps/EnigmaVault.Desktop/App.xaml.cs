@@ -1,5 +1,8 @@
-﻿using EnigmaVault.Desktop.Ioc;
+﻿using EnigmaVault.Desktop.Enums;
+using EnigmaVault.Desktop.Ioc;
 using EnigmaVault.Desktop.Services.Initializers;
+using EnigmaVault.Desktop.Services.Secure;
+using EnigmaVault.Desktop.Services.WindowNavigation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -27,6 +30,8 @@ namespace EnigmaVault.Desktop
 
             ServiceProvider = services.BuildServiceProvider();
 
+            SetupGlobalAuthenticationHandler();
+
             var appInitializer = ServiceProvider.GetService<IApplicationInitializer>();
 
             try
@@ -40,6 +45,21 @@ namespace EnigmaVault.Desktop
             }
 
             base.OnStartup(e);
+        }
+
+        private void SetupGlobalAuthenticationHandler()
+        {
+            var authStateService = ServiceProvider.GetRequiredService<IAuthenticationStateService>();
+            var windowsNavigationService = ServiceProvider.GetRequiredService<IWindowNavigation>();
+
+            authStateService.AuthenticationRequired += () =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    windowsNavigationService.Close(WindowsName.MainWindow);
+                    windowsNavigationService.Open(WindowsName.AuthenticationWindow);
+                });
+            };
         }
     }
 }

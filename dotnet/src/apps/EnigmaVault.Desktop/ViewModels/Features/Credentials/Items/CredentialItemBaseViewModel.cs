@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Crossdyne.Security.Abstractions;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using Quantropic.Security.Abstractions;
 using Shared.Contracts.Enums;
 using System.Windows.Media;
 

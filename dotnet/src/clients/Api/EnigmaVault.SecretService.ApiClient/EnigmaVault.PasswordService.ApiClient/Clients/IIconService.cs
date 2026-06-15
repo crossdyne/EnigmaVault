@@ -8,6 +8,6 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
     {
         Task<Result<string>> CreatePersonalAsync(CreateIconPersonalRequest request);
         Task<Result<Unit>> DeletePersonalAsync(string userId, string id);
-        Task<Result<List<IconResponse>>> GetAll(string userId);
+        Task<Result<List<IconResponse>>> GetAll();
     }
 }

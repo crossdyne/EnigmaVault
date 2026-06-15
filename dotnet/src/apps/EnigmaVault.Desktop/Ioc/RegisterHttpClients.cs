@@ -1,4 +1,5 @@
 ﻿using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.Desktop.Handlers;
 using EnigmaVault.PasswordService.ApiClient.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,8 @@ namespace EnigmaVault.Desktop.Ioc
     {
         public static IServiceCollection AddHttpServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<RefreshTokenHandler>();
+
             string? authServiceApiUrl = configuration.GetValue<string>("BaseAuthServiceUrl");
             const string authServiceApiClientName = "AuthApiClient";
             services.AddHttpClient(authServiceApiClientName, client => client.BaseAddress = new Uri(authServiceApiUrl!));
@@ -21,7 +24,7 @@ namespace EnigmaVault.Desktop.Ioc
 
             string? passwordServiceApiUrl = configuration.GetValue<string>("BasePasswordServiceUrl");
             const string passwordServiceApiClientName = "PasswordApiClient";
-            services.AddHttpClient(passwordServiceApiClientName, client => client.BaseAddress = new Uri(passwordServiceApiUrl!));
+            services.AddHttpClient(passwordServiceApiClientName, client => client.BaseAddress = new Uri(passwordServiceApiUrl!)).AddHttpMessageHandler<RefreshTokenHandler>();
             services.AddHttpClient<ITagService, TagService>(passwordServiceApiClientName);
             services.AddHttpClient<IIconCategoryService, IconCategoryService>(passwordServiceApiClientName);
             services.AddHttpClient<IIconService, IconService>(passwordServiceApiClientName);

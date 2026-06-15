@@ -76,32 +76,11 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
 
         }
 
-        public async Task<Result<AuthResponse?>> LoginByToken(LoginByTokenRequest request)
+        public async Task<Result<AuthResponse?>> RefreshTokens(LoginByTokenRequest request)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/token-login", request, _jsonSerializerOptions);
-                response.EnsureSuccessStatusCode();
-
-                var responseData = await response.Content.ReadFromJsonAsync<AuthResponse>();
-
-                return responseData;
-            }
-            catch (HttpRequestException ex)
-            {
-                return Error.New(ErrorCode.ApiError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return Error.New(ErrorCode.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
-            }
-        }
-
-        public async Task<Result<AuthResponse?>> Refresh(RefreshTokenRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/token-login", request, _jsonSerializerOptions);
+                var response = await _httpClient.PostAsJsonAsync("api/auth/refresh", request, _jsonSerializerOptions);
                 response.EnsureSuccessStatusCode();
 
                 var responseData = await response.Content.ReadFromJsonAsync<AuthResponse>();

@@ -1,6 +1,7 @@
 ﻿using Common.Core.Results;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Crossdyne.Security.Abstractions;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.PageNavigation;
@@ -11,7 +12,6 @@ using EnigmaVault.Desktop.ViewModels.Common.Organization;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Items;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
 using EnigmaVault.PasswordService.ApiClient.Clients;
-using Quantropic.Security.Abstractions;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
@@ -404,7 +404,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Свойства: IconName
 
         [ObservableProperty]
-        private string _iconName;
+        private string? _iconName;
 
         #endregion
 
@@ -1076,7 +1076,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetIcons()
         {
-            var result = await _iconService.GetAll(_userContext.Id);
+            var result = await _iconService.GetAll();
 
             if (result.IsFailure)
             {
