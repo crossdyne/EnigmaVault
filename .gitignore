@@ -233,6 +233,7 @@ __pycache__/
 testem.log
 /typings
 __screenshots__/
+.angular
 
 #############################################
 # 4. IDE и редакторы кода
