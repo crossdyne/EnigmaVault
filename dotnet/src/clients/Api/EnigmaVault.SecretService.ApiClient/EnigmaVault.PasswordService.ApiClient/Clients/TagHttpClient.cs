@@ -16,11 +16,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             PropertyNameCaseInsensitive = true,
         };
 
-        public async Task<Result<List<TagResponse>>> GetAll(string userId)
+        public async Task<Result<List<TagResponse>>> GetAll()
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_url}/{userId}");
+                var response = await _httpClient.GetAsync($"{_url}");
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<List<TagResponse>>() ?? [];

@@ -18,7 +18,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
         {
             try
             {
-                var maybeTag = await _repository.GetAsync(request.Id, token: cancellationToken);
+                var maybeTag = await _repository.GetAsync(request.Id, request.UserId, token: cancellationToken);
 
                 if (maybeTag.HasValue)
                 {

@@ -14,7 +14,7 @@ namespace EnigmaVault.PasswordService.Infrastructure.Repositories
 
         public void Remove(Tag tag) => _context.Set<Tag>().Remove(tag);
 
-        public async Task<Maybe<Tag>> GetAsync(Guid id, Guid? UserId = null, CancellationToken token = default)
-            => await _context.Set<Tag>().FirstOrDefaultAsync(ic => ic.Id == id, token);
+        public async Task<Maybe<Tag>> GetAsync(Guid id, Guid UserId, CancellationToken token = default)
+            => await _context.Set<Tag>().FirstOrDefaultAsync(ic => ic.Id == id && ic.UserId == UserId, token);
     }
 }

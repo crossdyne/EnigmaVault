@@ -6,7 +6,9 @@ using EnigmaVault.PasswordService.Application.Features.IconCategories.Commands.U
 using EnigmaVault.PasswordService.Application.Features.IconCategories.Commands.UpdatePersonal;
 using EnigmaVault.PasswordService.Application.Features.IconCategories.Queries.GetAll;
 using EnigmaVault.PasswordService.Application.Features.IconCategories.Queries.GetPersonal;
+using EnigmaVault.PasswordService.Extentions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;
 
@@ -21,6 +23,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Create----------------------------------------------------------------------------------------*/
       
         [HttpPost("common")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> CreateCommon([FromBody] CreateIconCategoryCommonRequest request)
         {
             var result = await _mediator.Send(new CreateCommonIconCategoryCommand(request.Name));
@@ -31,9 +34,15 @@ namespace EnigmaVault.PasswordService.Controllers
         }
 
         [HttpPost("personal")]
+        [Authorize]
         public async Task<IActionResult> CreatePersonal([FromBody] CreateIconCategoryPersonalRequest request)
         {
-            var result = await _mediator.Send(new CreatePersonalCategoryCommand(request.Name, request.UserId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new CreatePersonalCategoryCommand(request.Name, extractResult.Value.UserId));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(result.Value),
@@ -43,6 +52,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Update----------------------------------------------------------------------------------------*/
 
         [HttpPatch("common")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> UpdateCommon([FromBody] UpdateCommonIconCategoryRequest request)
         {
             var result = await _mediator.Send(new UpdateCommonIconCategoryCommand(request.Id, request.Name));
@@ -53,9 +63,15 @@ namespace EnigmaVault.PasswordService.Controllers
         }
 
         [HttpPatch("personal")]
+        [Authorize]
         public async Task<IActionResult> UpdatePersonal([FromBody] UpdatePersonalIconCategoryRequest request)
         {
-            var result = await _mediator.Send(new UpdatePersonalIconCategoryCommand(request.Id, request.UserId, request.Name));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new UpdatePersonalIconCategoryCommand(request.Id, extractResult.Value.UserId, request.Name));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(),
@@ -65,6 +81,7 @@ namespace EnigmaVault.PasswordService.Controllers
         /*--Delete----------------------------------------------------------------------------------------*/
 
         [HttpDelete("common/{id}")]
+        [Authorize(Roles = "Admin,SuperAdmin,Moderator")]
         public async Task<IActionResult> DeleteCommon([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new DeleteCommonIconCategoryCommand(id));
@@ -74,10 +91,16 @@ namespace EnigmaVault.PasswordService.Controllers
                 onFailure: errors => BadRequest(result.StringMessage));
         }
 
-        [HttpDelete("personal/{userId}/{id}")]
-        public async Task<IActionResult> DeletePersonal([FromRoute] Guid id, [FromRoute] Guid userId)
+        [HttpDelete("personal/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeletePersonal([FromRoute] Guid id)
         {
-            var result = await _mediator.Send(new DeletePersonalIconCategoryCommand(id, userId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new DeletePersonalIconCategoryCommand(id, extractResult.Value.UserId));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(),
@@ -86,18 +109,30 @@ namespace EnigmaVault.PasswordService.Controllers
 
         /*--Get-------------------------------------------------------------------------------------------*/
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetAll([FromRoute] Guid userId)
+        [HttpGet()]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
         {
-            var result = await _mediator.Send(new GetAllIconCategoriesQuery(userId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new GetAllIconCategoriesQuery(extractResult.Value.UserId));
 
             return Ok(result);
         }
 
-        [HttpGet("personal/{userId}")]
-        public async Task<IActionResult> GetAllPersonal([FromRoute] Guid userId)
+        [HttpGet("personal")]
+        [Authorize]
+        public async Task<IActionResult> GetAllPersonal()
         {
-            var result = await _mediator.Send(new GetAllPersonalIconCategories(userId));
+            var extractResult = this.ExtactCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var result = await _mediator.Send(new GetAllPersonalIconCategories(extractResult.Value.UserId));
 
             return Ok(result);
         }

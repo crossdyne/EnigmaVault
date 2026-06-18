@@ -46,11 +46,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> DeletePersonalAsync(string userId, string id)
+        public async Task<Result<Unit>> DeletePersonalAsync(string id)
         {
             try
             {
-                HttpResponseMessage? response = await _httpClient.DeleteAsync($"{_url}/personal/{userId}/{id}");
+                HttpResponseMessage? response = await _httpClient.DeleteAsync($"{_url}/personal/{id}");
                 response.EnsureSuccessStatusCode();
 
                 return Unit.Value;
@@ -61,11 +61,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<List<IconCategoryResponse>>> GetAllAsync(string userId)
+        public async Task<Result<List<IconCategoryResponse>>> GetAllAsync()
         {
             try
             {
-                HttpResponseMessage? response = await _httpClient.GetAsync($"{_url}/{userId}");
+                HttpResponseMessage? response = await _httpClient.GetAsync($"{_url}");
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<List<IconCategoryResponse>>(_jsonSerializerOptions) ?? [];

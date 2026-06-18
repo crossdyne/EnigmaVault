@@ -48,11 +48,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> AddToFavoritesAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> AddToFavoritesAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/add-favorites/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/add-favorites/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -63,11 +63,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> RemoveFromFavoritesAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> RemoveFromFavoritesAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/remove-favorites/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/remove-favorites/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -78,11 +78,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> ArchiveAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> ArchiveAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/archive/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/archive/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -93,11 +93,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> UnArchiveAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> UnArchiveAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/un-archive/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/un-archive/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -108,11 +108,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> DeleteAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> DeleteAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_url}/{userId}/{vaultId}");
+                var response = await _httpClient.DeleteAsync($"{_url}/{vaultId}");
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -123,11 +123,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<DateTime>> MoveToTrashAsync(string userId, string vaultId)
+        public async Task<Result<DateTime>> MoveToTrashAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/move-to-trash/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/move-to-trash/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 var dateTimeValue = await response.Content.ReadFromJsonAsync<DateTime>();
@@ -141,11 +141,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> RestoreFromTrashAsync(string userId, string vaultId)
+        public async Task<Result<Unit>> RestoreFromTrashAsync(string vaultId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/restore-from-trash/{userId}/{vaultId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/restore-from-trash/{vaultId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -156,11 +156,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> RestoreAllFromTrashAsync(string userId)
+        public async Task<Result<Unit>> RestoreAllFromTrashAsync()
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/restore-all-from-trash/{userId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/restore-all-from-trash", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -171,11 +171,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> EmptyTrashAsync(string userId)
+        public async Task<Result<Unit>> EmptyTrashAsync()
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/empty-trash/{userId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/empty-trash", null);
                 response.EnsureSuccessStatusCode();
 
                 return Result.Success();
@@ -186,11 +186,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<List<EncryptedVaultResponse>>> GetAllAsync(string userId)
+        public async Task<Result<List<EncryptedVaultResponse>>> GetAllAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_url}/{userId}");
+                var response = await _httpClient.GetAsync($"{_url}");
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<List<EncryptedVaultResponse>>(_jsonSerializerOptions) ?? [];
@@ -201,11 +201,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> AddTagAsync(string userId, string vaultId, string tagId)
+        public async Task<Result<Unit>> AddTagAsync(string vaultId, string tagId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/add-tag/{userId}/{vaultId}/{tagId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/add-tag/{vaultId}/{tagId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Unit.Value;
@@ -216,11 +216,11 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
         }
 
-        public async Task<Result<Unit>> RemoveTagAsync(string userId, string vaultId, string tagId)
+        public async Task<Result<Unit>> RemoveTagAsync(string vaultId, string tagId)
         {
             try
             {
-                var response = await _httpClient.PatchAsync($"{_url}/remove-tag/{userId}/{vaultId}/{tagId}", null);
+                var response = await _httpClient.PatchAsync($"{_url}/remove-tag/{vaultId}/{tagId}", null);
                 response.EnsureSuccessStatusCode();
 
                 return Unit.Value;

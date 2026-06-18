@@ -1,4 +1,4 @@
 ﻿namespace Shared.Contracts.Requests.PasswordService
 {
-    public sealed record CreateTagRequest(string UserId, string Name, string Color);
+    public sealed record CreateTagRequest(string Name, string Color);
 }
