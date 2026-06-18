@@ -1,6 +1,0 @@
-@EnigmaVault.ConfigurationService_HostAddress = http://localhost:5041
-
-GET {{EnigmaVault.ConfigurationService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
