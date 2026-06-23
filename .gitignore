@@ -261,6 +261,7 @@ __screenshots__/
 .localhistory/
 .vshistory/
 .ionide/
+*.lscache
 
 #############################################
 # 5. Операционная система (ОС)

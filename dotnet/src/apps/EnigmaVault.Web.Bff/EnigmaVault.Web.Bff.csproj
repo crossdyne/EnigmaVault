@@ -1,13 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>d53fe9e4-e8a4-4e6c-a476-19c7efd3b52e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
+    <PackageReference Include="DistributedLock.Redis" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\clients\Api\EnigmaVault.Authentication.ApiClient\EnigmaVault.Authentication.ApiClient.csproj" />
+    <ProjectReference Include="..\..\common\Shared.Contracts\Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\shared\infrastructure\Shared.Redis\Shared.Redis.csproj" />
   </ItemGroup>
 
 </Project>
