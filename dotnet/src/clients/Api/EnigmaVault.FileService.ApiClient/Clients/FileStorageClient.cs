@@ -1,0 +1,21 @@
+using System.Net.Http.Json;
+using Common.Core.Results;
+using EnigmaVault.FileService.ApiClient.Models;
+
+namespace EnigmaVault.FileService.ApiClient.Clients
+{
+    public sealed class FileStorageClient(HttpClient http) : IFileServiceClient
+    {
+        public async Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request)
+        {
+            var response = await http.PostAsJsonAsync("api/files/urls", request);
+            
+            if (!response.IsSuccessStatusCode)
+                return Result<BatchUrlResponse>.Failure(new Error(ErrorCode.ApiError, await response.Content.ReadAsStringAsync()));
+
+            var result = await response.Content.ReadFromJsonAsync<BatchUrlResponse>();
+
+            return Result<BatchUrlResponse>.Success(result!);
+        }
+    }
+}
