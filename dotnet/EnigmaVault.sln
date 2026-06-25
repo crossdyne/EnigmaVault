@@ -53,6 +53,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Redis", "src\shared\infrastructure\Shared.Redis\Shared.Redis.csproj", "{FA602CE2-3B1B-4BDF-A0CA-E86778EB5FC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnigmaVault.AssetsService.ApiClient", "src\clients\Api\EnigmaVault.AssetsService.ApiClient\EnigmaVault.AssetsService.ApiClient.csproj", "{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnigmaVault.FileService.ApiClient", "src\clients\Api\EnigmaVault.FileService.ApiClient\EnigmaVault.FileService.ApiClient.csproj", "{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,30 @@ Global
 		{FA602CE2-3B1B-4BDF-A0CA-E86778EB5FC0}.Release|x64.Build.0 = Release|Any CPU
 		{FA602CE2-3B1B-4BDF-A0CA-E86778EB5FC0}.Release|x86.ActiveCfg = Release|Any CPU
 		{FA602CE2-3B1B-4BDF-A0CA-E86778EB5FC0}.Release|x86.Build.0 = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|x64.Build.0 = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Debug|x86.Build.0 = Debug|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|x64.ActiveCfg = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|x64.Build.0 = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|x86.ActiveCfg = Release|Any CPU
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90}.Release|x86.Build.0 = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Debug|x86.Build.0 = Debug|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|x64.Build.0 = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -260,6 +288,8 @@ Global
 		{6331DF01-558C-4546-9585-AACF05BBE9C8} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{26D84E8C-2A16-923A-9C49-67410EC92192} = {3827324D-069A-4EC6-B529-2FC139F0F26B}
 		{FA602CE2-3B1B-4BDF-A0CA-E86778EB5FC0} = {26D84E8C-2A16-923A-9C49-67410EC92192}
+		{9EEB0D8F-2A2D-4D55-9140-5ABDB85D8D90} = {DDF3A59D-BB41-48AF-A474-81EAB64C4FE5}
+		{8B7687C7-A707-4BBA-8A08-3F4F174B90CF} = {DDF3A59D-BB41-48AF-A474-81EAB64C4FE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92D2AA97-3A00-446D-BDE4-0DFBA8BCC5C9}

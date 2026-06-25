@@ -1,4 +1,4 @@
-﻿using EnigmaVault.PasswordService.Application.Features.IconCategories.Commands.CreatePersonal;
+﻿using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Create;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ namespace EnigmaVault.PasswordService.Application.Ioc
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            var currentAssembly = typeof(CreatePersonalCategoryCommandHandler).Assembly;
+            var currentAssembly = typeof(CreateVaultItemCommandHandler).Assembly;
             services.AddValidatorsFromAssembly(currentAssembly);
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(currentAssembly));
 

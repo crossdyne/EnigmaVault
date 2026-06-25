@@ -83,6 +83,11 @@ namespace EnigmaVault.PasswordService.Infrastructure.Persistence.Configurations
                 .HasColumnName("DateUpdated")
                 .IsRequired(false);
 
+            builder.Property(vi => vi.IconId)
+                .HasColumnName("IconId")
+                .HasConversion(iconId => iconId.Value, db => IconId.Create(db))
+                .IsRequired();
+
             builder.Property(vi => vi.Tags)
                 .HasColumnName("TagsIds")
                 .HasColumnType("uuid[]")

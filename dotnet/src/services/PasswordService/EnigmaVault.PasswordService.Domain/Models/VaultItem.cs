@@ -25,26 +25,30 @@ namespace EnigmaVault.PasswordService.Domain.Models
         public DateTime DateAdded { get; private set; }
         public DateTime? DateUpdated { get; private set; }
 
+        public IconId IconId { get; private set; }
+
         private readonly List<TagId> _tags = [];
         public IReadOnlyCollection<TagId> Tags => _tags.AsReadOnly();
 
         private VaultItem() { }
 
-        private VaultItem(VaultItemId id, UserId userId, VaultType type, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite) : base(id)
+        private VaultItem(VaultItemId id, UserId userId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite) : base(id)
         {
             UserId = userId;
+            IconId = iconId;
             PasswordType = type;
             EncryptedOverview = encryptedOverview;
             EncryptedDetails = encryptedDetails;
             IsFavorite = isFavorite;
         }
 
-        public static VaultItem Create(UserId UserId, VaultType type, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite = false)
+        public static VaultItem Create(UserId UserId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite = false)
         {
             return new VaultItem(
                 VaultItemId.New(),
                 UserId,
                 type,
+                iconId,
                 encryptedOverview,
                 encryptedDetails,
                 isFavorite)
@@ -70,6 +74,11 @@ namespace EnigmaVault.PasswordService.Domain.Models
             if (IsFavorite == isFavorite) return;
 
             IsFavorite = isFavorite;
+        }
+
+        public void SetIcon(IconId iconId)
+        {
+            IconId = iconId;
         }
 
         public void SetArchive(bool isArchive)

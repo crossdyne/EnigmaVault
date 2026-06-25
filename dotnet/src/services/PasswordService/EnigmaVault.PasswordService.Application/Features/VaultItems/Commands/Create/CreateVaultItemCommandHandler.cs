@@ -22,7 +22,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.C
             try
             {
                 var type = Enum.Parse<VaultType>(request.PasswordType);
-                var vaultItem = VaultItem.Create(UserId.Create(request.UserId), type, EncryptedData.Create(request.EncryptedOverview), EncryptedData.Create(request.EncryptedDetails));
+                var vaultItem = VaultItem.Create(UserId.Create(request.UserId), type, IconId.Create(request.IconId), EncryptedData.Create(request.EncryptedOverview), EncryptedData.Create(request.EncryptedDetails));
 
                 await _vaultItemRepository.AddAsync(vaultItem, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
