@@ -14,21 +14,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Http" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf"/>
-    <PackageReference Include="SharpVectors.Wpf"/>
-	  <PackageReference Include="Crossdyne.Security.Configuration"/>
-	  <PackageReference Include="Crossdyne.Security.Srp.Client"/>
-    <PackageReference Include="Crossdyne.Security.Windows"/>
-    <PackageReference Include="Crossdyne.Security.Cryptography"/>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+    <PackageReference Include="SharpVectors.Wpf" />
+	  <PackageReference Include="Crossdyne.Security.Configuration" />
+	  <PackageReference Include="Crossdyne.Security.Srp.Client" />
+    <PackageReference Include="Crossdyne.Security.Windows" />
+    <PackageReference Include="Crossdyne.Security.Cryptography" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\clients\Api\EnigmaVault.AssetsService.ApiClient\EnigmaVault.AssetsService.ApiClient.csproj" />
     <ProjectReference Include="..\..\clients\Api\EnigmaVault.Authentication.ApiClient\EnigmaVault.Authentication.ApiClient.csproj" />
+    <ProjectReference Include="..\..\clients\Api\EnigmaVault.FileService.ApiClient\EnigmaVault.FileService.ApiClient.csproj" />
     <ProjectReference Include="..\..\clients\Api\EnigmaVault.PasswordService.ApiClient\EnigmaVault.PasswordService.ApiClient.csproj" />
     <ProjectReference Include="..\..\common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\common\Shared.Contracts\Shared.Contracts.csproj" />
@@ -41,6 +43,9 @@
 
   <ItemGroup>
     <None Update="apiconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="urls.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

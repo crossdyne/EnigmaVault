@@ -2,7 +2,7 @@
 using Common.Core.Results;
 using EnigmaVault.PasswordService.Domain.Exception;
 
-namespace EnigmaVault.PasswordService.Domain.ValueObjects.SvgIcon
+namespace EnigmaVault.PasswordService.Domain.ValueObjects.Password
 {
     public readonly record struct IconId
     {
@@ -13,7 +13,7 @@ namespace EnigmaVault.PasswordService.Domain.ValueObjects.SvgIcon
         /// <exception cref="EmptyIdentifierException"></exception>
         public static IconId Create(Guid value)
         {
-            Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(Error.New(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(IconId)}")));
+            // Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(Error.New(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(IconId)}")));
 
             return new IconId(value);
         }

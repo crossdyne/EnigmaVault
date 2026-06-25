@@ -18,8 +18,6 @@ namespace EnigmaVault.PasswordService.Infrastructure.Ioc
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<EnigmaContext>());
             services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<EnigmaContext>());
 
-            services.AddScoped<IIconRepository, IconRepository>();
-            services.AddScoped<IIconCategoryRepository, IconCategoryRepository>();
             services.AddScoped<IFolderRepository, FolderRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IVaultItemRepository, VaultItemRepository>();

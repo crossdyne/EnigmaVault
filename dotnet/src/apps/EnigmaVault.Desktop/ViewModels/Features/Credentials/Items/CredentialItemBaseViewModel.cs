@@ -52,6 +52,9 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
         private DrawingImage? _icon;
 
         [ObservableProperty]
+        private string? _iconId;
+
+        [ObservableProperty]
         private string? _svgCode;
 
         public abstract void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoServices secureData, IUserContext context);

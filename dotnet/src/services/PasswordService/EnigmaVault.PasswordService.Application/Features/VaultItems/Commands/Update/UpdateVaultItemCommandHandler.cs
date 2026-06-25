@@ -1,6 +1,7 @@
 ﻿using Common.Core.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
+using EnigmaVault.PasswordService.Domain.ValueObjects.Password;
 using MediatR;
 using Shared.Kernel.Exceptions;
 using EncryptedData = EnigmaVault.PasswordService.Domain.ValueObjects.Password.EncryptedData;
@@ -27,6 +28,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.U
 
                 vault.UpdateOverview(EncryptedData.Create(request.EncryptedOverview));
                 vault.UpdateDetails(EncryptedData.Create(request.EncryptedDetails));
+                vault.SetIcon(IconId.Create(request.IconId));
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

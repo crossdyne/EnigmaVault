@@ -40,6 +40,7 @@ namespace EnigmaVault.PasswordService.Controllers
             var command = new CreateVaultItemCommand(
                      extractResult.Value.UserId,
                      request.PasswordType,
+                     Guid.Parse(request.IconId),
                      Convert.FromBase64String(request.EncryptedOverview),
                      Convert.FromBase64String(request.EncryptedDetails));
 
@@ -65,6 +66,7 @@ namespace EnigmaVault.PasswordService.Controllers
             var command = new UpdateVaultItemCommand(
                 extractResult.Value.UserId,
                 Guid.Parse(request.VaultItemId),
+                Guid.Parse(request.IconId),
                 Convert.FromBase64String(request.EncryptedOverview),
                 Convert.FromBase64String(request.EncryptedDetails));
 

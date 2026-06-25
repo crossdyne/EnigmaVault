@@ -30,6 +30,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
             EncryptedOverview = Convert.ToBase64String(model.EncryptedOverview);
             EncryptedDetails = Convert.ToBase64String(model.EncryptedDetails);
             DateAdded = model.DateAdded.ToLocalTime();
+            IconId = model.IconId;
 
             if (model.DateUpdate is not null)
                 DateUpdate = model.DateUpdate.Value.ToLocalTime();
@@ -86,6 +87,9 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
 
         [ObservableProperty]
         private DateTime? _deletedAt;
+
+        [ObservableProperty]
+        private string? _iconId;
 
         public string ServiceNameFirstLetter
         {

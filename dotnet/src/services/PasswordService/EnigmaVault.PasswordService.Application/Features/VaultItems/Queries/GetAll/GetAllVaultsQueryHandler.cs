@@ -32,7 +32,8 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Queries.Ge
                     x.IsInTrash,
                     x.EncryptedOverview,
                     x.EncryptedDetails,
-                    TagValues = x.Tags
+                    TagValues = x.Tags,
+                    x.IconId
                 })
                 .ToListAsync(cancellationToken);
 
@@ -47,7 +48,8 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Queries.Ge
                 x.IsInTrash,
                 x.EncryptedOverview,
                 x.EncryptedDetails,
-                [.. x.TagValues.Select(v => v.ToString())]
+                [.. x.TagValues.Select(v => v.ToString())],
+                x.IconId.ToString()
             )).ToList();
 
             return response;
