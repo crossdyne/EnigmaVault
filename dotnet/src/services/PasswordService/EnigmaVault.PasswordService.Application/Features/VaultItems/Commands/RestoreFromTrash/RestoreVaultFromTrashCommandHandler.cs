@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.RestoreFromTrash
 {
@@ -15,25 +14,18 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.R
 
         public async Task<Result<Unit>> Handle(RestoreVaultFromTrashCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (maybeVault.IsNone)
-                    return Error.NotFound("Данные не найдены.");
+            if (maybeVault.IsNone)
+                return new Error(ErrorCode.NotFound, "Данные не найдены.");
 
-                var vaultItem = maybeVault.Value;
+            var vaultItem = maybeVault.Value;
 
-                vaultItem.SetInTrash(false);
+            vaultItem.SetInTrash(false);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return Error.Server("Не удалось востановить данные из корзины.");
-            }
+            return Unit.Value;
         }
     }
 }

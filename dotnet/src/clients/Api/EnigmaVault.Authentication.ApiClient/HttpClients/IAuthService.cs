@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using Shared.Contracts.Requests;
 using Shared.Contracts.Requests.Authentication;
 using Shared.Contracts.Responses.Authentication;

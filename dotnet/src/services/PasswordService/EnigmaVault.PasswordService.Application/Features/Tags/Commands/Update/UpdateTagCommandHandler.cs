@@ -1,11 +1,9 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Common;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Tag;
 using MediatR;
-using Shared.Kernel.Exceptions;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
 {
@@ -16,29 +14,18 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
 
         public async Task<Result<Unit>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeTag = await _repository.GetAsync(request.Id, request.UserId, token: cancellationToken);
+            var maybeTag = await _repository.GetAsync(request.Id, request.UserId, token: cancellationToken);
 
-                if (maybeTag.HasValue)
-                {
-                    maybeTag.Value.UpdateName(TagName.Create(request.Name));
-                    maybeTag.Value.UpdateColor(Color.FromHex(request.Color));
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    return Unit.Value;
-                }
-
-                return Error.NotFound(request.Name, request.Id);
-            }
-            catch (DomainException ex)
+            if (maybeTag.HasValue)
             {
-                return ex.Error;
+                maybeTag.Value.UpdateName(TagName.Create(request.Name));
+                maybeTag.Value.UpdateColor(Color.FromHex(request.Color));
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return Unit.Value;
             }
-            catch (Exception)
-            {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+
+            return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден");
         }
     }
 }

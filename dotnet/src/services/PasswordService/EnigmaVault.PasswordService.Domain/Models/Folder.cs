@@ -1,8 +1,9 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Common;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Folder;
 using EnigmaVault.PasswordService.Domain.ValueObjects.User;
+using Shared.Kernel.Errors;
 using Shared.Kernel.Exceptions;
 using Shared.Kernel.Primitives;
 
@@ -33,7 +34,7 @@ namespace EnigmaVault.PasswordService.Domain.Models
 
         public void Move(FolderId? newParentId)
         {
-            Guard.Against.That(newParentId == this.Id, () => new DomainException(Error.New(ErrorCode.Rule, "Папку нельзя перемещать в саму себя.")));
+            Guard.Against.That(newParentId == this.Id, () => new DomainException(new Error(AppErrors.Rule, "Папку нельзя перемещать в саму себя.")));
 
             ParentFolderId = newParentId;
         }

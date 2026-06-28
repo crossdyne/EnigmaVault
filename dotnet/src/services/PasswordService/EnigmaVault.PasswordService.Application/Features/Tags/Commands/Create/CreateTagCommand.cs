@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Features.Validators;
 using MediatR;
 

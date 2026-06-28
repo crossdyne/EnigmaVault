@@ -1,4 +1,4 @@
-﻿using Common.Core.Primitives;
+﻿using Crossdyne.Toolkit.Primitives;
 using EnigmaVault.Authentication.ApiClient.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;

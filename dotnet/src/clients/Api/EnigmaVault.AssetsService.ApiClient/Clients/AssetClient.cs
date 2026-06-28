@@ -1,8 +1,9 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using Common.Core.Results;
+using Crossdyne.Toolkit.Results;
 using EnigmaVault.AssetsService.ApiClient.Constants;
 using EnigmaVault.AssetsService.ApiClient.Models;
+using Shared.Kernel.Errors;
 
 namespace EnigmaVault.AssetsService.ApiClient.Clients
 {
@@ -32,11 +33,11 @@ namespace EnigmaVault.AssetsService.ApiClient.Clients
             }
             catch (HttpRequestException ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
+                return new Error(AppErrors.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
             }
         }
     }

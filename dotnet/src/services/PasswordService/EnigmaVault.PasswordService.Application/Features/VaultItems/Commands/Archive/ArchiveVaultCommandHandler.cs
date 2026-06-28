@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Archive
 {
@@ -15,23 +14,16 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.A
 
         public async Task<Result<Unit>> Handle(ArchiveVaultCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var mayBe = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var mayBe = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (mayBe.IsNone)
-                    return Error.NotFound("Vault", request.VaultItemId);
+            if (mayBe.IsNone)
+                return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена");
 
-                mayBe.Value.SetArchive(true);
+            mayBe.Value.SetArchive(true);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Result.Success();
-            }
-            catch (Exception)
-            {
-                return Error.Server("Произошла непредвиденная ошибка.");
-            }
+            return Unit.Value;
         }
     }
 }

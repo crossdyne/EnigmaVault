@@ -1,6 +1,4 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
-using EnigmaVault.PasswordService.Domain.Exception;
+﻿using EnigmaVault.PasswordService.Domain.Exception;
 
 namespace EnigmaVault.PasswordService.Domain.ValueObjects.Password
 {

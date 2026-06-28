@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using Shared.Kernel.Exceptions;
 
 namespace EnigmaVault.PasswordService.Domain.Exception

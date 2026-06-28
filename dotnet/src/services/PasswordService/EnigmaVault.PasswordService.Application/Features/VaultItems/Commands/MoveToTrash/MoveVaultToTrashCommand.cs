@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using MediatR;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.MoveToTrash

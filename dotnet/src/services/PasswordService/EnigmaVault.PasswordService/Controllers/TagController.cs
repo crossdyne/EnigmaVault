@@ -2,7 +2,7 @@
 using EnigmaVault.PasswordService.Application.Features.Tags.Commands.Delete;
 using EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update;
 using EnigmaVault.PasswordService.Application.Features.Tags.Queries.GetAll;
-using EnigmaVault.PasswordService.Extentions;
+using EnigmaVault.PasswordService.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateTagRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -40,7 +40,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UpdateTagRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -58,7 +58,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -75,7 +75,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll()
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;

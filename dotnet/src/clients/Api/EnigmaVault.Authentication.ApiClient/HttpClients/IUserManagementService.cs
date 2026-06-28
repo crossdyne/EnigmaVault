@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.Authentication.ApiClient.Model.Responses;
 using Shared.Contracts.Responses;
 

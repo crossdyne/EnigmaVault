@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.AddToFavorites
 {
@@ -15,25 +14,18 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.A
 
         public async Task<Result<Unit>> Handle(AddToFavoritesVaultCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (maybeVault.IsNone)
-                    return Error.NotFound("Vault", request.VaultItemId);
+            if (maybeVault.IsNone)
+                return new Error(ErrorCode.NotFound, $"Элемента {request.VaultItemId} не был найден");
 
-                var vault = maybeVault.Value;
+            var vault = maybeVault.Value;
 
-                vault.SetFavorite(true);
+            vault.SetFavorite(true);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Result.Success();
-            }
-            catch (Exception)
-            {
-                return Error.Server("Произошла непредвиденная ошибка.");
-            }
+            return Unit.Value;
         }
     }
 }

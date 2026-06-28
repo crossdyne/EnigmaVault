@@ -1,5 +1,6 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
+using Shared.Kernel.Errors;
 using Shared.Kernel.Exceptions;
 
 namespace EnigmaVault.PasswordService.Domain.ValueObjects.Folder
@@ -16,8 +17,8 @@ namespace EnigmaVault.PasswordService.Domain.ValueObjects.Folder
         /// <exception cref="DomainException"></exception>
         public static FolderName Create(string value)
         {
-            Guard.Against.That(string.IsNullOrWhiteSpace(value), () => new DomainException(Error.New(ErrorCode.Validation, "Название записи было пустым.")));
-            Guard.Against.That(value.Length > MAX_LENGTH || value.Length < MIN_LENGTH, () => new DomainException(Error.New(ErrorCode.Validation, $"Максимально допустимы диапазон от {MIN_LENGTH} до {MAX_LENGTH} символов")));
+            Guard.Against.That(string.IsNullOrWhiteSpace(value), () => new DomainException(new Error(AppErrors.Validation, "Название записи было пустым.")));
+            Guard.Against.That(value.Length > MAX_LENGTH || value.Length < MIN_LENGTH, () => new DomainException(new Error(AppErrors.Validation, $"Максимально допустимы диапазон от {MIN_LENGTH} до {MAX_LENGTH} символов")));
 
             return new FolderName(value);
         }

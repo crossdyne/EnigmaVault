@@ -1,5 +1,5 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
 using EnigmaVault.PasswordService.Domain.Exception;
 
 namespace EnigmaVault.PasswordService.Domain.ValueObjects.Password
@@ -13,7 +13,7 @@ namespace EnigmaVault.PasswordService.Domain.ValueObjects.Password
         /// <exception cref="EmptyIdentifierException"></exception>
         public static VaultItemId Create(Guid value)
         {
-            Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(Error.New(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(VaultItemId)}")));
+            Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(new Error(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(VaultItemId)}")));
 
             return new VaultItemId(value);
         }

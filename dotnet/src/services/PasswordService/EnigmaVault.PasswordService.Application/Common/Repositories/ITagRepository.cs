@@ -1,4 +1,4 @@
-﻿using Common.Core.Primitives;
+﻿using Crossdyne.Toolkit.Primitives;
 using EnigmaVault.PasswordService.Domain.Models;
 
 namespace EnigmaVault.PasswordService.Application.Common.Repositories

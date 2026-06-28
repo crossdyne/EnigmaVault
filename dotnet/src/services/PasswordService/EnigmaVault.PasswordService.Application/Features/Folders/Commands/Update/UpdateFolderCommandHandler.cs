@@ -1,10 +1,9 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Folder;
 using MediatR;
 using Shared.Kernel.Exceptions;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Update
 {
@@ -17,28 +16,17 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Upda
 
         public async Task<Result<Unit>> Handle(UpdateFolderCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
+            var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
 
-                if (maybeFolder.IsNone)
-                    return Error.NotFound(request.Name, request.Id);
+            if (maybeFolder.IsNone)
+                return new Error(ErrorCode.NotFound, $"Папка {request.Name} - { request.Id} не была найдена");
 
-                maybeFolder.Value.Rename(FolderName.Create(request.Name));
-                maybeFolder.Value.Move(request.ParentFolderId != null ? FolderId.Create(request.ParentFolderId.Value) : null);
+            maybeFolder.Value.Rename(FolderName.Create(request.Name));
+            maybeFolder.Value.Move(request.ParentFolderId != null ? FolderId.Create(request.ParentFolderId.Value) : null);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (DomainException ex)
-            {
-                return ex.Error;
-            }
-            catch (Exception)
-            {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+            return Unit.Value;
         }
     }
 }
