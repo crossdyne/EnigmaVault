@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation"/>
-    <PackageReference Include="MediatR"/>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MediatR" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\Common.Core\Common.Core.csproj" />
+    <PackageReference Include="Crossdyne.Toolkit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared.Kernel\Shared.Kernel.csproj" />
   </ItemGroup>
 
 </Project>

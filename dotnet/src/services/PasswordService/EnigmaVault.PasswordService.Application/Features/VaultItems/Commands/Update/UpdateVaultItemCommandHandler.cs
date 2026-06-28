@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Password;
@@ -22,7 +22,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.U
                 var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
                 
                 if (maybeVault.IsNone)
-                    return Result<string>.Failure(Error.NotFound("VaultItem", request.VaultItemId));
+                    return Result<string>.Failure(new Error(ErrorCode.NotFound, $"Данный элемент {request.VaultItemId} не был найден."));
 
                 var vault = maybeVault.Value;
 
@@ -40,7 +40,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.U
             }
             catch (Exception)
             {
-                return Error.Server("Произошла непредвиденная ошибка на стороне сервера.");
+                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка на стороне сервера.");
             }
         }
     }

@@ -1,7 +1,8 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using Shared.Contracts.Requests;
 using Shared.Contracts.Requests.Authentication;
 using Shared.Contracts.Responses.Authentication;
+using Shared.Kernel.Errors;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -28,11 +29,11 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
             }
             catch (HttpRequestException ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
+                return new Error(AppErrors.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
             }
         }
 
@@ -47,7 +48,7 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    return Error.New(ErrorCode.ApiError,
+                    return new Error(AppErrors.ApiError,
                         $"HTTP {response.StatusCode}: {errorContent}");
                 }
 
@@ -55,7 +56,7 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
 
                 if (resultData is null)
                 {
-                    return Error.New(ErrorCode.ApiError, "Пустой или некорректный JSON-ответ от сервера");
+                    return new Error(AppErrors.ApiError, "Пустой или некорректный JSON-ответ от сервера");
                 }
 
                 return resultData!;
@@ -63,15 +64,15 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
             catch (JsonException ex) when (ex.Message.Contains("could not be converted"))
             {
                 var rawContent = await response.Content.ReadAsStringAsync();
-                return Error.New(ErrorCode.ApiError, $"Ошибка десериализации AuthResponse. Ответ сервера: {rawContent}\nОшибка: {ex.Message}");
+                return new Error(AppErrors.ApiError, $"Ошибка десериализации AuthResponse. Ответ сервера: {rawContent}\nОшибка: {ex.Message}");
             }
             catch (HttpRequestException ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, $"Произошла критическая ошибка при отправке запроса: {ex.Message}");
+                return new Error(AppErrors.ApiError, $"Произошла критическая ошибка при отправке запроса: {ex.Message}");
             }
 
         }
@@ -89,11 +90,11 @@ namespace EnigmaVault.Authentication.ApiClient.HttpClients
             }
             catch (HttpRequestException ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
+                return new Error(AppErrors.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
             }
         }
     }

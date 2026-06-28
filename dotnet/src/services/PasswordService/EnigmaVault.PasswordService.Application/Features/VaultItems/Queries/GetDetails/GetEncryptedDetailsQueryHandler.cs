@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Domain.Models;
 using MediatR;
@@ -15,7 +15,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Queries.Ge
             var vault = await _context.Set<VaultItem>().FirstOrDefaultAsync(v => v.UserId == request.UserId && v.Id == request.VaultItemId, cancellationToken);
 
             if (vault is null)
-                return Error.NotFound("EncryptedDetails", request.VaultItemId);
+                return new Error(ErrorCode.NotFound, $"Элемент {request.VaultItemId} не был найден");
 
             return Convert.ToBase64String(vault.EncryptedDetails);
         }

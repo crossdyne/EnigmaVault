@@ -1,4 +1,5 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Primitives;
+using Crossdyne.Toolkit.Results;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
 

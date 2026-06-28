@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
@@ -19,7 +19,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.M
                 var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
                 if (maybeVault.IsNone)
-                    return Error.NotFound("Данные не найдены.");
+                    return new Error(ErrorCode.NotFound, "Данные не найдены.");
 
                 var vaultItem = maybeVault.Value;
 
@@ -31,7 +31,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.M
             }
             catch (Exception)
             {
-                return Error.Server("Не удалось переместить данные в корзину.");
+                return new Error(ErrorCode.Server, "Не удалось переместить данные в корзину.");
             }
         }
     }

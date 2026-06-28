@@ -1,9 +1,10 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
 using EnigmaVault.PasswordService.Domain.Enums;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Password;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Tag;
 using EnigmaVault.PasswordService.Domain.ValueObjects.User;
+using Shared.Kernel.Errors;
 using Shared.Kernel.Exceptions;
 using Shared.Kernel.Primitives;
 
@@ -86,7 +87,7 @@ namespace EnigmaVault.PasswordService.Domain.Models
             if (IsArchive == isArchive)
                 return;
             
-            Guard.Against.That(isArchive && IsInTrash, () => new DomainException(Error.Validation("Нельзя архивировать запись, находящуюся в корзине")));
+            Guard.Against.That(isArchive && IsInTrash, () => new DomainException(new Error(AppErrors.Validation, "Нельзя архивировать запись, находящуюся в корзине")));
 
             IsArchive = isArchive;
             UpdateDate();

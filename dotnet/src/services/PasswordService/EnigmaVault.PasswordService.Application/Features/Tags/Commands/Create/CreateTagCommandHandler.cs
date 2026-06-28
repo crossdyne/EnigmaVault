@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.Models;
@@ -31,7 +31,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Create
             }
             catch (Exception)
             {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
+                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
             }
         }
     }

@@ -1,10 +1,9 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.EmptyTrash
 {
@@ -32,7 +31,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.E
             }
             catch (Exception)
             {
-                return Error.Server("Не удалось очистить карзину.");
+                return new Error(ErrorCode.Server, "Не удалось очистить корзину.");
             }
         }
     }

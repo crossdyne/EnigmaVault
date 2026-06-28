@@ -1,5 +1,5 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
 using EnigmaVault.PasswordService.Domain.Exception;
 
 namespace EnigmaVault.PasswordService.Domain.ValueObjects.Tag
@@ -13,7 +13,7 @@ namespace EnigmaVault.PasswordService.Domain.ValueObjects.Tag
         /// <exception cref="EmptyIdentifierException"></exception>
         public static TagId Create(Guid value)
         {
-            Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(Error.New(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(TagId)}")));
+            Guard.Against.That(value == Guid.Empty, () => new EmptyIdentifierException(new Error(ErrorCode.Null, $"Был передан пустой {typeof(Guid)} в качестве идентификатора в {nameof(TagId)}")));
 
             return new TagId(value);
         }

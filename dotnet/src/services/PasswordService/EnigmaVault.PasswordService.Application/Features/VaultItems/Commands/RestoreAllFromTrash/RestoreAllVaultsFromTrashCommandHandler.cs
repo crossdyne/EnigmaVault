@@ -1,9 +1,8 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.RestoreAllFromTrash
 {
@@ -29,7 +28,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.R
             }
             catch (Exception)
             {
-                return Error.Server("Не удалось востановить записи из карзины.");
+                return new Error(ErrorCode.Server, "Не удалось восстановить записи из корзины.");
             }
         }
     }

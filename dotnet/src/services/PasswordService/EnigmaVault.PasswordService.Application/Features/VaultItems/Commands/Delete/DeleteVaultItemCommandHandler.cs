@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Delete
 {
@@ -27,11 +26,11 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.D
                     return Unit.Value;
                 }
 
-                return Error.NotFound("Icon", request.VaultItemId);
+                return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена.");
             }
             catch (Exception)
             {
-                return Error.Server("Произошла непредвиденая ошибка на стороне сервера.");
+                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка на стороне сервера.");
             }
         }
     }

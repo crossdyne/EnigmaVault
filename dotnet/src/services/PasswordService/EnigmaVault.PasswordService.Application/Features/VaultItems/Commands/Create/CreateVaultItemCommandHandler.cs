@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.Enums;
@@ -35,7 +35,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.C
             }
             catch (Exception ex)
             {
-                return Error.Server($"Произошла непредвиденная ошибка: {ex}");
+                return new Error(ErrorCode.Server, $"Произошла непредвиденная ошибка: {ex}");
             }
         }
     }

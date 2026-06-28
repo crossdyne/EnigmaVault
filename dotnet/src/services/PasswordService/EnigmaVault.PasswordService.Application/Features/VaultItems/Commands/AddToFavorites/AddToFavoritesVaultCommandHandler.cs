@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.AddToFavorites
 {
@@ -20,7 +19,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.A
                 var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
                 if (maybeVault.IsNone)
-                    return Error.NotFound("Vault", request.VaultItemId);
+                    return new Error(ErrorCode.NotFound, $"Элемента {request.VaultItemId} не был найден");
 
                 var vault = maybeVault.Value;
 
@@ -28,11 +27,11 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.A
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Result.Success();
+                return Unit.Value;
             }
             catch (Exception)
             {
-                return Error.Server("Произошла непредвиденная ошибка.");
+                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка.");
             }
         }
     }

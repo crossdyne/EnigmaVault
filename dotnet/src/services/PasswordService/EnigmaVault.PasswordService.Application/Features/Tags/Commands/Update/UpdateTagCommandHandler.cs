@@ -1,11 +1,10 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Common;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Tag;
 using MediatR;
 using Shared.Kernel.Exceptions;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
 {
@@ -29,7 +28,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
                     return Unit.Value;
                 }
 
-                return Error.NotFound(request.Name, request.Id);
+                return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден");
             }
             catch (DomainException ex)
             {
@@ -37,7 +36,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Update
             }
             catch (Exception)
             {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
+                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
             }
         }
     }

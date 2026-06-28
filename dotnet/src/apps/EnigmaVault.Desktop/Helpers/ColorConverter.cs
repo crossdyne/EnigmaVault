@@ -1,6 +1,6 @@
-﻿using Common.Core.Guard;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Globalization;
+using Crossdyne.Toolkit.Validation;
 
 namespace EnigmaVault.Desktop.Helpers
 {

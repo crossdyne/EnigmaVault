@@ -1,4 +1,4 @@
-﻿using Common.Core.Guard;
+﻿using Crossdyne.Toolkit.Validation;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EnigmaVault.PasswordService.Domain.ValueObjects.Password

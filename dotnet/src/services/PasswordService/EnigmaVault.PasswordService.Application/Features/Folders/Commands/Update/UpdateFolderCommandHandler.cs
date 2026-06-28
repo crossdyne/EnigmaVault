@@ -1,10 +1,9 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.ValueObjects.Folder;
 using MediatR;
 using Shared.Kernel.Exceptions;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Update
 {
@@ -22,7 +21,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Upda
                 var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
 
                 if (maybeFolder.IsNone)
-                    return Error.NotFound(request.Name, request.Id);
+                    return new Error(ErrorCode.NotFound, $"Папка {request.Name} - { request.Id} не была найдена");
 
                 maybeFolder.Value.Rename(FolderName.Create(request.Name));
                 maybeFolder.Value.Move(request.ParentFolderId != null ? FolderId.Create(request.ParentFolderId.Value) : null);
@@ -37,7 +36,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Upda
             }
             catch (Exception)
             {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
+                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
             }
         }
     }

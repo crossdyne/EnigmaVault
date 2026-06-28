@@ -1,6 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
+using Shared.Kernel.Errors;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -27,7 +28,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
         }
 
@@ -42,7 +43,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
             catch (Exception ex)
             {
-                return Error.New(ErrorCode.ApiError, ex.Message);
+                return new Error(AppErrors.ApiError, ex.Message);
             }
         }
 
@@ -57,7 +58,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
             catch (Exception ex)
             {
-                return Result.Failure(Error.New(ErrorCode.ApiError, ex.Message));
+                return Result.Failure(new Error(AppErrors.ApiError, ex.Message));
             }
         }
 
@@ -72,7 +73,7 @@ namespace EnigmaVault.PasswordService.ApiClient.Clients
             }
             catch (Exception ex)
             {
-                return Result.Failure(Error.New(ErrorCode.ApiError, ex.Message));
+                return Result.Failure(new Error(AppErrors.ApiError, ex.Message));
             }
         }
     }

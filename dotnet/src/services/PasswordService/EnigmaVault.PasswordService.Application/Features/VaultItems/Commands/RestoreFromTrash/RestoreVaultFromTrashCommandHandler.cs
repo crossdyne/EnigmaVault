@@ -1,8 +1,7 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using MediatR;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.RestoreFromTrash
 {
@@ -20,7 +19,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.R
                 var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
                 if (maybeVault.IsNone)
-                    return Error.NotFound("Данные не найдены.");
+                    return new Error(ErrorCode.NotFound, "Данные не найдены.");
 
                 var vaultItem = maybeVault.Value;
 
@@ -32,7 +31,7 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.R
             }
             catch (Exception)
             {
-                return Error.Server("Не удалось востановить данные из корзины.");
+                return new Error(ErrorCode.Server, "Не удалось восстановить данные из корзины.");
             }
         }
     }

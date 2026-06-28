@@ -1,10 +1,9 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Unit = Common.Core.Results.Unit;
 
 namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Delete
 {
@@ -24,7 +23,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Dele
                 var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
 
                 if (maybeFolder.IsNone)
-                    return Error.NotFound("Folder", request.Id);
+                    return new Error(ErrorCode.NotFound, $"Папка {request.Id} не была найдена");
 
                 var children = await _context.Set<Folder>().Where(x => x.ParentFolderId == maybeFolder.Value.Id).ToListAsync(cancellationToken);
 
@@ -35,7 +34,7 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Dele
             }
             catch (Exception)
             {
-                return Error.New(ErrorCode.Server, "Произошла ошибка на стороне сервера");
+                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
             }
         }
     }
