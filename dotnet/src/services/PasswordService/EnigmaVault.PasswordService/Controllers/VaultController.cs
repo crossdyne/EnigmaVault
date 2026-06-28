@@ -12,7 +12,7 @@ using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Resto
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.UnArchive;
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.Update;
 using EnigmaVault.PasswordService.Application.Features.VaultItems.Queries.GetAll;
-using EnigmaVault.PasswordService.Extentions;
+using EnigmaVault.PasswordService.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +32,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateVaultItemRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -58,7 +58,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UpdateVaultItemRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -82,7 +82,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> AddToFavorites([FromRoute] Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -101,7 +101,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> RemoveFromFavorites([FromRoute] Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -120,7 +120,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Archive([FromRoute] Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -139,7 +139,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> UnArchive([FromRoute] Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -160,7 +160,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -179,7 +179,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> EmptyTrash()
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -198,7 +198,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> MoveToTrash(Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -215,9 +215,9 @@ namespace EnigmaVault.PasswordService.Controllers
 
         [HttpPatch("restore-from-trash/{vaultId}")]
         [Authorize]
-        public async Task<IActionResult> RestoreFronmTrash(Guid vaultId)
+        public async Task<IActionResult> RestoreFromTrash(Guid vaultId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -234,9 +234,9 @@ namespace EnigmaVault.PasswordService.Controllers
 
         [HttpPatch("restore-all-from-trash")]
         [Authorize]
-        public async Task<IActionResult> RestoreAllFronmTrash()
+        public async Task<IActionResult> RestoreAllFromTrash()
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -257,7 +257,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll([FromRoute] Guid userId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -273,7 +273,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> AddTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -292,7 +292,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> RemoveTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;

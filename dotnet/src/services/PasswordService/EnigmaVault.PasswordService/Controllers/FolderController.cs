@@ -3,7 +3,7 @@ using EnigmaVault.PasswordService.Application.Features.Folders.Commands.CreateSu
 using EnigmaVault.PasswordService.Application.Features.Folders.Commands.Delete;
 using EnigmaVault.PasswordService.Application.Features.Folders.Commands.Update;
 using EnigmaVault.PasswordService.Application.Features.Folders.Queries.GetAll;
-using EnigmaVault.PasswordService.Extentions;
+using EnigmaVault.PasswordService.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRoot([FromBody] CreateFolderRootRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -39,7 +39,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> CreateSubFolder([FromBody] CreateSubFolderRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -57,7 +57,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UpdateFolderRequest request)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -75,7 +75,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
@@ -93,7 +93,7 @@ namespace EnigmaVault.PasswordService.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll()
         {
-            var extractResult = this.ExtactCredentials(User);
+            var extractResult = this.ExtractCredentials(User);
 
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;

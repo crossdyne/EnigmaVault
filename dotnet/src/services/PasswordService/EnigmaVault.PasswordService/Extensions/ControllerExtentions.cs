@@ -3,11 +3,11 @@ using EnigmaVault.PasswordService.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace EnigmaVault.PasswordService.Extentions
+namespace EnigmaVault.PasswordService.Extensions
 {
-    public static class ControllerExtentions
+    public static class ControllerExtensions
     {
-        public static Result<ExtractData> ExtactCredentials(this Controller controller, ClaimsPrincipal user)
+        public static Result<ExtractData> ExtractCredentials(this Controller controller, ClaimsPrincipal user)
         {
             var extractData = new ExtractData();
 
