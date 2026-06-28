@@ -6,34 +6,27 @@ using MediatR;
 
 namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.AddTag
 {
-    public sealed class AddTagToVaulItemCommandHandler(
+    public sealed class AddTagToVaultItemCommandHandler(
         IVaultItemRepository vaultItemRepository,
-        IUnitOfWork unitOfWork) : IRequestHandler<AddTagToVaulItemCommand, Result<Unit>>
+        IUnitOfWork unitOfWork) : IRequestHandler<AddTagToVaultItemCommand, Result<Unit>>
     {
         private readonly IVaultItemRepository _vaultItemRepository = vaultItemRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Result<Unit>> Handle(AddTagToVaulItemCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(AddTagToVaultItemCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (maybeVault.IsNone)
-                    return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена");
+            if (maybeVault.IsNone)
+                return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена");
 
-                var vault = maybeVault.Value;
+            var vault = maybeVault.Value;
 
-                vault.AddTag(TagId.Create(request.TagId));
+            vault.AddTag(TagId.Create(request.TagId));
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка.");
-            }
+            return Unit.Value;
         }
     }
 }

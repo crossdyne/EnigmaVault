@@ -14,23 +14,16 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.A
 
         public async Task<Result<Unit>> Handle(ArchiveVaultCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var mayBe = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var mayBe = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (mayBe.IsNone)
-                    return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена");
+            if (mayBe.IsNone)
+                return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена");
 
-                mayBe.Value.SetArchive(true);
+            mayBe.Value.SetArchive(true);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка.");
-            }
+            return Unit.Value;
         }
     }
 }

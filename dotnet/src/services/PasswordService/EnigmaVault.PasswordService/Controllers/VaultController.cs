@@ -278,7 +278,7 @@ namespace EnigmaVault.PasswordService.Controllers
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
 
-            var command = new AddTagToVaulItemCommand(extractResult.Value.UserId, vaultId, tagId);
+            var command = new AddTagToVaultItemCommand(extractResult.Value.UserId, vaultId, tagId);
 
             var result = await _mediator.Send(command);
 

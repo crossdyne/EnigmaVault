@@ -18,21 +18,14 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.E
 
         public async Task<Result<Unit>> Handle(EmptyVaultsTrashCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var vaults = await _context.Set<VaultItem>().Where(vi => vi.UserId == request.UserId && vi.IsInTrash).ToListAsync(cancellationToken);
+            var vaults = await _context.Set<VaultItem>().Where(vi => vi.UserId == request.UserId && vi.IsInTrash).ToListAsync(cancellationToken);
 
-                foreach (var vault in vaults)
-                    _vaultItemRepository.Remove(vault);
+            foreach (var vault in vaults)
+                _vaultItemRepository.Remove(vault);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Не удалось очистить корзину.");
-            }
+            return Unit.Value;
         }
     }
 }

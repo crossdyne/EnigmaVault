@@ -15,6 +15,7 @@ namespace EnigmaVault.PasswordService.Application.Ioc
             services.AddValidatorsFromAssembly(currentAssembly);
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(currentAssembly));
 
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ExceptionBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             services.AddAutoMapper(cfg => cfg.LicenseKey = configuration["AutoMapper:AutoMapperKey"], currentAssembly);

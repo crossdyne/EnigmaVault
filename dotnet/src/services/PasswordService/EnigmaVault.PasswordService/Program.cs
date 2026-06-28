@@ -1,9 +1,13 @@
 
 using System.Text;
+using System.Text.Json;
 using EnigmaVault.PasswordService.Application.Ioc;
 using EnigmaVault.PasswordService.Infrastructure.Ioc;
+using EnigmaVault.PasswordService.JsonConverters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Shared.Logging;
 
 namespace EnigmaVault.PasswordService
 {
@@ -15,6 +19,14 @@ namespace EnigmaVault.PasswordService
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
+
+            builder.Services.Configure<JsonSerializerOptions>(options =>
+            {
+                options.PropertyNameCaseInsensitive = true;
+                options.Converters.Add(new ErrorCodeJsonConverter());
+            });
+            
+            builder.Host.AddSerilogLogger();
             builder.Services.AddApplication(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -47,6 +59,7 @@ namespace EnigmaVault.PasswordService
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSerilogRequestLogging();
             app.MapControllers();
 
             app.Run();

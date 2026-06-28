@@ -14,24 +14,17 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Delete
 
         public async Task<Result<Unit>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
-            try
+            var maybeTag = await _tagRepository.GetAsync(request.Id, request.UserId, token: cancellationToken);
+
+            if (maybeTag.HasValue)
             {
-                var maybeTag = await _tagRepository.GetAsync(request.Id, request.UserId, token: cancellationToken);
+                _tagRepository.Remove(maybeTag.Value);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                if (maybeTag.HasValue)
-                {
-                    _tagRepository.Remove(maybeTag.Value);
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    return Unit.Value;
-                }
-
-                return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден.");
+                return Unit.Value;
             }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+
+            return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден.");
         }
     }
 }

@@ -3,7 +3,6 @@ using EnigmaVault.PasswordService.Application.Common;
 using EnigmaVault.PasswordService.Application.Common.Repositories;
 using EnigmaVault.PasswordService.Domain.Models;
 using MediatR;
-using Shared.Kernel.Exceptions;
 
 namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Create
 {
@@ -16,23 +15,12 @@ namespace EnigmaVault.PasswordService.Application.Features.Tags.Commands.Create
 
         public async Task<Result<Guid>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var tag = Tag.Create(request.UserId, request.Name, request.Color);
+            var tag = Tag.Create(request.UserId, request.Name, request.Color);
 
-                await _repository.AddAsync(tag, cancellationToken);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _repository.AddAsync(tag, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return tag.Id.Value;
-            }
-            catch (DomainException ex)
-            {
-                return ex.Error;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+            return tag.Id.Value;
         }
     }
 }

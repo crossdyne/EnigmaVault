@@ -14,25 +14,18 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.M
 
         public async Task<Result<DateTime>> Handle(MoveVaultToTrashCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (maybeVault.IsNone)
-                    return new Error(ErrorCode.NotFound, "Данные не найдены.");
+            if (maybeVault.IsNone)
+                return new Error(ErrorCode.NotFound, "Данные не найдены.");
 
-                var vaultItem = maybeVault.Value;
+            var vaultItem = maybeVault.Value;
 
-                vaultItem.SetInTrash(true);
+            vaultItem.SetInTrash(true);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return vaultItem.DeletedAt!;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Не удалось переместить данные в корзину.");
-            }
+            return vaultItem.DeletedAt!;
         }
     }
 }

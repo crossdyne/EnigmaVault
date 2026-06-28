@@ -16,28 +16,17 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Upda
 
         public async Task<Result<Unit>> Handle(UpdateFolderCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
+            var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
 
-                if (maybeFolder.IsNone)
-                    return new Error(ErrorCode.NotFound, $"Папка {request.Name} - { request.Id} не была найдена");
+            if (maybeFolder.IsNone)
+                return new Error(ErrorCode.NotFound, $"Папка {request.Name} - { request.Id} не была найдена");
 
-                maybeFolder.Value.Rename(FolderName.Create(request.Name));
-                maybeFolder.Value.Move(request.ParentFolderId != null ? FolderId.Create(request.ParentFolderId.Value) : null);
+            maybeFolder.Value.Rename(FolderName.Create(request.Name));
+            maybeFolder.Value.Move(request.ParentFolderId != null ? FolderId.Create(request.ParentFolderId.Value) : null);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (DomainException ex)
-            {
-                return ex.Error;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+            return Unit.Value;
         }
     }
 }

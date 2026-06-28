@@ -15,25 +15,18 @@ namespace EnigmaVault.PasswordService.Application.Features.VaultItems.Commands.R
 
         public async Task<Result<Unit>> Handle(RemoveTagFromVaulItemCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
+            var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-                if (maybeVault.IsNone)
-                    return new Error(ErrorCode.NotFound,  $"Элемент {request.VaultItemId} не был найден.");
+            if (maybeVault.IsNone)
+                return new Error(ErrorCode.NotFound,  $"Элемент {request.VaultItemId} не был найден.");
 
-                var vault = maybeVault.Value;
+            var vault = maybeVault.Value;
 
-                vault.RemoveTag(TagId.Create(request.TagId));
+            vault.RemoveTag(TagId.Create(request.TagId));
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла непредвиденная ошибка.");
-            }
+            return Unit.Value;
         }
     }
 }

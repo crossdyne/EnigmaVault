@@ -18,24 +18,17 @@ namespace EnigmaVault.PasswordService.Application.Features.Folders.Commands.Dele
 
         public async Task<Result<Unit>> Handle(DeleteFolderCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
+            var maybeFolder = await _repository.GetAsync(request.Id, request.UserId, cancellationToken);
 
-                if (maybeFolder.IsNone)
-                    return new Error(ErrorCode.NotFound, $"Папка {request.Id} не была найдена");
+            if (maybeFolder.IsNone)
+                return new Error(ErrorCode.NotFound, $"Папка {request.Id} не была найдена");
 
-                var children = await _context.Set<Folder>().Where(x => x.ParentFolderId == maybeFolder.Value.Id).ToListAsync(cancellationToken);
+            var children = await _context.Set<Folder>().Where(x => x.ParentFolderId == maybeFolder.Value.Id).ToListAsync(cancellationToken);
 
-                _repository.Remove(maybeFolder.Value);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _repository.Remove(maybeFolder.Value);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
-            }
-            catch (Exception)
-            {
-                return new Error(ErrorCode.Server, "Произошла ошибка на стороне сервера");
-            }
+            return Unit.Value;
         }
     }
 }
