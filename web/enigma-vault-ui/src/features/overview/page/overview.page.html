@@ -1,0 +1,220 @@
+<div class="overview-container">
+    <div class="project-hello">
+        <!-- <svg class="svg-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+            <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+            <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+            <path d="M2 12a10 10 0 0 1 18-6"/>
+            <path d="M2 16h.01"/>
+            <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+            <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+            <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+            <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
+        </svg> -->
+        <svg class="svg-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+            <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <div class="project-name">
+            <span class="enigma">Enigma</span>
+            <span class="vault">Vault</span>
+        </div>
+        <span class="description">Единое защищённое хранилище для паролей,</span>
+        <span class="description">заметок и файлов</span>
+
+        <div class="button-project-container">
+            <button class="passwords">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/>
+                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                </svg>
+                <span>Пароли</span>
+            </button>
+            <button class="notes">
+                <svg class="svg-notes" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                    <path d="M8 11h8"/>
+                    <path d="M8 7h6"/>
+                </svg>
+                <span>Заметки</span>
+            </button>
+            <button class="files">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                </svg>
+                <span>Файлы</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="history">
+            <div class="card-element">
+                <div class="header">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/>
+                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                    </svg>
+                    <span class="title">Последние пароли</span>
+                    <span class="total">Все 7</span>
+                </div>
+                <div class="last-records">
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">GitHub</div>
+                            <div class="record-email">developer@example...</div>
+                        </div>
+                        <div class="record-actions">
+                            <div class="eye-icon">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="password-dots">........</div>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">AWS Console</div>
+                            <div class="record-email">admin@company.com</div>
+                        </div>
+                        <div class="record-actions">
+                            <div class="eye-icon">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="password-dots">........</div>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">Gmail</div>
+                            <div class="record-email">user@gmail.com</div>
+                        </div>
+                        <div class="record-actions">
+                            <div class="eye-icon">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="password-dots">........</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-element">
+                <div class="header">
+                    <svg class="svg-notes" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                        <path d="M8 11h8"/>
+                        <path d="M8 7h6"/>
+                    </svg>
+                    <span class="title">Последние заметки</span>
+                    <span class="total">Все 14</span>
+                </div>
+                <div class="last-records">
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 7h6"/>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">SSH ключи для продакшене</div>
+                            <div class="record-description">Настройка доступа к серверам, нужно для быстрого развертывания</div>
+                        </div>
+                    </div>
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 7h6"/>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">План развития проекта</div>
+                            <div class="record-description">Основной этап, который нужно</div>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="lock-icon">                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 7h6"/>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">Список продуктов</div>
+                            <div class="record-description">Не забыть купить следующие продукты</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-element">
+                <div class="header">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span class="title">Последние файлы</span>
+                    <span class="total">Все 153</span>
+                </div>
+                <div class="last-records">
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 12h-5"/>
+                                <path d="M15 8h-5"/>
+                                <path d="M19 17V5a2 2 0 0 0-2-2H4"/>
+                                <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">server-config.yaml</div>
+                            <div class="record-description">Файла с конфигурациями для запуска серверов по быстрому</div>
+                        </div>
+                    </div>
+                    <div class="record-item">
+                        <div class="lock-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 12h-5"/>
+                                <path d="M15 8h-5"/>
+                                <path d="M19 17V5a2 2 0 0 0-2-2H4"/>
+                                <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>
+                            </svg>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-title">backup-2026-07.tar.gz</div>
+                            <div class="record-description">Бэкап базы данных для продакшене</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
