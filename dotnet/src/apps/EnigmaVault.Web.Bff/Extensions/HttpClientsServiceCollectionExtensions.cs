@@ -7,7 +7,7 @@ namespace EnigmaVault.Web.Bff.Extensions
     {
         public static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            var authBaseUrl = configuration["Urls:AuthServicesBase"];
+            var authBaseUrl = configuration["Urls:AuthServices"];
             string authenticationServices = "AuthenticationServices";
             services.AddHttpClient<IAuthService, AuthService>(authenticationServices, client => client.BaseAddress = new Uri(authBaseUrl!));
             
