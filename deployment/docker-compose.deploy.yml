@@ -1,0 +1,47 @@
+services:
+
+  enigma-vault-bff:
+    image: enigma-vault/bff:latest
+    container_name: enigma-vault-bff
+    ports:
+      - "7007:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Redis__ConnectionString=
+      - Urls__AuthServices=
+      - Urls__UserManagement=
+    restart: unless-stopped
+    volumes:
+      - ./logs/bff:/logs
+    networks:
+      - enigma-vault-network
+
+  enigma-vault-api:
+    image: enigma-vault/password-api:latest
+    container_name: enigma-vault-password-api
+    ports:
+      - "7008:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection= <<Postgres_Sql>>
+      - JwtSettings__Secret=
+      - JwtSettings__Issuer=
+      - JwtSettings__Audience=
+    restart: unless-stopped
+    volumes:
+      - ./logs/password:/logs
+    networks:
+      - enigma-vault-network
+
+  enigma-vault-ui:
+    image: enigma-vault/ui:latest
+    container_name: enigma-vault-ui
+    ports:
+      - "7009:80"
+    restart: unless-stopped
+    networks:
+      - enigma-vault-network
+
+networks:
+  enigma-vault-network:
+    driver: bridge

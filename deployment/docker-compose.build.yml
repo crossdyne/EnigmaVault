@@ -1,0 +1,18 @@
+services:
+  enigma-vault-bff:
+    build:
+      context: ..
+      dockerfile: dotnet/src/apps/EnigmaVault.Web.Bff/Dockerfile
+    image: enigma-vault/bff:latest 
+
+  enigma-vault-api:
+    build:
+      context: ..
+      dockerfile: dotnet/src/services/Password/EnigmaVault.Password.Service.Api/Dockerfile
+    image: enigma-vault/password-api:latest
+
+  enigma-vault-ui:
+    build:
+      context: ../web/enigma-vault-ui   
+      dockerfile: Dockerfile
+    image: enigma-vault/ui:latest
