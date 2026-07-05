@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'overview-page',
@@ -7,5 +8,9 @@ import { Component } from "@angular/core";
     standalone: true
 })
 export class OverviewPage {
+    private router = inject(Router);
     
+    openPasswordsPage() {
+        this.router.navigate(['/passwords']);
+    }
 }
