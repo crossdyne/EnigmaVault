@@ -47,9 +47,11 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
             var srpProfile = SrpProfileRegistry.GetProfile(SrpGroup.Rfc5054_3072);
             var srpContext = SrpContext.FromOptions(srpProfile.Options);
 
+            var normalizeLogin = AuthLogin.ToLower();
+
             #endregion
 
-            var challengeResult = await authService.GetSrpChallenge(new SrpChallengeRequest(AuthLogin));
+            var challengeResult = await authService.GetSrpChallenge(new SrpChallengeRequest(normalizeLogin));
 
             if (challengeResult.IsFailure)
             {
@@ -57,9 +59,9 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
                 return;
             }
 
-            var (A, M1, S) = srpClient.GenerateSrpProof(AuthLogin, AuthPassword, challengeResult.Value.Salt, challengeResult.Value.B, srpContext);
+            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, challengeResult.Value.Salt, challengeResult.Value.B, srpContext);
 
-            var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(AuthLogin, A, M1));
+            var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(normalizeLogin, A, M1));
 
             if (verifierResult.IsFailure)
             {
@@ -83,7 +85,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
 
             #region Дек
 
-            var userPublicInfo = await userManagementService.GetPublicEncryptionInfo(AuthLogin);
+            var userPublicInfo = await userManagementService.GetPublicEncryptionInfo(normalizeLogin);
 
             if (userPublicInfo.IsFailure)
             {
@@ -94,7 +96,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
             var publicInfo = userPublicInfo.Value;
             byte[] salt = Convert.FromBase64String(publicInfo.ClientSalt);
 
-            var (kek, _) = keyDerivationService.DeriveKeysFromPassword(AuthLogin, AuthPassword, salt, cryptoProfile.KdfOptions);
+            var (kek, _) = keyDerivationService.DeriveKeysFromPassword(normalizeLogin, AuthPassword, salt, cryptoProfile.KdfOptions);
 
             byte[]? dek;
 
