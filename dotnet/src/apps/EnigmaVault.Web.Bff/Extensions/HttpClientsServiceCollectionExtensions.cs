@@ -1,8 +1,7 @@
-
-using EnigmaVault.AssetsService.ApiClient.Clients;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
-using EnigmaVault.FileService.ApiClient.Clients;
-using EnigmaVault.PasswordService.ApiClient.Clients;
+using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.Authentication.Client.HttpClients;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.PasswordService.Client.Clients;
 using EnigmaVault.Web.Bff.Handlers;
 
 namespace EnigmaVault.Web.Bff.Extensions

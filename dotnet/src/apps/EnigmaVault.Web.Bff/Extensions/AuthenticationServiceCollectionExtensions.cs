@@ -1,4 +1,4 @@
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Web.Bff.Extensions;
 using EnigmaVault.Web.Bff.Services;
 using Medallion.Threading;

@@ -1,8 +1,8 @@
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.ApiClient.Clients;
-using EnigmaVault.AssetsService.ApiClient.Models;
-using EnigmaVault.FileService.ApiClient.Clients;
-using EnigmaVault.FileService.ApiClient.Models;
+using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.AssetsService.Client.Models;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.FileService.Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Responses;
 using Shared.Web.Extensions;

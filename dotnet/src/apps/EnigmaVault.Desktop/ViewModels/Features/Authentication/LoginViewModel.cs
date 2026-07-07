@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Crossdyne.Security.Abstractions;
 using Crossdyne.Security.Configuration;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services;

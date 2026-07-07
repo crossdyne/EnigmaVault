@@ -1,4 +1,4 @@
-using EnigmaVault.PasswordService.ApiClient.Clients;
+using EnigmaVault.PasswordService.Client.Clients;
 using EnigmaVault.Web.Bff.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;

@@ -1,4 +1,4 @@
-using EnigmaVault.AssetsService.ApiClient.Clients;
+using EnigmaVault.AssetsService.Client.Clients;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Web.Extensions;
 

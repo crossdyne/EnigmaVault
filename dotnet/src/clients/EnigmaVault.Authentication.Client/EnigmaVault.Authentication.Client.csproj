@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crossdyne.Toolkit" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\contracts\Shared.Contracts\Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\shared\core\Shared.Kernel\Shared.Kernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\Requests\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootNamespace>EnigmaVault.Authentication.Client</RootNamespace>
+    <AssemblyName>EnigmaVault.Authentication.Client</AssemblyName>
+  </PropertyGroup>
+
+</Project>

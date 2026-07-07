@@ -5,10 +5,11 @@
     <Project Path="src/apps/EnigmaVault.Web.Bff/EnigmaVault.Web.Bff.csproj" />
   </Folder>
   <Folder Name="/src/clients/">
-    <Project Path="src/clients/EnigmaVault.AssetsService.ApiClient/EnigmaVault.AssetsService.ApiClient.csproj" />
-    <Project Path="src/clients/EnigmaVault.Authentication.ApiClient/EnigmaVault.Authentication.ApiClient.csproj" />
-    <Project Path="src/clients/EnigmaVault.FileService.ApiClient/EnigmaVault.FileService.ApiClient.csproj" />
-    <Project Path="src/clients/EnigmaVault.PasswordService.ApiClient/EnigmaVault.PasswordService.ApiClient.csproj" />
+    <Project Path="src/clients/EnigmaVault.AssetsService.Client/EnigmaVault.AssetsService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.FileService.Client/EnigmaVault.FileService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.PasswordService.Client/EnigmaVault.PasswordService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.UserManagement.Client/EnigmaVault.UserManagement.Client.csproj" />
   </Folder>
   <Folder Name="/src/services/" />
   <Folder Name="/src/services/Password/">
