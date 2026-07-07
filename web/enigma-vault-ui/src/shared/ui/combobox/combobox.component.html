@@ -1,0 +1,30 @@
+<div class="combobox-wrapper" [class.disabled]="disabled">
+  <button
+    type="button"
+    class="combobox-trigger"
+    (click)="toggleDropdown()"
+    [disabled]="disabled">
+    <span class="combobox-value" [class.placeholder]="!selected()">
+      {{ displayValue }}
+    </span>
+    <span class="combobox-actions">
+      @if (selected()) {
+        <span class="combobox-clear" (mousedown)="clear($event)">✕</span>
+      }
+      <span class="combobox-arrow" [class.open]="isOpen()">▼</span>
+    </span>
+  </button>
+
+  @if (isOpen()) {
+    <ul class="combobox-dropdown">
+      @for (item of items; track item) {
+        <li
+          class="combobox-item"
+          [class.selected]="item === selected()"
+          (mousedown)="selectItem(item)">
+          {{ item[displayKey] }}
+        </li>
+      }
+    </ul>
+  }
+</div>
