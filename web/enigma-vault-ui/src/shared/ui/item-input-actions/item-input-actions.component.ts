@@ -7,35 +7,44 @@ import { TagResponse } from '../../../features/passwords/models/tag.response';
   templateUrl: './item-input-actions.component.html',
   styleUrl: './item-input-actions.component.scss',
 })
-export class ItemInputActionsComponent {
-  editing = input<TagResponse | null>(null);
+export class ItemInputActionsComponent<T> {
+  editing = input<T | null>(null);
 
-  tagName = signal<string>('');
+  getValue = input.required<(item: T) => string>();
+  setValue = input.required<(item: T, value: string) => T>();
+
+  createPlaceholder = input<string>('Введите название...');
+  editPlaceholder = input<string>('Редактирование...');
+
+  value = signal<string>('');
   
   cancelEdit = output<void>();
-  update = output<TagResponse>();
+  update = output<T>();
   create = output<string>();
 
   constructor() {
     effect(() => {
-      const tag = this.editing();
-      this.tagName.set(tag ? tag.name : '');
+      const item = this.editing();
+      const getter = this.getValue();
+      this.value.set(item ? getter(item) : '');
     });
   }
     
   onAdd() {
-    const value = this.tagName().trim();
+    const trimmed = this.value().trim();
 
-    if (value) {
-      this.create.emit(value);
-      this.tagName.set('');
+    if (trimmed) {
+      this.create.emit(trimmed);
+      this.value.set('');
     }
   }
 
   onSave() {
-    const tag = this.editing();
-    if (tag) {
-      this.update.emit({ ...tag, name: this.tagName() });
+    const item = this.editing();
+    const setter = this.setValue();
+
+    if (item) {
+      this.update.emit(setter(item, this.value()));
     }
   }
 

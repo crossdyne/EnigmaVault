@@ -30,6 +30,13 @@ export class PasswordsPage {
 
     //#endregion
 
+    //#region Get и Set
+
+    getTagName = (tag: TagResponse) => tag.name;
+    setTagName = (tag: TagResponse, name: string) => ({ ...tag, name});
+
+    //#endregion
+
     //#region События
 
     onSelectedTag(tag: TagResponse) {

@@ -1,8 +1,8 @@
 <div class="container">
     <input
-        [value]="tagName()"
-        (input)="tagName.set($any($event.target).value)"
-        [placeholder]="editing() ? 'Редактирование...' : 'Введите название...'">
+        [value]="value()"
+        (input)="value.set($any($event.target).value)"
+        [placeholder]="editing() ? editPlaceholder() : createPlaceholder()">
 
     @if (!editing()) {
         <button class="button-add" (click)="onAdd()">
