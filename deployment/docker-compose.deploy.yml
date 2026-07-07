@@ -11,6 +11,7 @@ services:
       - Urls__AuthService=
       - Urls__UserManagementService=
       - Urls__PasswordService=
+      - Urls__AssetsService=
     restart: unless-stopped
     volumes:
       - ./logs/bff:/logs

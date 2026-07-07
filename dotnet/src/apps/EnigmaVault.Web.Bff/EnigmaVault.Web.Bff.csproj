@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\clients\EnigmaVault.AssetsService.ApiClient\EnigmaVault.AssetsService.ApiClient.csproj" />
     <ProjectReference Include="..\..\clients\EnigmaVault.Authentication.ApiClient\EnigmaVault.Authentication.ApiClient.csproj" />
     <ProjectReference Include="..\..\clients\EnigmaVault.PasswordService.ApiClient\EnigmaVault.PasswordService.ApiClient.csproj" />
     <ProjectReference Include="..\..\shared\contracts\Shared.Contracts\Shared.Contracts.csproj" />

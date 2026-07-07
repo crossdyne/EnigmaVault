@@ -1,4 +1,5 @@
 $button-background-color-hover: rgba(121, 118, 118, 0.301);
+$button-background-color-disable: rgba(129, 123, 123, 0.301);
 
 .side-bar-button {
     display: flex;
@@ -17,6 +18,11 @@ $button-background-color-hover: rgba(121, 118, 118, 0.301);
     &:hover {
         background-color: $button-background-color-hover;
     }
+
+    &.active {
+        background-color: $button-background-color-disable;
+    }
+
     svg {
         width: 24px;            
         height: 24px;

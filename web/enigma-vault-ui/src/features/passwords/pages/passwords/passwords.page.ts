@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, effect, inject, model, signal } from "@angular/core";
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
@@ -6,26 +6,50 @@ import { TagsListComponent } from "../../../../shared/ui/tags/tags-list.componen
 import { ItemInputActionsComponent } from "../../../../shared/ui/item-input-actions/item-input-actions.component";
 import { CreateTagRequest } from "../../models/create-tag.request";
 import { UpdateTagRequest } from "../../models/update-tag.request";
+import { IconCategoryResponse } from "../../models/icon-category.response";
+import { IconCategoryService } from "../../services/icon-category.service";
+import { ComboboxComponent } from "../../../../shared/ui/combobox/combobox.component";
 
 @Component({
     selector: 'passwords-page',
     templateUrl: './passwords.page.html',
     styleUrls: ['./passwords.page.scss'],
     standalone: true,
-    imports: [TagsListComponent, ItemInputActionsComponent]
+    imports: [TagsListComponent, ItemInputActionsComponent, ComboboxComponent,]
 })
 export class PasswordsPage {
-    private http = inject(TagService);
+    private tagService = inject(TagService);
+    private iconCategoryService = inject(IconCategoryService);
 
     selectedTag = signal<TagResponse | null>(null);
 
     constructor() {
         this.getTagsAsync();
+        this.getIconCategoriesAsync();
+
+        effect(() => {
+            const cat = this.selectedCategory();
+            
+            if (!cat)
+                return;
+
+            console.log('Выбранная категория: ', cat.name);
+        });
     }
     
     //#region Коллекции
 
     tags = signal<TagResponse[]>([]);
+    iconCategories = signal<IconCategoryResponse[]>([]);
+
+    selectedCategory = model<IconCategoryResponse | null>(null);
+
+    //#endregion
+
+    //#region Сигналы
+
+    activeTab = signal<'tags' | 'icons'>('tags');
+
     editingTag = signal<TagResponse | null>(null);
 
     //#endregion
@@ -54,7 +78,7 @@ export class PasswordsPage {
             color: '#F0F0F0'
         } 
 
-        const result: Result<string> = await this.http.createAsync(request);
+        const result: Result<string> = await this.tagService.createAsync(request);
 
         result.match(
             id => {
@@ -73,7 +97,7 @@ export class PasswordsPage {
             color: tag.color
         }
 
-        const result: Result = await this.http.updateAsync(request);
+        const result: Result = await this.tagService.updateAsync(request);
 
         result.match(
             () => {
@@ -97,7 +121,7 @@ export class PasswordsPage {
     }
 
     async onDeleteTag(id: string){
-        const result: Result = await this.http.removeAsync(id);
+        const result: Result = await this.tagService.removeAsync(id);
 
         result.match(
             () => {
@@ -114,31 +138,31 @@ export class PasswordsPage {
         this.editingTag.set(null);
     }
 
+    setActiveTab(tab: 'tags' | 'icons') {
+        this.activeTab.set(tab);
+    }
+
     //#endregion
 
     //#region CRUD
 
     async getTagsAsync() {
-        // const list = 
-        //  this.tags.set([
-        //     { id: "tag-001", name: "Важно", color: "#EF4444" },
-        //     { id: "tag-002", name: "Работа", color: "#3B82F6" },
-        //     { id: "tag-003", name: "Личное", color: "#10B981" },
-        //     { id: "tag-004", name: "Идеи", color: "#F59E0B" },
-        //     { id: "tag-005", name: "Баг", color: "#DC2626" },
-        //     { id: "tag-006", name: "Фича", color: "#8B5CF6" },
-        //     { id: "tag-007", name: "Документация", color: "#06B6D4" },
-        //     { id: "tag-008", name: "Дизайн", color: "#EC4899" },
-        //     { id: "tag-009", name: "Тестирование", color: "#84CC16" },
-        //     { id: "tag-010", name: "Релиз", color: "#F97316" }
-        // ]);
-        const result: Result<TagResponse[]> = await this.http.getAllAsync();
+        const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
 
         result.match(
             tags => this.tags.set(tags),
             errors => console.log(this.mapErrors(errors))
         );
     } 
+
+    async getIconCategoriesAsync() {
+        const result: Result<IconCategoryResponse[]> = await this.iconCategoryService.getAllAsync();
+
+        result.match(
+            categories => this.iconCategories.set(categories),
+            errors => console.error('Ошибка получения категорий: ', this.mapErrors(errors))
+        );
+    }
 
     //#endregion
 
