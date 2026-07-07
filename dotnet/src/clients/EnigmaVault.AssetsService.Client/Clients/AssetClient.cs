@@ -24,11 +24,6 @@ namespace EnigmaVault.AssetsService.Client.Clients
 
                 var icons = await response.Content.ReadFromJsonAsync<List<IconMetadataResponse>>(_jsonSerializerOptions) ?? [];
 
-                foreach (var item in icons)
-                {
-                    System.Console.WriteLine(item.AssetName);
-                }
-
                 return icons;
             }
             catch (HttpRequestException ex)
