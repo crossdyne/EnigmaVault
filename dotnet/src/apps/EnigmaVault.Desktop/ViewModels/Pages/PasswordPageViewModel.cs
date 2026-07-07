@@ -26,7 +26,6 @@ using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -918,6 +917,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             var result = await _tagService.GetAll(); 
 
+            if (result.IsFailure)
+                return;
+
             foreach (var item in result.Value)
             {
                 Tags.Add(new TagViewModel(item));
@@ -961,6 +963,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         public async Task GetIconCategories()
         {
             var result = await _iconCategoryService.GetIconCategories();
+            
+            if (result.IsFailure)
+                return;
 
             foreach (var item in result.Value)
                 IconCategories.Add(item);

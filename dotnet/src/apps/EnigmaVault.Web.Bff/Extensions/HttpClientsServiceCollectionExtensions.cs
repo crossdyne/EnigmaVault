@@ -1,5 +1,7 @@
 
 using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.PasswordService.ApiClient.Clients;
+using EnigmaVault.Web.Bff.Handlers;
 
 namespace EnigmaVault.Web.Bff.Extensions
 {
@@ -7,9 +9,11 @@ namespace EnigmaVault.Web.Bff.Extensions
     {
         public static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            var authBaseUrl = configuration["Urls:AuthServices"];
-            string authenticationServices = "AuthenticationServices";
-            services.AddHttpClient<IAuthService, AuthService>(authenticationServices, client => client.BaseAddress = new Uri(authBaseUrl!));
+            services.AddHttpClient<IAuthService, AuthService>(client => client.BaseAddress = new Uri(configuration["Urls:AuthService"]!));
+            
+            var passwordServiceName = "PasswordService";
+            services.AddHttpClient(passwordServiceName, client => client.BaseAddress = new Uri(configuration["Urls:PasswordService"]!)).AddHttpMessageHandler<AccessTokenHandler>();
+            services.AddHttpClient<ITagService, TagService>(passwordServiceName);
             
             return services;
         }
