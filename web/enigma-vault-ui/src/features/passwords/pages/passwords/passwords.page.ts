@@ -9,40 +9,55 @@ import { UpdateTagRequest } from "../../models/update-tag.request";
 import { IconCategoryResponse } from "../../models/icon-category.response";
 import { IconCategoryService } from "../../services/icon-category.service";
 import { ComboboxComponent } from "../../../../shared/ui/combobox/combobox.component";
+import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
+import { AssetUrlResponse } from "../../models/asset-urls.response";
+import { AssetService } from "../../services/asset.service";
 
 @Component({
     selector: 'passwords-page',
     templateUrl: './passwords.page.html',
     styleUrls: ['./passwords.page.scss'],
     standalone: true,
-    imports: [TagsListComponent, ItemInputActionsComponent, ComboboxComponent,]
+    imports: [TagsListComponent, ItemInputActionsComponent, ComboboxComponent, IconsComponent]
 })
 export class PasswordsPage {
     private tagService = inject(TagService);
     private iconCategoryService = inject(IconCategoryService);
-
-    selectedTag = signal<TagResponse | null>(null);
-
+    private assetService = inject(AssetService);
+   
     constructor() {
         this.getTagsAsync();
         this.getIconCategoriesAsync();
-
+        this.getIcons();
+        
         effect(() => {
             const cat = this.selectedCategory();
             
             if (!cat)
                 return;
-
+            
             console.log('Выбранная категория: ', cat.name);
+        });
+        
+        effect(() =>{
+            const icon = this.selectedIcon();
+            
+            if (!icon)
+                return;
+            
+            console.log('Выбрана иконка с именем: ', icon.assetName);
         });
     }
     
     //#region Коллекции
-
+    
     tags = signal<TagResponse[]>([]);
+    icons = signal<AssetUrlResponse[]>([]);
     iconCategories = signal<IconCategoryResponse[]>([]);
-
+    
+    selectedTag = signal<TagResponse | null>(null);
     selectedCategory = model<IconCategoryResponse | null>(null);
+    selectedIcon = model<AssetUrlResponse | null>(null);
 
     //#endregion
 
@@ -66,6 +81,10 @@ export class PasswordsPage {
     onSelectedTag(tag: TagResponse) {
         this.selectedTag.set(tag);
     }
+
+    // onSelectedIcon(icon: AssetUrlResponse) {
+    //     this.selectedIcon.set(icon);
+    // }
 
     onEditTag(tag: TagResponse) {
         this.editingTag.set(tag);
@@ -161,6 +180,15 @@ export class PasswordsPage {
         result.match(
             categories => this.iconCategories.set(categories),
             errors => console.error('Ошибка получения категорий: ', this.mapErrors(errors))
+        );
+    }
+
+    async getIcons() {
+        const result: Result<AssetUrlResponse[]> = await this.assetService.getAllAsync();
+
+        result.match(
+            assets => this.icons.set(assets),
+            errors => console.error('Ошибка получения иконок: ', this.mapErrors(errors))
         );
     }
 

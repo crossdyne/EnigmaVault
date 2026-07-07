@@ -1,0 +1,8 @@
+<div class="assets-container">
+    @for (icon of icons(); track icon.assetId) {
+        <div class="svg-card-container" (click)="selectedIcon.set(icon)">
+            <img [src]="icon.url" [alt]="icon.assetName">
+            <!-- <span class="name" [title]="icon.assetName">{{icon.assetName}}</span> -->
+        </div>
+    }
+</div>        

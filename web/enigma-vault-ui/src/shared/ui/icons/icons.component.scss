@@ -1,0 +1,49 @@
+.assets-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.svg-card-container {
+    display: grid;
+    position: relative;
+    justify-content: center;
+    background-color: rgba(121, 118, 118, 0.301);
+    border-radius: 1.5rem;
+    margin: 10px 0px 10px 10px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: gray;
+    }
+}
+
+delete-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.svg-card-container:hover delete-button {
+    opacity: 1;
+}
+
+img {
+    width: 78px;
+    padding: 10px;
+}
+
+.name {
+    display: block;
+    width: 100%;
+    text-align: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: 600;
+    margin-bottom: 15px;
+}
