@@ -1,6 +1,7 @@
 ﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.Authentication.Client.Model.Responses;
 using Shared.Contracts.Responses;
+using Shared.Contracts.Responses.UserManagement;
 
 namespace EnigmaVault.Authentication.Client.HttpClients
 {
@@ -8,5 +9,6 @@ namespace EnigmaVault.Authentication.Client.HttpClients
     {
         Task<Result<UserResponse?>> Me(string accesToken);
         Task<Result<UserPublicInfo>> GetPublicEncryptionInfo(string confirmationToken);
+        Task<Result<DekResponse>> GetDek();
     }
 }

@@ -12,24 +12,40 @@ import { ComboboxComponent } from "../../../../shared/ui/combobox/combobox.compo
 import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { AssetUrlResponse } from "../../models/asset-urls.response";
 import { AssetService } from "../../services/asset.service";
+import { EncryptedVaultResponse } from "../../models/encrypted-vault.response";
+import { VaultService } from "../../services/vault.service";
+import { VaultItem } from "../../models/vault-item";
+import { IconUrl } from "../../models/icon-url";
+import { CryptoService } from "@crossdyne/security";
+import { OverviewPayload } from "../../models/overview-payload";
+import { CryptoStateService } from "../../../../core/services/crypto-state.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'passwords-page',
     templateUrl: './passwords.page.html',
     styleUrls: ['./passwords.page.scss'],
     standalone: true,
-    imports: [TagsListComponent, ItemInputActionsComponent, ComboboxComponent, IconsComponent]
+    imports: [
+        TagsListComponent, 
+        ItemInputActionsComponent, 
+        ComboboxComponent, 
+        IconsComponent
+    ]
 })
 export class PasswordsPage {
+    private router = inject(Router);
     private tagService = inject(TagService);
     private iconCategoryService = inject(IconCategoryService);
     private assetService = inject(AssetService);
+    private vaultService = inject(VaultService);
+    private cryptoStateService = inject(CryptoStateService);
+
+    private cryptoService = new CryptoService();
    
     constructor() {
-        this.getTagsAsync();
-        this.getIconCategoriesAsync();
-        this.getIcons();
-        
+        this.initAsync();
+
         effect(() => {
             const cat = this.selectedCategory();
             
@@ -49,8 +65,16 @@ export class PasswordsPage {
         });
     }
     
+    private async initAsync() {
+        await this.getTagsAsync();
+        await this.getIconCategoriesAsync();
+        await this.getIcons();
+        await this.getVaults();
+    }
+
     //#region Коллекции
     
+    vaults = signal<VaultItem[]>([]);
     tags = signal<TagResponse[]>([]);
     icons = signal<AssetUrlResponse[]>([]);
     iconCategories = signal<IconCategoryResponse[]>([]);
@@ -192,12 +216,86 @@ export class PasswordsPage {
         );
     }
 
+    async getVaults() {
+        const dek = this.cryptoStateService.dek;
+        if (!dek) {
+            this.router.navigate(['/passwords/access']);
+            return;
+        }
+
+        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
+
+        result.match(
+            async vaults => {
+                const vaultItems: VaultItem[] = [];
+
+                for (const vault of vaults) {
+                    
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
+
+                    let icon: IconUrl | undefined = undefined;
+                    if (iconUrl)
+                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+
+                    const overview: OverviewPayload | null = await this.cryptoService.decryptData<OverviewPayload>(
+                        vault.encryptedOverview, 
+                        this.cryptoStateService.dek!);
+
+                    const vaultItem: VaultItem = {
+                        id: vault.id,
+                        type: vault.type as VaultType,
+                        serviceName: overview?.ServiceName!,
+                        url: overview?.Url!,
+                        dateAdded: vault.dateAdded,
+                        dateUpdate: vault.dateUpdate,
+                        deletedAt: vault.deletedAt,
+                        isFavorite: vault.isFavorite,
+                        isArchive: vault.isArchive,
+                        isInTrash: vault.isInTrash,
+                        encryptedOverview: vault.encryptedOverview,
+                        encryptedDetails: vault.encryptedDetails,
+                        tags: fullTags,
+                        icon: icon,
+                        note: overview?.Note!
+                    }
+
+                    vaultItems.push(vaultItem);
+                    console.log(overview?.ServiceName);
+                }
+                this.vaults.set(vaultItems);
+            },
+            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
+        );
+    }
+    
     //#endregion
 
     //#region Хелперы
 
       private mapErrors(errors: ErrorList): string{
         return errors.map(e => e.message).join(', ')
+    }
+
+    formatDate(value: any): string {
+        if (!value) return '';
+        
+        const date = value.toDate ? value.toDate() : new Date(value);
+        
+        if (isNaN(date.getTime())) return '';
+        
+        return date.toLocaleString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    }
+
+    openUrl(vault: VaultItem): void {
+         window.open(vault.url, '_blank', 'noopener,noreferrer');
     }
 
     //#endregion

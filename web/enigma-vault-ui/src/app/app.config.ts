@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { bffBaseUrlInterceptor } from '../core/interceptors/bff-base-url.interceptor';
@@ -10,6 +10,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([bffBaseUrlInterceptor, credentialsInterceptor, authErrorInterceptor])),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    { provide: LOCALE_ID, useValue: 'ru' }
   ]
 };

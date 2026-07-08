@@ -27,8 +27,8 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
             IsFavorite = model.IsFavorite;
             IsArchive = model.IsArchive;
             IsInTrash = model.IsInTrash;
-            EncryptedOverview = Convert.ToBase64String(model.EncryptedOverview);
-            EncryptedDetails = Convert.ToBase64String(model.EncryptedDetails);
+            EncryptedOverview = model.EncryptedOverview;
+            EncryptedDetails = model.EncryptedDetails;
             DateAdded = model.DateAdded.ToLocalTime();
             IconId = model.IconId;
 

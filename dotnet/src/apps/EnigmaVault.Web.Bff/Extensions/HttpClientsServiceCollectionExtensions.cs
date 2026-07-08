@@ -11,10 +11,12 @@ namespace EnigmaVault.Web.Bff.Extensions
         public static IServiceCollection AddHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpClient<IAuthService, AuthService>(client => client.BaseAddress = new Uri(configuration["Urls:AuthService"]!));
-            
+            services.AddHttpClient<IUserManagementService, UserManagementService>(client => client.BaseAddress = new Uri(configuration["Urls:UserManagementService"]!)).AddHttpMessageHandler<AccessTokenHandler>();
+
             var passwordServiceName = "PasswordService";
             services.AddHttpClient(passwordServiceName, client => client.BaseAddress = new Uri(configuration["Urls:PasswordService"]!)).AddHttpMessageHandler<AccessTokenHandler>();
             services.AddHttpClient<ITagService, TagService>(passwordServiceName);
+            services.AddHttpClient<IVaultService, VaultService>(passwordServiceName);
 
             var assetsService = "AssetsService";
             services.AddHttpClient(assetsService, client => client.BaseAddress = new Uri(configuration["Urls:AssetsService"]!)).AddHttpMessageHandler<AccessTokenHandler>();

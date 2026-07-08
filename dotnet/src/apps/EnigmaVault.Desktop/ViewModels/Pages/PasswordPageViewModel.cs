@@ -451,8 +451,8 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                         IsFavorite: false,
                         IsArchive: false,
                         IsInTrash: false,
-                        Convert.FromBase64String(EncryptedOverView),
-                        Convert.FromBase64String(EncryptedDetails),
+                        EncryptedOverView,
+                        EncryptedDetails,
                         [],
                         SelectedIcon!.Id!),
                     _cryptoServices, 
@@ -979,7 +979,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             var encrypted = encryptedVm;
 
-            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, [], [], [], ""), _cryptoServices, _userContext.Dek, Tags);
+            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, string.Empty, string.Empty, [], ""), _cryptoServices, _userContext.Dek, Tags);
 
             SelectedCredentialItemBaseViewModel = type switch
             {

@@ -1,6 +1,7 @@
 ﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.Authentication.Client.Model.Responses;
 using Shared.Contracts.Responses;
+using Shared.Contracts.Responses.UserManagement;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -59,6 +60,30 @@ namespace EnigmaVault.Authentication.Client.HttpClients
             catch (JsonException jsonEx)
             {
                 return Result<UserPublicInfo>.Failure(new Error(ErrorCode.Create, $"Ошибка десериализации ответа от api/users/public-encryption-info: {jsonEx.Message}"));
+            }
+        }
+
+        public async Task<Result<DekResponse>> GetDek()
+        {            
+            try
+            {
+                var responseMessage = await _httpClient.GetAsync($"api/v1/users/private/crypto/dek");
+                responseMessage.EnsureSuccessStatusCode();
+
+                var dek = await responseMessage.Content.ReadFromJsonAsync<DekResponse>(_jsonSerializerOptions);
+
+                if (dek == null)
+                    return new Error(ErrorCode.NotFound, "Пользователь не найден.");
+
+                return Result<DekResponse>.Success(dek);
+            }
+            catch (HttpRequestException ex)
+            {
+                return new Error(ErrorCode.Create, $"Ошибка: {ex}");
+            }
+            catch (JsonException jsonEx)
+            {
+                return new Error(ErrorCode.Create, $"Ошибка десериализации ответа: {jsonEx.Message}");
             }
         }
     }
