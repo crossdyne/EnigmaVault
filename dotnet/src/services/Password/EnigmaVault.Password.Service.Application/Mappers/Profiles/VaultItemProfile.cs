@@ -18,8 +18,8 @@ namespace EnigmaVault.Password.Service.Application.Mappers.Profiles
                  src.IsFavorite,
                  src.IsArchive,
                  src.IsInTrash,
-                 (byte[])src.EncryptedOverview, 
-                 (byte[])src.EncryptedDetails,    
+                 src.EncryptedOverview, 
+                 src.EncryptedDetails,    
                  new List<string>(src.Tags.Select(x => x.Value.ToString())),
                  src.IconId.ToString()
              ));

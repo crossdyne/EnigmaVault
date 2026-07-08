@@ -41,8 +41,8 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                      extractResult.Value.UserId,
                      request.PasswordType,
                      Guid.Parse(request.IconId),
-                     Convert.FromBase64String(request.EncryptedOverview),
-                     Convert.FromBase64String(request.EncryptedDetails));
+                     request.EncryptedOverview,
+                     request.EncryptedDetails);
 
             var result = await _mediator.Send(command);
 
@@ -67,8 +67,8 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 extractResult.Value.UserId,
                 Guid.Parse(request.VaultItemId),
                 Guid.Parse(request.IconId),
-                Convert.FromBase64String(request.EncryptedOverview),
-                Convert.FromBase64String(request.EncryptedDetails));
+                request.EncryptedOverview,
+                request.EncryptedDetails);
 
             var result = await _mediator.Send(command);
 
