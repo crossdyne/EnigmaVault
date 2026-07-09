@@ -59,7 +59,7 @@ export class InputPasswordPage {
             return;
         }
 
-        // this.state.set(decryptedDek, dekResponse.cryptoVersion);
+        this.state.set(decryptedDek, dekResponse.cryptoVersion);
         
         this.router.navigate(['/passwords']);
     }
