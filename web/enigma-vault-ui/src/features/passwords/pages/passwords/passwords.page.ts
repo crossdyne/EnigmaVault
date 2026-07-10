@@ -79,49 +79,120 @@ export class PasswordsPage {
         await this.getVaults();
     }
 
-    //#region Коллекции
-    
-    vaults = signal<VaultItem[]>([]);
-    tags = signal<TagResponse[]>([]);
-    icons = signal<AssetUrlResponse[]>([]);
-    iconCategories = signal<IconCategoryResponse[]>([]);
-    
-    selectedTag = signal<TagResponse | null>(null);
-    selectedCategory = model<IconCategoryResponse | null>(null);
-    selectedIcon = model<AssetUrlResponse | null>(null);
-
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
 
-    //#endregion
-
-    //#region Сигналы
-
     activeTab = signal<'tags' | 'icons'>('tags');
+    
+    setActiveTab(tab: 'tags' | 'icons') {
+        this.activeTab.set(tab);
+    }
 
-    editingTag = signal<TagResponse | null>(null);
+    //#region Vaults
+
+    vaults = signal<VaultItem[]>([]);
+ 
+
+    // CRUD
+    async getVaults() {
+        const dek = this.cryptoStateService.dek;
+        if (!dek) {
+            this.router.navigate(['/passwords/access']);
+            return;
+        }
+
+        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
+
+        result.match(
+            async vaults => {
+                const vaultItems: VaultItem[] = [];
+
+                for (const vault of vaults) {
+                    
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
+
+                    let icon: IconUrl | undefined = undefined;
+                    if (iconUrl)
+                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+
+                    const overview: OverviewPayload | null = await this.cryptoService.decryptData<OverviewPayload>(
+                        vault.encryptedOverview, 
+                        this.cryptoStateService.dek!);
+
+                    const vaultItem: VaultItem = {
+                        id: vault.id,
+                        type: vault.type as VaultType,
+                        serviceName: overview?.ServiceName!,
+                        url: overview?.Url!,
+                        dateAdded: vault.dateAdded,
+                        dateUpdate: vault.dateUpdate,
+                        deletedAt: vault.deletedAt,
+                        isFavorite: vault.isFavorite,
+                        isArchive: vault.isArchive,
+                        isInTrash: vault.isInTrash,
+                        encryptedOverview: vault.encryptedOverview,
+                        encryptedDetails: vault.encryptedDetails,
+                        tags: fullTags,
+                        icon: icon,
+                        note: overview?.Note!
+                    }
+
+                    vaultItems.push(vaultItem);
+                    console.log(overview?.ServiceName);
+                }
+                this.vaults.set(vaultItems);
+            },
+            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
+        );
+    }
+
+    // Actions
+    onMoveToArchiveVault(vault: VaultItem) {
+        console.log('Архивируем:', vault.id);
+    }
+
+    onCopyVault(vault: VaultItem) {
+        console.log('Копируем пароль для:', vault.serviceName);
+    }
+
+    async onMoveToTrashVault(vault: VaultItem) {
+        console.log('В корзину:', vault.id);
+    }
 
     //#endregion
 
-    //#region Get и Set
+    //#region Tags
+
+    tags = signal<TagResponse[]>([]);
+    selectedTag = signal<TagResponse | null>(null);
+    editingTag = signal<TagResponse | null>(null);
 
     getTagName = (tag: TagResponse) => tag.name;
     setTagName = (tag: TagResponse, name: string) => ({ ...tag, name});
 
-    //#endregion
-
-    //#region События
+    //Events & Selectors
 
     onSelectedTag(tag: TagResponse) {
         this.selectedTag.set(tag);
     }
-
-    // onSelectedIcon(icon: AssetUrlResponse) {
-    //     this.selectedIcon.set(icon);
-    // }
-
+    
     onEditTag(tag: TagResponse) {
         this.editingTag.set(tag);
     }
+
+    onCancelEditTag() {
+        this.editingTag.set(null);
+    }
+
+    // CRUD
+    async getTagsAsync() {
+        const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
+
+        result.match(
+            tags => this.tags.set(tags),
+            errors => console.log(this.mapErrors(errors))
+        );
+    } 
 
     async onCreateTag(name: string) {
         let request: CreateTagRequest = {
@@ -186,36 +257,14 @@ export class PasswordsPage {
         );
     }
 
-    onCancelEdit() {
-        this.editingTag.set(null);
-    }
-
-    setActiveTab(tab: 'tags' | 'icons') {
-        this.activeTab.set(tab);
-    }
-
     //#endregion
 
-    //#region CRUD
+    //#region Icons
 
-    async getTagsAsync() {
-        const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
+    icons = signal<AssetUrlResponse[]>([]);
+    selectedIcon = model<AssetUrlResponse | null>(null);
 
-        result.match(
-            tags => this.tags.set(tags),
-            errors => console.log(this.mapErrors(errors))
-        );
-    } 
-
-    async getIconCategoriesAsync() {
-        const result: Result<IconCategoryResponse[]> = await this.iconCategoryService.getAllAsync();
-
-        result.match(
-            categories => this.iconCategories.set(categories),
-            errors => console.error('Ошибка получения категорий: ', this.mapErrors(errors))
-        );
-    }
-
+    // CRUD
     async getIcons() {
         const result: Result<AssetUrlResponse[]> = await this.assetService.getAllAsync();
 
@@ -225,80 +274,28 @@ export class PasswordsPage {
         );
     }
 
-    async getVaults() {
-        const dek = this.cryptoStateService.dek;
-        if (!dek) {
-            this.router.navigate(['/passwords/access']);
-            return;
-        }
-
-        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
-
-        result.match(
-            async vaults => {
-                const vaultItems: VaultItem[] = [];
-
-                for (const vault of vaults) {
-                    
-                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
-                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
-
-                    let icon: IconUrl | undefined = undefined;
-                    if (iconUrl)
-                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
-
-                    const overview: OverviewPayload | null = await this.cryptoService.decryptData<OverviewPayload>(
-                        vault.encryptedOverview, 
-                        this.cryptoStateService.dek!);
-
-                    const vaultItem: VaultItem = {
-                        id: vault.id,
-                        type: vault.type as VaultType,
-                        serviceName: overview?.ServiceName!,
-                        url: overview?.Url!,
-                        dateAdded: vault.dateAdded,
-                        dateUpdate: vault.dateUpdate,
-                        deletedAt: vault.deletedAt,
-                        isFavorite: vault.isFavorite,
-                        isArchive: vault.isArchive,
-                        isInTrash: vault.isInTrash,
-                        encryptedOverview: vault.encryptedOverview,
-                        encryptedDetails: vault.encryptedDetails,
-                        tags: fullTags,
-                        icon: icon,
-                        note: overview?.Note!
-                    }
-
-                    vaultItems.push(vaultItem);
-                    console.log(overview?.ServiceName);
-                }
-                this.vaults.set(vaultItems);
-            },
-            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
-        );
-    }
-    
     //#endregion
 
-    //#region ContextMenu
+    //#region IconCategories
 
-    onMoveToArchiveVault(vault: VaultItem) {
-        console.log('Архивируем:', vault.id);
-    }
+    iconCategories = signal<IconCategoryResponse[]>([]);
+    selectedCategory = model<IconCategoryResponse | null>(null);
 
-    onCopyVault(vault: VaultItem) {
-        console.log('Копируем пароль для:', vault.serviceName);
-    }
+    // CRUD
+    async getIconCategoriesAsync() {
+        const result: Result<IconCategoryResponse[]> = await this.iconCategoryService.getAllAsync();
 
-    async onMoveToTrashVault(vault: VaultItem) {
-        console.log('В корзину:', vault.id);
+        result.match(
+            categories => this.iconCategories.set(categories),
+            errors => console.error('Ошибка получения категорий: ', this.mapErrors(errors))
+        );
     }
 
     //#endregion
 
     //#region Хелперы
 
-      private mapErrors(errors: ErrorList): string{
+    private mapErrors(errors: ErrorList): string{
         return errors.map(e => e.message).join(', ')
     }
 
