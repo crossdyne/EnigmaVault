@@ -1,4 +1,4 @@
-import { Component, effect, inject, model, signal } from "@angular/core";
+import { Component, effect, inject, model, signal, viewChild } from "@angular/core";
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
@@ -20,6 +20,8 @@ import { CryptoService } from "@crossdyne/security";
 import { OverviewPayload } from "../../models/overview-payload";
 import { CryptoStateService } from "../../../../core/services/crypto-state.service";
 import { Router } from "@angular/router";
+import { OverlayModule } from "@angular/cdk/overlay";
+import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@angular/cdk/menu";
 
 @Component({
     selector: 'passwords-page',
@@ -30,7 +32,12 @@ import { Router } from "@angular/router";
         TagsListComponent, 
         ItemInputActionsComponent, 
         ComboboxComponent, 
-        IconsComponent
+        IconsComponent,
+        OverlayModule,
+        CdkMenu,
+        CdkMenuItem,
+        CdkMenuTrigger,
+        CdkContextMenuTrigger
     ]
 })
 export class PasswordsPage {
@@ -82,6 +89,8 @@ export class PasswordsPage {
     selectedTag = signal<TagResponse | null>(null);
     selectedCategory = model<IconCategoryResponse | null>(null);
     selectedIcon = model<AssetUrlResponse | null>(null);
+
+    trigger = viewChild.required<CdkMenuTrigger>('trigger')
 
     //#endregion
 
@@ -269,6 +278,22 @@ export class PasswordsPage {
         );
     }
     
+    //#endregion
+
+    //#region ContextMenu
+
+    onMoveToArchiveVault(vault: VaultItem) {
+        console.log('Архивируем:', vault.id);
+    }
+
+    onCopyVault(vault: VaultItem) {
+        console.log('Копируем пароль для:', vault.serviceName);
+    }
+
+    async onMoveToTrashVault(vault: VaultItem) {
+        console.log('В корзину:', vault.id);
+    }
+
     //#endregion
 
     //#region Хелперы
