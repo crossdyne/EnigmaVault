@@ -1,11 +1,11 @@
-import { IconUrl } from "./icon-url";
-import { TagResponse } from "./tag.response";
+import { IconUrl } from "../icon-url";
+import { TagResponse } from "../tag.response";
 
-export interface VaultItem {
+export interface VaultItemDisplay {
     id: string; 
     serviceName: string;
     url: string;
-    type: VaultType;
+    type: VaultTypeEnum;
     dateAdded: Date;
     dateUpdate: Date | null;
     deletedAt: Date | null;

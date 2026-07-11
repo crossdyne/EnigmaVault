@@ -14,14 +14,21 @@ import { AssetUrlResponse } from "../../models/asset-urls.response";
 import { AssetService } from "../../services/asset.service";
 import { EncryptedVaultResponse } from "../../models/encrypted-vault.response";
 import { VaultService } from "../../services/vault.service";
-import { VaultItem } from "../../models/vault-item";
+import { VaultItemDisplay } from "../../models/domain/vault-item-display";
 import { IconUrl } from "../../models/icon-url";
 import { CryptoService } from "@crossdyne/security";
-import { OverviewPayload } from "../../models/overview-payload";
+import { OverviewPayload } from "../../models/domain/overview-payload";
 import { CryptoStateService } from "../../../../core/services/crypto-state.service";
 import { Router } from "@angular/router";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@angular/cdk/menu";
+import { Dialog } from "@angular/cdk/dialog";
+import { CreateVaultComponent } from "../../components/form/vault-item-form.component";
+import { CreateVaultItemRequest } from "../../models/dto/create-vault.request";
+import { CreateVaultItemModalData } from "../../models/modal/create-vault-item.modal-data";
+import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
+import { CreateVaultItemResult } from "../../models/modal/create-vault-item.result";
+import { VaultCryptoService } from "../../services/crypto-vault.service";
 
 @Component({
     selector: 'passwords-page',
@@ -42,13 +49,15 @@ import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@an
 })
 export class PasswordsPage {
     private router = inject(Router);
+    private dialog = inject(Dialog);
     private tagService = inject(TagService);
     private iconCategoryService = inject(IconCategoryService);
     private assetService = inject(AssetService);
     private vaultService = inject(VaultService);
+    private vaultCryptoService = inject(VaultCryptoService);
     private cryptoStateService = inject(CryptoStateService);
 
-    private cryptoService = new CryptoService();
+    // private cryptoService = new CryptoService();
    
     constructor() {
         this.initAsync();
@@ -89,8 +98,71 @@ export class PasswordsPage {
 
     //#region Vaults
 
-    vaults = signal<VaultItem[]>([]);
+    vaults = signal<VaultItemDisplay[]>([]);
  
+    openAddVaultItem() {
+        const dialogRef = this.dialog.open<CreateVaultItemResult, CreateVaultItemModalData, CreateVaultComponent>(
+            CreateVaultComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop'
+            }
+        );
+        
+        dialogRef.closed.subscribe(async (result) => {
+            if (!result) return;
+            
+            console.log('Тип:', result.type);
+            console.log('Общие поля:', result.common);
+            console.log('Детали:', result.details);
+
+            const encryptedOVerView = await this.vaultCryptoService.encryptOverview({ 
+                ServiceName: result.common.name,
+                Url: result.common.url,
+                Note: result.common.description
+            });
+
+            const encryptedDetails = await this.vaultCryptoService.encryptDetails(result.details);
+
+            let iconId: string;
+
+            switch (result.type) {
+                case VaultTypeEnum.Password:
+                    iconId = '1b0e32c3-ba08-423d-bb76-fb6e982c122e';
+                    break;
+                case VaultTypeEnum.ApiKey:
+                    iconId = '41cbdb12-30f0-48d8-8932-704b10519fda';
+                    break;
+                case VaultTypeEnum.CreditCard:
+                    iconId = 'd2af044d-d576-40e7-80c6-cb2bf9176f4d';
+                    break;
+                case VaultTypeEnum.Server:
+                    iconId = '9c75d52a-347f-4a90-a96c-663509e34e26';
+                    break;
+            
+                default:
+                    iconId = '5e3e7328-12b7-4740-ad90-90889e15b58e';
+                    break;
+            }
+
+            const request: CreateVaultItemRequest = {
+                passwordType: result.type,
+                iconId: iconId,
+                encryptedOverview: encryptedOVerView,
+                encryptedDetails: encryptedDetails
+            };
+
+            const resultCreated: Result<string> = await this.vaultService.createAsync(request);
+
+            resultCreated.match(
+                id => {
+                    console.log('Запись успешно создана!');
+                },
+                errors => console.error(this.mapErrors(errors))
+            );
+        });
+    }
 
     // CRUD
     async getVaults() {
@@ -104,7 +176,7 @@ export class PasswordsPage {
 
         result.match(
             async vaults => {
-                const vaultItems: VaultItem[] = [];
+                const vaultItems: VaultItemDisplay[] = [];
 
                 for (const vault of vaults) {
                     
@@ -115,13 +187,11 @@ export class PasswordsPage {
                     if (iconUrl)
                         icon = { id: iconUrl?.assetId, url: iconUrl?.url }
 
-                    const overview: OverviewPayload | null = await this.cryptoService.decryptData<OverviewPayload>(
-                        vault.encryptedOverview, 
-                        this.cryptoStateService.dek!);
+                    const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
 
-                    const vaultItem: VaultItem = {
+                    const vaultItem: VaultItemDisplay = {
                         id: vault.id,
-                        type: vault.type as VaultType,
+                        type: vault.type as VaultTypeEnum,
                         serviceName: overview?.ServiceName!,
                         url: overview?.Url!,
                         dateAdded: vault.dateAdded,
@@ -147,16 +217,26 @@ export class PasswordsPage {
     }
 
     // Actions
-    onMoveToArchiveVault(vault: VaultItem) {
+    onMoveToArchiveVault(vault: VaultItemDisplay) {
         console.log('Архивируем:', vault.id);
     }
 
-    onCopyVault(vault: VaultItem) {
+    onCopyVault(vault: VaultItemDisplay) {
         console.log('Копируем пароль для:', vault.serviceName);
     }
 
-    async onMoveToTrashVault(vault: VaultItem) {
+    async onMoveToTrashVault(vault: VaultItemDisplay) {
         console.log('В корзину:', vault.id);
+    }
+
+    async onChangeFavorite(vault: VaultItemDisplay) {
+        if (vault.isFavorite){
+            vault.isFavorite = false;
+            console.log('Удалено из избранного: ', vault.serviceName);
+        } else {
+            vault.isFavorite = true;
+            console.log('Добавлено в избранное: ', vault.serviceName);
+        }
     }
 
     //#endregion
@@ -316,7 +396,7 @@ export class PasswordsPage {
         });
     }
 
-    openUrl(vault: VaultItem): void {
+    openUrl(vault: VaultItemDisplay): void {
          window.open(vault.url, '_blank', 'noopener,noreferrer');
     }
 

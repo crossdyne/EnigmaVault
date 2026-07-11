@@ -1,5 +1,5 @@
 export interface OverviewPayload {
     ServiceName: string; 
-    Url: string; 
-    Note: string | null; 
+    Url?: string; 
+    Note?: string; 
 }

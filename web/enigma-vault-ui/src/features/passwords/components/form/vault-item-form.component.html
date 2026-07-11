@@ -1,0 +1,89 @@
+<div class="modal-overlay">
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Добавить запись</h2>
+      <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-group">
+        <div class="type-record">
+          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.Password" (click)="setActiveTab(VaultTypeEnum.Password)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-keyhole-icon lucide-lock-keyhole"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
+          </button>
+          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.Server" (click)="setActiveTab(VaultTypeEnum.Server)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server-icon lucide-server"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+          </button>
+          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.CreditCard" (click)="setActiveTab(VaultTypeEnum.CreditCard)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.ApiKey" (click)="setActiveTab(VaultTypeEnum.ApiKey)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round-icon lucide-key-round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <input id="name" type="text" formControlName="name" placeholder="Название" />
+        <input id="url" type="text" formControlName="url" placeholder="Ссылка на ресурс" />
+      </div>
+
+      <div class="form-group"> 
+        @switch (activeTab()) {
+          @case (VaultTypeEnum.Password) {
+            <input formControlName="login" placeholder="Логин" />
+            <input formControlName="password" placeholder="Пароль" />
+            <input formControlName="email" placeholder="Почта" />
+            <input formControlName="phone" placeholder="Номер телефона" />
+            <input formControlName="secretWord" placeholder="Секретное слово" />
+            <input formControlName="recoveryKey" placeholder="Ключ восстановления" />
+          }
+          @case (VaultTypeEnum.CreditCard) {
+            <input formControlName="cardNumber" placeholder="Номер" />
+            <input formControlName="cardHolder" placeholder="Владелец" />
+            <input formControlName="expireDate" placeholder="Дата окончания" />
+            <input formControlName="cvvCode" placeholder="CVV" />
+            <input formControlName="pinCode" placeholder="PIN" />
+            <input formControlName="bankName" placeholder="Банк" />
+            <input formControlName="paymentSystem" placeholder="Платежная система" />
+          }
+          @case (VaultTypeEnum.Server) {
+            <input formControlName="ipAddress" placeholder="Адрес" />
+            <input formControlName="port" placeholder="Порт" />
+            <input formControlName="domain" placeholder="Домен" />
+            <input formControlName="serverLogin" placeholder="Логин" />
+            <input formControlName="rootPassword" placeholder="Root пароль" />
+            <input formControlName="sshKey" placeholder="SSH ключ" />
+          }
+          @case (VaultTypeEnum.ApiKey) {
+            <input formControlName="key" placeholder="Ключ" />
+            <input formControlName="baseUrl" placeholder="Сайт" />
+            <input formControlName="clientId" placeholder="Идентификатор клиента" />
+            <input formControlName="clientSecret" placeholder="Секрет клиента" />
+            <input formControlName="expirationDate" placeholder="Дата окончания" />
+            <input formControlName="environment" placeholder="Окружение" />
+            <input formControlName="scope" placeholder="Область" />
+          }
+          @default {
+            <div>Выберите категорию</div>
+          }
+        }
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Описание</label>
+        <textarea 
+          id="description" 
+          formControlName="description"
+          rows="3"
+          placeholder="Введите описание">
+        </textarea>
+      </div>
+
+    </form>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="onCancel()">Отмена</button>
+      <button type="submit" class="btn-primary" (click)="onSubmit()" [disabled]="form.invalid">
+        Добавить
+      </button>
+    </div>
+  </div>
+</div>

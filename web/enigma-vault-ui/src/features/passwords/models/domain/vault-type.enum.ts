@@ -1,4 +1,4 @@
-enum VaultType {
+export enum VaultTypeEnum {
     Password = 'Password',
     CreditCard = 'CreditCard',
     Server = 'Server',
