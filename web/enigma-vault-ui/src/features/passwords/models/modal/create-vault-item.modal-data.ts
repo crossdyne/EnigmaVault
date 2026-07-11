@@ -1,5 +1,5 @@
-import { AssetUrlResponse } from "../asset-urls.response";
-import { TagResponse } from "../tag.response";
+import { AssetUrlResponse } from "../dto/asset-urls.response";
+import { TagResponse } from "../dto/tag.response";
 
 export interface CreateVaultItemModalData {
     assets: AssetUrlResponse[];

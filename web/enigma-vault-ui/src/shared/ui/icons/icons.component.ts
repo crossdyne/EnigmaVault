@@ -1,5 +1,5 @@
 import { Component, input, model } from '@angular/core';
-import { AssetUrlResponse } from '../../../features/passwords/models/asset-urls.response';
+import { AssetUrlResponse } from '../../../features/passwords/models/dto/asset-urls.response';
 
 @Component({
   selector: 'icons',

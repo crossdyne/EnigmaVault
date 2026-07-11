@@ -1,5 +1,6 @@
-import { IconUrl } from "../icon-url";
-import { TagResponse } from "../tag.response";
+import { IconUrl } from "../dto/icon-url";
+import { TagResponse } from "../dto/tag.response";
+import { VaultTypeEnum } from "./vault-type.enum";
 
 export interface VaultItemDisplay {
     id: string; 

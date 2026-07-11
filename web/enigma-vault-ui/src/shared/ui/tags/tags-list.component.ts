@@ -1,5 +1,5 @@
 import { Component, input, model, output, signal } from "@angular/core";
-import { TagResponse } from "../../../features/passwords/models/tag.response";
+import { TagResponse } from "../../../features/passwords/models/dto/tag.response";
 
 @Component({
     selector: 'tags-list',

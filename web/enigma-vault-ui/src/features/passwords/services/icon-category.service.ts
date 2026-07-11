@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpService } from "../../../core/http/http.service";
 import { Result } from "@crossdyne/toolkit";
-import { IconCategoryResponse } from "../models/icon-category.response";
+import { IconCategoryResponse } from "../models/dto/icon-category.response";
 
 @Injectable({
     providedIn: 'root'
