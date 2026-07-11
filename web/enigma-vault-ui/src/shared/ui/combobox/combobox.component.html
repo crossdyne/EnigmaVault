@@ -22,7 +22,7 @@
           class="combobox-item"
           [class.selected]="item === selected()"
           (mousedown)="selectItem(item)">
-          {{ item[displayKey] }}
+          {{ displayKey ? item[displayKey] : item }}
         </li>
       }
     </ul>

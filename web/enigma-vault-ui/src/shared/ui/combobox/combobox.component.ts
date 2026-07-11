@@ -41,7 +41,11 @@ export class ComboboxComponent<T extends Record<string, any>> implements Control
 
   get displayValue(): string {
     const sel = this.selected();
-    return sel ? String(sel[this.displayKey]) : this.placeholder;
+    if (!sel) return this.placeholder;
+    if (this.displayKey) {
+      return String(sel[this.displayKey]);
+    }
+    return String(sel);
   }
 
   writeValue(value: T | null): void {
