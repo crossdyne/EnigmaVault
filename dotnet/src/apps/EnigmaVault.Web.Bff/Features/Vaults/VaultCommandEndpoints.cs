@@ -11,6 +11,9 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
         {
             builder.MapPost("api/v1/vault", async ([FromBody] CreateVaultItemRequest request, [FromServices] IVaultService service) 
                 => await service.CreateAsync(request).MapErrorOrOkAsync()).RequireAuthorization();
+
+            builder.MapPut("api/v1/vault", async ([FromBody] UpdateVaultItemRequest request, [FromServices] IVaultService service) 
+                => await service.UpdateAsync(request).MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
 }

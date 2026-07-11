@@ -2,10 +2,11 @@ import { DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, model, signal } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { CreateVaultItemModalData } from "../../models/modal/create-vault-item.modal-data";
+import { VaultItemFormData } from "../../models/modal/vault-item-form.data";
 import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
 import { VaultItemCommon } from "../../models/modal/vault-item-common.modal";
-import { CreateVaultItemResult } from "../../models/modal/create-vault-item.result";
+import { FormVaultItemResult } from "../../models/modal/form-vault-item.result";
+import { VaultItemDisplay } from "../../models/domain/vault-item-display";
 
 @Component({
     selector: 'create-vault',
@@ -17,10 +18,10 @@ import { CreateVaultItemResult } from "../../models/modal/create-vault-item.resu
         ReactiveFormsModule
     ]
 })
-export class CreateVaultComponent {
-    private dialogRef = inject(DialogRef<CreateVaultItemResult>);
+export class VaultItemFormComponent {
+    private dialogRef = inject(DialogRef<FormVaultItemResult>);
     private fb = inject(FormBuilder);
-    data = inject(DIALOG_DATA) as CreateVaultItemModalData;
+    data = inject(DIALOG_DATA) as VaultItemFormData;
 
     form: FormGroup = this.fb.group({
         // Обязательные
@@ -62,8 +63,74 @@ export class CreateVaultComponent {
     VaultTypeEnum = VaultTypeEnum;
 
     activeTab = signal<VaultTypeEnum>(VaultTypeEnum.Password);
+    readonly isEdit = signal(false);
+    readonly vault = signal<VaultItemDisplay | null>(null);
+
+    constructor() {
+        if (this.data.mode === 'edit' && this.data.item) {
+            this.isEdit.set(true);
+            this.activeTab.set(this.data.item.type);
+
+            this.form.patchValue({
+                name: this.data.item.serviceName,
+                url: this.data.item.url ?? '',
+                description: this.data.item.note ?? '',
+            });
+
+            if (this.data.decryptedDetails) {
+                const d = this.data.decryptedDetails;
+                const patch: Record<string, any> = {};
+
+                switch (this.data.item.type) {
+                    case VaultTypeEnum.Password:
+                        patch['login'] = d['Login'];
+                        patch['password'] = d['Password'];
+                        patch['email'] = d['Email'];
+                        patch['phone'] = d['Phone'];
+                        patch['secretWord'] = d['SecredWord']; 
+                        patch['recoveryKey'] = d['RecoveryKey'];
+                        break;
+
+                    case VaultTypeEnum.CreditCard:
+                        patch['cardNumber'] = d['CardNumber'];
+                        patch['cardHolder'] = d['CardHolder'];
+                        patch['expireDate'] = d['ExpireDate'];
+                        patch['cvvCode'] = d['CvvCode'];
+                        patch['pinCode'] = d['PinCode'];
+                        patch['bankName'] = d['BankName'];
+                        patch['paymentSystem'] = d['PaymentSystem'];
+                        break;
+
+                    case VaultTypeEnum.Server:
+                        patch['ipAddress'] = d['IpAddress'];
+                        patch['port'] = d['Port'];
+                        patch['domain'] = d['Domain'];
+                        patch['serverLogin'] = d['Login']; 
+                        patch['rootPassword'] = d['RootPassword'];
+                        patch['sshKey'] = d['SshKey'];
+                        break;
+
+                    case VaultTypeEnum.ApiKey:
+                        patch['key'] = d['Key'];
+                        patch['baseUrl'] = d['BaseUrl'];
+                        patch['clientId'] = d['ClientId'];
+                        patch['clientSecret'] = d['ClientSecret'];
+                        patch['expirationDate'] = d['ExpirationDate'];
+                        patch['environment'] = d['Environment'];
+                        patch['scope'] = d['Scope'];
+                        break;
+                }
+
+                this.form.patchValue(patch);
+            }
+        }
+    }
 
     setActiveTab(tab: VaultTypeEnum) {
+        if (this.isEdit()) {
+            return;
+        }
+
         this.activeTab.set(tab);
     }
 
@@ -80,7 +147,7 @@ export class CreateVaultComponent {
             description: value.description
         };
         
-        let result: CreateVaultItemResult;
+        let result: FormVaultItemResult;
 
         switch (this.activeTab()) {
             case VaultTypeEnum.Password:
@@ -144,6 +211,10 @@ export class CreateVaultComponent {
 
             default:
                 return;
+        }
+
+        if (this.isEdit() && this.data.item?.id) {
+            result = { ...result, id: this.data.item.id}
         }
 
         this.dialogRef.close(result);

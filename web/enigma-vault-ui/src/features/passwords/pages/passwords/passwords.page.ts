@@ -16,19 +16,19 @@ import { EncryptedVaultResponse } from "../../models/dto/encrypted-vault.respons
 import { VaultService } from "../../services/vault.service";
 import { VaultItemDisplay } from "../../models/domain/vault-item-display";
 import { IconUrl } from "../../models/dto/icon-url";
-import { CryptoService } from "@crossdyne/security";
 import { OverviewPayload } from "../../models/domain/overview-payload";
 import { CryptoStateService } from "../../../../core/services/crypto-state.service";
 import { Router } from "@angular/router";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@angular/cdk/menu";
 import { Dialog } from "@angular/cdk/dialog";
-import { CreateVaultComponent } from "../../components/form/vault-item-form.component";
+import { VaultItemFormComponent } from "../../components/form/vault-item-form.component";
 import { CreateVaultItemRequest } from "../../models/dto/create-vault.request";
-import { CreateVaultItemModalData } from "../../models/modal/create-vault-item.modal-data";
+import { VaultItemFormData } from "../../models/modal/vault-item-form.data";
 import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
-import { CreateVaultItemResult } from "../../models/modal/create-vault-item.result";
+import { FormVaultItemResult } from "../../models/modal/form-vault-item.result";
 import { VaultCryptoService } from "../../services/crypto-vault.service";
+import { UpdateVaultItemRequest } from "../../models/dto/update-vault-item.request";
 
 @Component({
     selector: 'passwords-page',
@@ -57,8 +57,6 @@ export class PasswordsPage {
     private vaultCryptoService = inject(VaultCryptoService);
     private cryptoStateService = inject(CryptoStateService);
 
-    // private cryptoService = new CryptoService();
-   
     constructor() {
         this.initAsync();
 
@@ -79,6 +77,15 @@ export class PasswordsPage {
             
             console.log('Выбрана иконка с именем: ', icon.assetName);
         });
+
+        effect(() => {
+            const vault = this.selectedVault();
+
+            if (!vault)
+                return;
+
+            console.log('Выбрана запись с именем: ', vault.serviceName);
+        })
     }
     
     private async initAsync() {
@@ -99,18 +106,22 @@ export class PasswordsPage {
     //#region Vaults
 
     vaults = signal<VaultItemDisplay[]>([]);
- 
+    selectedVault = model<VaultItemDisplay | null>(null);
+
     openAddVaultItem() {
-        const dialogRef = this.dialog.open<CreateVaultItemResult, CreateVaultItemModalData, CreateVaultComponent>(
-            CreateVaultComponent, { 
+        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
+            VaultItemFormComponent, { 
                 width: '500px',
                 disableClose: false,
                 hasBackdrop: true,
-                backdropClass: 'custom-backdrop'
+                backdropClass: 'custom-backdrop',
+                data: {
+                    mode: 'create'
+                }
             }
         );
         
-        dialogRef.closed.subscribe(async (result) => {
+        dialogRef.closed.subscribe(async result => {
             if (!result) return;
             
             console.log('Тип:', result.type);
@@ -161,6 +172,72 @@ export class PasswordsPage {
                 },
                 errors => console.error(this.mapErrors(errors))
             );
+        });
+    }
+
+    async openEditVaultItem(item: VaultItemDisplay) {
+        const decryptedDetails = await this.vaultCryptoService.decryptDetails(item.type, item.encryptedDetails);
+
+        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
+            VaultItemFormComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    mode: 'edit',
+                    item: item,
+                    decryptedDetails: decryptedDetails
+                }
+            }
+        );
+
+        dialogRef.closed.subscribe(async result => {
+            if (!result)
+                return;
+
+            if (result.id) {
+                const encryptedOverview = await this.vaultCryptoService.encryptOverview({
+                    ServiceName: result.common.name,
+                    Url: result.common.url,
+                    Note: result.common.description
+                });
+
+                const encryptedDetails = await this.vaultCryptoService.encryptDetails(result.details);
+
+                const request: UpdateVaultItemRequest = {
+                    vaultItemId: item.id,
+                    iconId: item.icon?.id!,
+                    encryptedOverview: encryptedOverview,
+                    encryptedDetails: encryptedDetails
+                };
+
+                const resultUpdate = await this.vaultService.updateAsync(request);
+                
+                resultUpdate.match(
+                    id => {
+                        const now = new Date();
+                        
+                        this.vaults.update(vaults => 
+                            vaults.map(v => v.id === item.id 
+                                ? { ...v, dateUpdate: now } 
+                                : v
+                            )
+                        );
+                        
+                        const current = this.selectedVault();
+                        if (current?.id === item.id) {
+                            this.selectedVault.set({
+                                ...current,
+                                dateUpdate: now
+                            });
+                        }
+                        
+                        console.log('Запись успешно обновлена!');
+                    },
+                    errors => console.error(this.mapErrors(errors))
+                );
+            }
         });
     }
 

@@ -1,7 +1,7 @@
 <div class="modal-overlay">
   <div class="modal-container" role="dialog" aria-modal="true">
     <div class="modal-header">
-      <h2>Добавить запись</h2>
+      <h2>{{ isEdit() ? 'Редактирование' : 'Создание' }}</h2>
       <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
     </div>
 
@@ -76,14 +76,13 @@
           placeholder="Введите описание">
         </textarea>
       </div>
-
+      
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="onCancel()">Отмена</button>
+        <button type="submit" class="btn-primary" [disabled]="form.invalid">
+          {{ isEdit() ? 'Сохранить' : 'Добавить' }}
+        </button>
+      </div>
     </form>
-
-    <div class="modal-footer">
-      <button type="button" class="btn-secondary" (click)="onCancel()">Отмена</button>
-      <button type="submit" class="btn-primary" (click)="onSubmit()" [disabled]="form.invalid">
-        Добавить
-      </button>
-    </div>
   </div>
 </div>
