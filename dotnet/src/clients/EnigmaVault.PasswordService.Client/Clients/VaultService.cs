@@ -261,5 +261,20 @@ namespace EnigmaVault.PasswordService.Client.Clients
                 return new Error(AppErrors.ApiError, ex.Message);
             }
         }
+
+        public async Task<Result<Unit>> ChangeIcon(string vaultId, string iconId)
+        {
+            try
+            {
+                var response = await _httpClient.PatchAsync($"{_url}/change/{vaultId}/icon/{iconId}", null);
+                response.EnsureSuccessStatusCode();
+
+                return Unit.Value;
+            }
+            catch (Exception ex)
+            {
+                return new Error(AppErrors.ApiError, ex.Message);
+            }
+        }
     }
 }

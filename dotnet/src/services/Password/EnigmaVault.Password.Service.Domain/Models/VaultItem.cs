@@ -133,5 +133,10 @@ namespace EnigmaVault.Password.Service.Domain.Models
 
         private void UpdateDate() => DateUpdated = DateTime.UtcNow;
 
+        public void ChangeIcon(IconId iconId)
+        {
+            if (IconId != iconId)
+                IconId = iconId;
+        }
     }
 }

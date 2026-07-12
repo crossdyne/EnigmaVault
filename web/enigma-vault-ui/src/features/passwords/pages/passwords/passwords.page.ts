@@ -393,6 +393,26 @@ export class PasswordsPage {
         });
     }
 
+    async onUpdateVaultIcon(icon: AssetUrlResponse) {
+        const vault = this.selectedVault();
+
+        if (!vault) {
+            console.warn('Сначала выберите запись в списке слева');
+            return;
+        }
+
+        const result = await this.vaultService.changeIcon(vault.id, icon.assetId);
+
+        result.match(
+            () => {
+                const newIcon: IconUrl = { id: icon.assetId, url: icon.url };
+                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
+                this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
+            },
+            errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
+        );
+    }
+
     // Actions
     async onMoveToArchive(vault: VaultItemDisplay) {
         const result: Result = await this.vaultService.zipAsync(vault.id);

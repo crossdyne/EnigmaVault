@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddTag;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddToFavorites;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Archive;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.ChangeIcon;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Create;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Delete;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.EmptyTrash;
@@ -176,6 +177,23 @@ namespace EnigmaVault.Password.Service.Api.Controllers
             return Ok();
         }
 
+        [HttpPatch("change/{vaultId:guid}/icon/{iconId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeIcon([FromRoute] Guid vaultId, [FromRoute] Guid iconId)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new ChangeIconCommand(extractResult.Value.UserId, vaultId, iconId);
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+               return BadRequest(result.StringMessage);
+
+            return Ok();
+        }
 
         /*--Delete----------------------------------------------------------------------------------------*/
 

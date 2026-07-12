@@ -61,4 +61,8 @@ export class VaultService extends HttpService {
     async unZipAllAsync(): Promise<Result> {
         return this.patchAsync(`unzip/all`, null);
     }
+
+    async changeIcon(vaultId: string, iconId: string): Promise<Result> {
+        return this.patchAsync(`change/${vaultId}/icon/${iconId}`, null);
+    }
 }
