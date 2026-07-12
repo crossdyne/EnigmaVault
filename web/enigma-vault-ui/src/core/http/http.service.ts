@@ -27,7 +27,7 @@ export abstract class HttpService {
     }
 
     protected delete<T>(path: string): Observable<Result<T>> {
-        return this.wrap<T>(this.http.delete<T>(`${this.baseUrl}/${path}`));
+        return this.wrap<T>(this.http.delete<T>(`${this.baseUrl}${path}`));
     }
 
     protected getAsync<T>(path: string, params?: HttpParams): Promise<Result<T>> {
