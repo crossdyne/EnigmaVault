@@ -29,6 +29,8 @@ import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
 import { FormVaultItemResult } from "../../models/modal/form-vault-item.result";
 import { VaultCryptoService } from "../../services/crypto-vault.service";
 import { UpdateVaultItemRequest } from "../../models/dto/update-vault-item.request";
+import { VaultItemViewComponent } from "../../components/view/vault-item-view.component";
+import { VaultItemView } from "../../models/modal/vault-item-view";
 
 @Component({
     selector: 'passwords-page',
@@ -173,6 +175,28 @@ export class PasswordsPage {
                 errors => console.error(this.mapErrors(errors))
             );
         });
+    }
+
+    async openViewVaultItem(item: VaultItemDisplay) {
+        const decryptedDetails = await this.vaultCryptoService.decryptDetails(item.type, item.encryptedDetails);
+
+        this.dialog.open<unknown, VaultItemView, VaultItemViewComponent>(
+            VaultItemViewComponent, {
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    type: item.type,
+                    overview: {
+                        ServiceName: item.serviceName,
+                        Note: item.note!,
+                        Url: item.url
+                    },
+                    decryptedDetails: decryptedDetails
+                }
+            }
+        );
     }
 
     async openEditVaultItem(item: VaultItemDisplay) {
