@@ -10,6 +10,9 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
         {
             builder.MapGet("api/v1/vault", async ([FromServices] IVaultService service) 
                 => await service.GetAllAsync().MapErrorOrOkAsync()).RequireAuthorization();
+
+            builder.MapGet("api/v1/vault/{id}", async ([FromRoute] string id, [FromServices] IVaultService service) 
+                => await service.GetById(id).MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
 }

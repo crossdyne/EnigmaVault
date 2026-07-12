@@ -13,9 +13,11 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Rest
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchive;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Update;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetAll;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.Replication;
 using Shared.Contracts.Requests.PasswordService;
 
 namespace EnigmaVault.Password.Service.Api.Controllers
@@ -263,6 +265,24 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 return extractResult.Value.Result;
 
             var result = await _mediator.Send(new GetAllVaultsQuery(extractResult.Value.UserId));
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var query = new GetVaultByIdQuery(id, extractResult.Value.UserId);
+            var result = await _mediator.Send(query);
+
+            if (result.IsFailure)
+                return BadRequest(result.StringMessage);
 
             return Ok(result.Value);
         }

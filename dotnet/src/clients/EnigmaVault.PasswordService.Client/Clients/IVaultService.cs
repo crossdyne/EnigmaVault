@@ -19,6 +19,7 @@ namespace EnigmaVault.PasswordService.Client.Clients
         Task<Result<Unit>> RestoreAllFromTrashAsync();
         Task<Result<Unit>> EmptyTrashAsync();
         Task<Result<List<EncryptedVaultResponse>>> GetAllAsync();
+        Task<Result<EncryptedVaultResponse>> GetById(string id);
         Task<Result<Unit>> AddTagAsync(string vaultId, string tagId);
         Task<Result<Unit>> RemoveTagAsync(string vaultId, string tagId);
     }

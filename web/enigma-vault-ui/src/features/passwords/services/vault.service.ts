@@ -11,7 +11,7 @@ import { UpdateVaultItemRequest } from "../models/dto/update-vault-item.request"
 export class VaultService extends HttpService {
 
     constructor() {
-        super('api/v1/vault')
+        super('api/v1/vault/')
     }
 
     async createAsync(request: CreateVaultItemRequest): Promise<Result<string>> {
@@ -24,5 +24,9 @@ export class VaultService extends HttpService {
 
     async getAllAsync(): Promise<Result<EncryptedVaultResponse[]>> {
         return this.getAsync('');
+    }
+
+    async getById(id: string): Promise<Result<EncryptedVaultResponse>> {
+        return this.getAsync(`${id}`);
     }
 }

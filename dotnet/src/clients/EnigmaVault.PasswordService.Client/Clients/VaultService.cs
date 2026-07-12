@@ -202,6 +202,21 @@ namespace EnigmaVault.PasswordService.Client.Clients
             }
         }
 
+        public async Task<Result<EncryptedVaultResponse>> GetById(string id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_url}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadFromJsonAsync<EncryptedVaultResponse>(_jsonSerializerOptions);
+            }
+            catch (Exception ex)
+            {
+                return new Error(AppErrors.ApiError, ex.Message);
+            }
+        }
+
         public async Task<Result<Unit>> AddTagAsync(string vaultId, string tagId)
         {
             try

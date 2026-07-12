@@ -110,6 +110,58 @@ export class PasswordsPage {
     vaults = signal<VaultItemDisplay[]>([]);
     selectedVault = model<VaultItemDisplay | null>(null);
 
+    // CRUD
+    async getVaults() {
+        const dek = this.cryptoStateService.dek;
+        if (!dek) {
+            this.router.navigate(['/passwords/access']);
+            return;
+        }
+
+        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
+
+        result.match(
+            async vaults => {
+                const vaultItems: VaultItemDisplay[] = [];
+
+                for (const vault of vaults) {
+                    
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
+
+                    let icon: IconUrl | undefined = undefined;
+                    if (iconUrl)
+                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+
+                    const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
+
+                    const vaultItem: VaultItemDisplay = {
+                        id: vault.id,
+                        type: vault.type as VaultTypeEnum,
+                        serviceName: overview?.ServiceName!,
+                        url: overview?.Url!,
+                        dateAdded: vault.dateAdded,
+                        dateUpdate: vault.dateUpdate,
+                        deletedAt: vault.deletedAt,
+                        isFavorite: vault.isFavorite,
+                        isArchive: vault.isArchive,
+                        isInTrash: vault.isInTrash,
+                        encryptedOverview: vault.encryptedOverview,
+                        encryptedDetails: vault.encryptedDetails,
+                        tags: fullTags,
+                        icon: icon,
+                        note: overview?.Note!
+                    }
+
+                    vaultItems.push(vaultItem);
+                    console.log(overview?.ServiceName);
+                }
+                this.vaults.set(vaultItems);
+            },
+            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
+        );
+    }
+
     openAddVaultItem() {
         const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
             VaultItemFormComponent, { 
@@ -124,11 +176,8 @@ export class PasswordsPage {
         );
         
         dialogRef.closed.subscribe(async result => {
-            if (!result) return;
-            
-            console.log('Тип:', result.type);
-            console.log('Общие поля:', result.common);
-            console.log('Детали:', result.details);
+            if (!result) 
+                return;
 
             const encryptedOVerView = await this.vaultCryptoService.encryptOverview({ 
                 ServiceName: result.common.name,
@@ -151,7 +200,7 @@ export class PasswordsPage {
                     iconId = 'd2af044d-d576-40e7-80c6-cb2bf9176f4d';
                     break;
                 case VaultTypeEnum.Server:
-                    iconId = '9c75d52a-347f-4a90-a96c-663509e34e26';
+                    iconId = 'ae71a54a-bea0-428c-a526-62ac9df400dc';
                     break;
             
                 default:
@@ -169,10 +218,43 @@ export class PasswordsPage {
             const resultCreated: Result<string> = await this.vaultService.createAsync(request);
 
             resultCreated.match(
-                id => {
-                    console.log('Запись успешно создана!');
+                async id => {
+                    const newVaultResult = await this.vaultService.getById(id);
+
+                    newVaultResult.match(
+                        async vault => {
+                            const decryptedOverView = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
+                            const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                            
+                            const iconUrl = this.icons().find(i => i.assetId === iconId);
+                            let icon: IconUrl | undefined = undefined;
+                            if (iconUrl)
+                                icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+                            
+                            const display: VaultItemDisplay = {
+                                id: vault.id,
+                                serviceName: decryptedOverView?.ServiceName!,
+                                url: decryptedOverView?.Url!,
+                                type: vault.type as VaultTypeEnum,
+                                dateAdded: vault.dateAdded,
+                                dateUpdate: vault.dateUpdate,
+                                deletedAt: vault.deletedAt,
+                                isFavorite: vault.isFavorite,
+                                isArchive: vault.isArchive,
+                                isInTrash: vault.isInTrash,
+                                encryptedOverview: vault.encryptedOverview,
+                                encryptedDetails: vault.encryptedDetails,
+                                tags: fullTags,
+                                icon: icon,
+                                note: decryptedOverView?.Note!
+                            }
+
+                            this.vaults.update(vaults => [...vaults, display]);
+                        },
+                        async errors => console.error(this.mapErrors(errors)) 
+                    ); 
                 },
-                errors => console.error(this.mapErrors(errors))
+                async errors => console.error(this.mapErrors(errors))
             );
         });
     }
@@ -263,58 +345,6 @@ export class PasswordsPage {
                 );
             }
         });
-    }
-
-    // CRUD
-    async getVaults() {
-        const dek = this.cryptoStateService.dek;
-        if (!dek) {
-            this.router.navigate(['/passwords/access']);
-            return;
-        }
-
-        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
-
-        result.match(
-            async vaults => {
-                const vaultItems: VaultItemDisplay[] = [];
-
-                for (const vault of vaults) {
-                    
-                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
-                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
-
-                    let icon: IconUrl | undefined = undefined;
-                    if (iconUrl)
-                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
-
-                    const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
-
-                    const vaultItem: VaultItemDisplay = {
-                        id: vault.id,
-                        type: vault.type as VaultTypeEnum,
-                        serviceName: overview?.ServiceName!,
-                        url: overview?.Url!,
-                        dateAdded: vault.dateAdded,
-                        dateUpdate: vault.dateUpdate,
-                        deletedAt: vault.deletedAt,
-                        isFavorite: vault.isFavorite,
-                        isArchive: vault.isArchive,
-                        isInTrash: vault.isInTrash,
-                        encryptedOverview: vault.encryptedOverview,
-                        encryptedDetails: vault.encryptedDetails,
-                        tags: fullTags,
-                        icon: icon,
-                        note: overview?.Note!
-                    }
-
-                    vaultItems.push(vaultItem);
-                    console.log(overview?.ServiceName);
-                }
-                this.vaults.set(vaultItems);
-            },
-            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
-        );
     }
 
     // Actions
