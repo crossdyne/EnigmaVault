@@ -71,7 +71,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers
         }
         /*--Get-------------------------------------------------------------------------------------------*/
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAll()
         {

@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Crossdyne.Security.Abstractions;
 using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.ApiClient.Clients;
-using EnigmaVault.AssetsService.ApiClient.Models;
+using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Helpers;
 using EnigmaVault.Desktop.Models;
@@ -16,9 +16,9 @@ using EnigmaVault.Desktop.ViewModels.Common.Controls;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Items;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using EnigmaVault.FileService.ApiClient.Clients;
-using EnigmaVault.FileService.ApiClient.Models;
-using EnigmaVault.PasswordService.ApiClient.Clients;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.FileService.Client.Models;
+using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Options;
 using Shared.Contracts.Enums;
 using Shared.Contracts.Requests.PasswordService;
@@ -26,7 +26,6 @@ using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -452,8 +451,8 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                         IsFavorite: false,
                         IsArchive: false,
                         IsInTrash: false,
-                        Convert.FromBase64String(EncryptedOverView),
-                        Convert.FromBase64String(EncryptedDetails),
+                        EncryptedOverView,
+                        EncryptedDetails,
                         [],
                         SelectedIcon!.Id!),
                     _cryptoServices, 
@@ -918,6 +917,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             var result = await _tagService.GetAll(); 
 
+            if (result.IsFailure)
+                return;
+
             foreach (var item in result.Value)
             {
                 Tags.Add(new TagViewModel(item));
@@ -961,6 +963,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         public async Task GetIconCategories()
         {
             var result = await _iconCategoryService.GetIconCategories();
+            
+            if (result.IsFailure)
+                return;
 
             foreach (var item in result.Value)
                 IconCategories.Add(item);
@@ -974,7 +979,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             var encrypted = encryptedVm;
 
-            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, [], [], [], ""), _cryptoServices, _userContext.Dek, Tags);
+            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, string.Empty, string.Empty, [], ""), _cryptoServices, _userContext.Dek, Tags);
 
             SelectedCredentialItemBaseViewModel = type switch
             {

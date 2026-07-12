@@ -98,16 +98,14 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("DeletedAt");
 
-                    b.Property<byte[]>("EncryptedDetails")
+                    b.Property<string>("EncryptedDetails")
                         .IsRequired()
-                        .HasMaxLength(262144)
-                        .HasColumnType("bytea")
+                        .HasColumnType("text")
                         .HasColumnName("EncryptedDetails");
 
-                    b.Property<byte[]>("EncryptedOverview")
+                    b.Property<string>("EncryptedOverview")
                         .IsRequired()
-                        .HasMaxLength(262144)
-                        .HasColumnType("bytea")
+                        .HasColumnType("text")
                         .HasColumnName("EncryptedOverview");
 
                     b.Property<Guid>("IconId")

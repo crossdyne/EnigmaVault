@@ -37,27 +37,13 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Configurations
 
             builder.Property(vi => vi.EncryptedOverview)
                 .HasColumnName("EncryptedOverview")
-                .HasConversion(
-                    data => (byte[])data,
-                    dbValue => EncryptedData.Create(dbValue))
-                .HasMaxLength(EncryptedData.MAX_LENGTH)
-                .IsRequired()
-                .Metadata.SetValueComparer(new ValueComparer<EncryptedData>(
-                    (c1, c2) => Enumerable.SequenceEqual(c1.Value, c2.Value),
-                    c => c.Value.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c));
+                .HasConversion(eo => eo.Value, db => EncryptedData.Create(db))
+                .IsRequired();
 
             builder.Property(vi => vi.EncryptedDetails)
                 .HasColumnName("EncryptedDetails")
-                .HasConversion(
-                  data => (byte[])data,
-                  dbValue => EncryptedData.Create(dbValue))
-                .HasMaxLength(EncryptedData.MAX_LENGTH)
-                .IsRequired()
-                .Metadata.SetValueComparer(new ValueComparer<EncryptedData>(
-                    (c1, c2) => Enumerable.SequenceEqual(c1.Value, c2.Value),
-                    c => c.Value.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c));
+                .HasConversion(eo => eo.Value, db => EncryptedData.Create(db))
+                .IsRequired();
 
             builder.Property(vi => vi.IsFavorite)
                 .HasColumnName("IsFavorite")

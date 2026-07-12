@@ -1,8 +1,8 @@
-﻿using EnigmaVault.AssetsService.ApiClient.Clients;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+﻿using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Handlers;
-using EnigmaVault.FileService.ApiClient.Clients;
-using EnigmaVault.PasswordService.ApiClient.Clients;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

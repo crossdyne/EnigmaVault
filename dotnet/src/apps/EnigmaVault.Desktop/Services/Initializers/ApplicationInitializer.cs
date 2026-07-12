@@ -1,5 +1,5 @@
 ﻿using Crossdyne.Toolkit.Primitives;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services.Managers;

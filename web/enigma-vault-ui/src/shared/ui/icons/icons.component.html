@@ -1,0 +1,18 @@
+<ng-template #assetMenu let-icon="asset">
+    <div class="icon-context-menu" cdkMenu>
+        <button class="menu-item" (click)="selectedIcon.emit(icon)" cdkMenuItem>
+            Установить
+        </button>
+    </div>
+</ng-template>
+
+<div class="assets-container">
+    @for (icon of icons(); track icon.assetId) {
+        <div 
+            class="svg-card-container"
+            [cdkContextMenuTriggerFor]="assetMenu"
+            [cdkContextMenuTriggerData]="{asset: icon}">
+            <img [src]="icon.url" [alt]="icon.assetName">
+        </div>
+    }
+</div>

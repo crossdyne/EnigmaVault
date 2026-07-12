@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\clients\EnigmaVault.AssetsService.ApiClient\EnigmaVault.AssetsService.ApiClient.csproj" />
-    <ProjectReference Include="..\..\clients\EnigmaVault.Authentication.ApiClient\EnigmaVault.Authentication.ApiClient.csproj" />
-    <ProjectReference Include="..\..\clients\EnigmaVault.FileService.ApiClient\EnigmaVault.FileService.ApiClient.csproj" />
-    <ProjectReference Include="..\..\clients\EnigmaVault.PasswordService.ApiClient\EnigmaVault.PasswordService.ApiClient.csproj" />
+    <ProjectReference Include="..\..\clients\EnigmaVault.AssetsService.Client\EnigmaVault.AssetsService.Client.csproj" />
+    <ProjectReference Include="..\..\clients\EnigmaVault.Authentication.Client\EnigmaVault.Authentication.Client.csproj" />
+    <ProjectReference Include="..\..\clients\EnigmaVault.FileService.Client\EnigmaVault.FileService.Client.csproj" />
+    <ProjectReference Include="..\..\clients\EnigmaVault.PasswordService.Client\EnigmaVault.PasswordService.Client.csproj" />
     <ProjectReference Include="..\..\shared\contracts\Shared.Contracts\Shared.Contracts.csproj" />
   </ItemGroup>
 

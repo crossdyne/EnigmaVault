@@ -1,0 +1,35 @@
+@use '../../../styles/button' as *;
+
+.container {
+    display: flex;
+    
+    input{
+        flex: 1;
+        padding: 8px 12px;
+        margin-right: 5px;
+        background-color: transparent;
+        border: 1px solid #03991a;
+        color: #ffffff;
+        border-radius: 6px;
+        font-size: 14px;
+        
+        &:focus{
+            outline: none;
+            border-color: #02ff28;
+        }
+    }
+
+    // .button-cancel {
+    //     margin: 0px 2px 0px 5px; 
+    // }
+
+    .button-add, .button-save, .button-cancel {
+        // margin-right: 5px;
+
+        &:hover {
+            svg {
+                color:  black;
+            }
+        }
+    }
+}

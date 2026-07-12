@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EnigmaVault.AssetsService.ApiClient.Models;
+using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.ViewModels.Base;
 using System.Windows.Media;
 

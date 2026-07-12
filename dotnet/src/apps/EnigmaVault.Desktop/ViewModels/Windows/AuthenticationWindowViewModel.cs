@@ -1,5 +1,5 @@
 ﻿using Crossdyne.Security.Abstractions;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;

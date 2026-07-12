@@ -8,8 +8,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Redis__ConnectionString=
-      - Urls__AuthServices=
-      - Urls__UserManagement=
+      - Urls__AuthService=
+      - Urls__UserManagementService=
+      - Urls__PasswordService=
+      - Urls__AssetsService=
     restart: unless-stopped
     volumes:
       - ./logs/bff:/logs

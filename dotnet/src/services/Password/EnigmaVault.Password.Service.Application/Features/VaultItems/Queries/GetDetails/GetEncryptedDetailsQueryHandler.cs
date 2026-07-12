@@ -17,7 +17,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
             if (vault is null)
                 return new Error(ErrorCode.NotFound, $"Элемент {request.VaultItemId} не был найден");
 
-            return Convert.ToBase64String(vault.EncryptedDetails);
+            return vault.EncryptedDetails.Value;
         }
     }
 }

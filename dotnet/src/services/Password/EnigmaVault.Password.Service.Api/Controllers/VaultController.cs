@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddTag;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddToFavorites;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Archive;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.ChangeIcon;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Create;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Delete;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.EmptyTrash;
@@ -11,11 +12,14 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Remo
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.RestoreAllFromTrash;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.RestoreFromTrash;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchive;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchiveAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Update;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetAll;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.Replication;
 using Shared.Contracts.Requests.PasswordService;
 
 namespace EnigmaVault.Password.Service.Api.Controllers
@@ -41,8 +45,8 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                      extractResult.Value.UserId,
                      request.PasswordType,
                      Guid.Parse(request.IconId),
-                     Convert.FromBase64String(request.EncryptedOverview),
-                     Convert.FromBase64String(request.EncryptedDetails));
+                     request.EncryptedOverview,
+                     request.EncryptedDetails);
 
             var result = await _mediator.Send(command);
 
@@ -67,8 +71,8 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 extractResult.Value.UserId,
                 Guid.Parse(request.VaultItemId),
                 Guid.Parse(request.IconId),
-                Convert.FromBase64String(request.EncryptedOverview),
-                Convert.FromBase64String(request.EncryptedDetails));
+                request.EncryptedOverview,
+                request.EncryptedDetails);
 
             var result = await _mediator.Send(command);
 
@@ -151,6 +155,43 @@ namespace EnigmaVault.Password.Service.Api.Controllers
            if (result.IsFailure)
                return BadRequest(result.StringMessage);
             
+            return Ok();
+        }
+
+        [HttpPatch("un-archive/all")]
+        [Authorize]
+        public async Task<IActionResult> UnArchiveAll([FromRoute] Guid vaultId)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new UnArchiveAllVaultCommand(extractResult.Value.UserId);
+
+            var result = await _mediator.Send(command);
+
+           if (result.IsFailure)
+               return BadRequest(result.StringMessage);
+            
+            return Ok();
+        }
+
+        [HttpPatch("change/{vaultId:guid}/icon/{iconId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeIcon([FromRoute] Guid vaultId, [FromRoute] Guid iconId)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new ChangeIconCommand(extractResult.Value.UserId, vaultId, iconId);
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+               return BadRequest(result.StringMessage);
+
             return Ok();
         }
 
@@ -263,6 +304,24 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 return extractResult.Value.Result;
 
             var result = await _mediator.Send(new GetAllVaultsQuery(extractResult.Value.UserId));
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var query = new GetVaultByIdQuery(id, extractResult.Value.UserId);
+            var result = await _mediator.Send(query);
+
+            if (result.IsFailure)
+                return BadRequest(result.StringMessage);
 
             return Ok(result.Value);
         }
