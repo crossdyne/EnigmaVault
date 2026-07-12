@@ -35,3 +35,11 @@ app-main-layout {
     flex: 1;
     min-height: 0;
 }
+
+.cdk-overlay-pane.vault-popup-panel {
+    pointer-events: none;
+}
+
+.cdk-overlay-pane.vault-popup-panel .vault-popup-menu {
+    pointer-events: auto;
+}

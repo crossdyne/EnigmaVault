@@ -13,6 +13,7 @@ namespace EnigmaVault.PasswordService.Client.Clients
         Task<Result<Unit>> RemoveFromFavoritesAsync(string vaultId);
         Task<Result<Unit>> ArchiveAsync(string vaultId);
         Task<Result<Unit>> UnArchiveAsync(string vaultId);
+        Task<Result<Unit>> RestoreAllFromArchiveAsync();
         Task<Result<Unit>> DeleteAsync(string vaultId);
         Task<Result<DateTime>> MoveToTrashAsync(string vaultId);
         Task<Result<Unit>> RestoreFromTrashAsync(string vaultId);

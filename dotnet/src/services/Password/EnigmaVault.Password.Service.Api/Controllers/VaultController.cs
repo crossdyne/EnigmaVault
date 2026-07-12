@@ -11,6 +11,7 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Remo
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.RestoreAllFromTrash;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.RestoreFromTrash;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchive;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchiveAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Update;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetById;
@@ -155,6 +156,26 @@ namespace EnigmaVault.Password.Service.Api.Controllers
             
             return Ok();
         }
+
+        [HttpPatch("un-archive/all")]
+        [Authorize]
+        public async Task<IActionResult> UnArchiveAll([FromRoute] Guid vaultId)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new UnArchiveAllVaultCommand(extractResult.Value.UserId);
+
+            var result = await _mediator.Send(command);
+
+           if (result.IsFailure)
+               return BadRequest(result.StringMessage);
+            
+            return Ok();
+        }
+
 
         /*--Delete----------------------------------------------------------------------------------------*/
 

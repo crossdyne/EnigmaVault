@@ -26,7 +26,39 @@ export class VaultService extends HttpService {
         return this.getAsync('');
     }
 
-    async getById(id: string): Promise<Result<EncryptedVaultResponse>> {
+    async getByIdAsync(id: string): Promise<Result<EncryptedVaultResponse>> {
         return this.getAsync(`${id}`);
+    }
+
+    async moveToTrashAsync(id: string): Promise<Result> {
+        return this.patchAsync(`trash/${id}`, null);
+    }
+
+    async restoreAllFromTrashAsync(): Promise<Result> {
+        return this.patchAsync(`restore/all`, null);
+    }
+
+    async restoreFromTrashAsync(id: string): Promise<Result> {
+        return this.patchAsync(`restore/${id}`, null);
+    }
+
+    async removeAsync(id: string): Promise<Result> {
+        return await this.deleteAsync(`${id}`);
+    }
+
+    async emptyTrashAsync(): Promise<Result> {
+        return await this.patchAsync('empty/trash', null);
+    }
+
+    async zipAsync(id: string): Promise<Result> {
+        return this.patchAsync(`zip/${id}`, null);
+    }
+
+    async unZipAsync(id: string): Promise<Result> {
+        return this.patchAsync(`unzip/${id}`, null);
+    }
+
+    async unZipAllAsync(): Promise<Result> {
+        return this.patchAsync(`unzip/all`, null);
     }
 }

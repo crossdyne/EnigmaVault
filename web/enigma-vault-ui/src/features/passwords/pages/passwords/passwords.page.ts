@@ -1,4 +1,4 @@
-import { Component, effect, inject, model, signal, viewChild } from "@angular/core";
+import { Component, computed, effect, inject, model, signal, viewChild } from "@angular/core";
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/dto/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
@@ -19,7 +19,7 @@ import { IconUrl } from "../../models/dto/icon-url";
 import { OverviewPayload } from "../../models/domain/overview-payload";
 import { CryptoStateService } from "../../../../core/services/crypto-state.service";
 import { Router } from "@angular/router";
-import { OverlayModule } from "@angular/cdk/overlay";
+import { ConnectedPosition, OverlayModule } from "@angular/cdk/overlay";
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@angular/cdk/menu";
 import { Dialog } from "@angular/cdk/dialog";
 import { VaultItemFormComponent } from "../../components/form/vault-item-form.component";
@@ -108,7 +108,53 @@ export class PasswordsPage {
     //#region Vaults
 
     vaults = signal<VaultItemDisplay[]>([]);
+    activeVaults = computed(() => this.vaults().filter(v => !v.isArchive && !v.isInTrash));
+    archivedVaults = computed(() => this.vaults().filter(v => v.isArchive && !v.isInTrash));
+    trashedVaults = computed(() => this.vaults().filter(v => v.isInTrash));
+
     selectedVault = model<VaultItemDisplay | null>(null);
+
+    // Popups
+    popupArchivePositions: ConnectedPosition[] = [
+        {
+            originX: 'end',
+            originY: 'center',
+            overlayX: 'start', 
+            overlayY: 'center',
+            offsetX: 8, 
+            offsetY: -75
+        },
+        {
+            originX: 'start',
+            originY: 'center',
+            overlayX: 'end',
+            overlayY: 'center',
+            offsetX: -8,
+            offsetY: -75
+        }
+    ];
+
+    popupTrashPositions: ConnectedPosition[] = [
+        {
+            originX: 'end',
+            originY: 'center',
+            overlayX: 'start',
+            overlayY: 'center',
+            offsetX: 8,
+            offsetY: -22
+        },
+        {
+            originX: 'start',
+            originY: 'center',
+            overlayX: 'end',
+            overlayY: 'center',
+            offsetX: -8,
+            offsetY: -22
+        }
+    ];
+
+    archivePositions = this.popupArchivePositions;
+    trashPositions = this.popupTrashPositions;
 
     // CRUD
     async getVaults() {
@@ -219,7 +265,7 @@ export class PasswordsPage {
 
             resultCreated.match(
                 async id => {
-                    const newVaultResult = await this.vaultService.getById(id);
+                    const newVaultResult = await this.vaultService.getByIdAsync(id);
 
                     newVaultResult.match(
                         async vault => {
@@ -348,16 +394,92 @@ export class PasswordsPage {
     }
 
     // Actions
-    onMoveToArchiveVault(vault: VaultItemDisplay) {
-        console.log('Архивируем:', vault.id);
+    async onMoveToArchive(vault: VaultItemDisplay) {
+        const result: Result = await this.vaultService.zipAsync(vault.id);
+
+        result.match(
+            () => {
+                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isArchive: true, isInTrash: false } : v ));
+
+                if (this.selectedVault()?.id === vault.id){
+                    this.selectedVault.set(null);
+                }
+            },
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async onRestoreFromArchive(vault: VaultItemDisplay){
+        const result: Result = await this.vaultService.unZipAsync(vault.id);
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isArchive: false } : v)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async unZipAllAsync() { 
+        const result: Result = await this.vaultService.unZipAllAsync(); 
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.map(v => v.isArchive ? { ...v, isArchive: false } : v)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async onMoveToTrash(vault: VaultItemDisplay) {
+        const result: Result = await this.vaultService.moveToTrashAsync(vault.id);
+
+        result.match(
+            () => {         
+                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isInTrash: true } : v));
+
+                if (this.selectedVault()?.id === vault.id) {
+                    this.selectedVault.set(null);
+                }
+            },
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async onRestoreFromTrash(vault: VaultItemDisplay) {
+        const result: Result = await this.vaultService.restoreFromTrashAsync(vault.id);
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isInTrash: false } : v)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async restoreAllAsync() {
+        const result: Result = await this.vaultService.restoreAllFromTrashAsync(); 
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.map(v => v.isInTrash ? { ...v, isInTrash: false } : v)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+    
+    async onDelete(vault: VaultItemDisplay) {
+        const result: Result = await this.vaultService.removeAsync(vault.id);
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.filter(v => v.id !== vault.id)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    async emptyTrashAsync() {
+         const result: Result = await this.vaultService.emptyTrashAsync(); 
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.filter(v => !v.isInTrash)),
+            errors => console.error(this.mapErrors(errors))
+        );
     }
 
     onCopyVault(vault: VaultItemDisplay) {
-        console.log('Копируем пароль для:', vault.serviceName);
-    }
-
-    async onMoveToTrashVault(vault: VaultItemDisplay) {
-        console.log('В корзину:', vault.id);
+        
     }
 
     async onChangeFavorite(vault: VaultItemDisplay) {

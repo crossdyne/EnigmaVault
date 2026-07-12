@@ -109,6 +109,21 @@ namespace EnigmaVault.PasswordService.Client.Clients
             }
         }
 
+        public async Task<Result<Unit>> RestoreAllFromArchiveAsync()
+        {   
+            try
+            {
+                var response = await _httpClient.PatchAsync($"{_url}/un-archive/all", null);
+                response.EnsureSuccessStatusCode();
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return new Error(AppErrors.ApiError, ex.Message);
+            }
+        }
+
         public async Task<Result<Unit>> DeleteAsync(string vaultId)
         {
             try
