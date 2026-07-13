@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EnigmaVault.Desktop.ViewModels.Pages
 {
@@ -68,6 +69,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             _cryptoServices = cryptoServices;
 
             SelectedPasswordType = PasswordTypes.FirstOrDefault();
+            SelectedSorting = SortingView.Ascending;
             CurrentDisplayUserControlLeftSideMenu = UserControlsName.Tags;
             CurrentActionRightSideMenu = ActionOnData.Create;
 
@@ -155,13 +157,6 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             new KeyValuePair<VaultType, string>(VaultType.Server, "Данные сервера"),
             new KeyValuePair<VaultType, string>(VaultType.CreditCard, "Банковские карты"),
             new KeyValuePair<VaultType, string>(VaultType.ApiKey, "Апи Ключи"),
-        ];
-
-        // TODO: Реализовать в будущем.
-        public ObservableCollection<KeyValuePair<SortingView, string>> Sorting { get; private set; } =
-        [
-            new KeyValuePair<SortingView, string>(SortingView.Ascending, "По возрастанию (от А до Я, от 0 до 9)"),
-            new KeyValuePair<SortingView, string>(SortingView.Descending, "По убыванию (от Я до А, от 9 до 0)"),
         ];
 
         // ====================================================================================
@@ -266,7 +261,13 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Свойство: [SelectedSorting] - Выбор сортировки списка паролей
 
         [ObservableProperty]
-        private KeyValuePair<SortingView, string> _selectedSorting;
+        [NotifyCanExecuteChangedFor(nameof(SetSortPasswordsCommand))]
+        private SortingView _selectedSorting;
+
+        partial void OnSelectedSortingChanged(SortingView value)
+        {
+            UpdateGroupingPassword();
+        }
 
         #endregion
 
@@ -743,6 +744,15 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
+        #region Команда [SetGroupingPasswordsCommand]: Выбор текущей группировки у списка с паролями
+
+        [RelayCommand(CanExecute = nameof(CanSetSortPasswords))]
+        private void SetSortPasswords(SortingView type) => SelectedSorting = type;
+
+        private bool CanSetSortPasswords(SortingView type) => type != SelectedSorting;
+
+        #endregion
+
         /*--PopupMenagement--*/
 
         #region Команда [SelectAndShowPasswordMenuPopup]: Отвечает за выбор элемента списка паролей при открытие контекстного меню 
@@ -1043,47 +1053,69 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #region Взоимодейсвтие с ICollectionView
 
-        private void UpdatePasswordsView() => PasswordsView.Refresh();
-
         private void UpdateGroupingPassword()
         {
+            if (PasswordsView == null)
+                return;
+
             PasswordsView.GroupDescriptions.Clear();
             PasswordsView.SortDescriptions.Clear();
 
-            var sorting = ListSortDirection.Descending;
+            var sorting = SelectedSorting == SortingView.None
+                ? (ListSortDirection?)null
+                : SelectedSorting == SortingView.Descending ? ListSortDirection.Descending : ListSortDirection.Ascending;
 
             Action action = SelectedGrouping switch
             {
-                GroupingView.Name => () => 
+                GroupingView.Name => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter), sorting.Value));
                 }
                 ,
-                GroupingView.Add => () => 
+                GroupingView.Add => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd), sorting.Value));
                 }
                 ,
                 GroupingView.Update => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate), sorting.Value));
                 }
                 ,
                 GroupingView.VaultType => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.VaultTypeString)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.VaultTypeString), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.VaultTypeString), sorting.Value));
                 }
                 ,
-                GroupingView.None or _ => () => PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateAdded), sorting)),
+                GroupingView.Tag => () =>
+                {
+                    PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.FirstTagName)));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.FirstTagName), sorting.Value));
+                }
+                ,
+                GroupingView.None or _ => () =>
+                {
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateAdded), sorting.Value));
+                }
+                ,
             };
 
             action?.Invoke();
 
-            UpdatePasswordsView();
+            PasswordsView.Refresh();
+
+            if (PasswordsView.CurrentItem != null)
+                PasswordsView.MoveCurrentToFirst();
         }
 
         #endregion

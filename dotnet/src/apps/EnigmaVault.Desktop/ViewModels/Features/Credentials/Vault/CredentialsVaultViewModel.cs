@@ -91,6 +91,8 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
         [ObservableProperty]
         private string? _iconId;
 
+        public string? FirstTagName => Tags.FirstOrDefault()?.TagName ?? "Без тега";
+
         public string ServiceNameFirstLetter
         {
             get

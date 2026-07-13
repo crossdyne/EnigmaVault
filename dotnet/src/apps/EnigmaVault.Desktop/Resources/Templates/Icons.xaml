@@ -1288,6 +1288,75 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ArrowUpDown" TargetType="Control">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="24" Height="24">
+                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Data="
+                      M 21,16
+                      L 17,20
+                      L 13,16
+                      M 21,8
+                      L 17,4
+                      L 13,8
+                      M 3,12
+                      L 21,12"/>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Descending" TargetType="Control">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="24" Height="24">
+                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Data="
+                      M 3,16
+                      L 7,20
+                      L 11,16
+                      M 7,20
+                      L 7,4
+                      M 11,4
+                      L 21,4
+                      M 11,8
+                      L 18,8
+                      M 11,12
+                      L 15,12"/>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Ascending" TargetType="Control">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="24" Height="24">
+                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                  StrokeThickness="2"
+                  StrokeStartLineCap="Round"
+                  StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round"
+                  Data="
+                      M 3,8
+                      L 7,4
+                      L 11,8
+                      M 7,4
+                      L 7,20
+                      M 11,12
+                      L 15,12
+                      M 11,16
+                      L 18,16
+                      M 11,20
+                      L 21,20"/>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
     <!-- ╔═════════════════════════════════════════════════════════════════════════════╗ -->
     <!-- ║                              Управление окном                               ║ -->
     <!-- ╚═════════════════════════════════════════════════════════════════════════════╝ -->
