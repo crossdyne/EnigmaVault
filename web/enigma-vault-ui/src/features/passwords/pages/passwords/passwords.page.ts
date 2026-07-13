@@ -103,7 +103,7 @@ export class PasswordsPage {
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
 
     activeTab = signal<'tags' | 'icons'>('tags');
-    
+
     setActiveTab(tab: 'tags' | 'icons') {
         this.activeTab.set(tab);
     }
@@ -559,6 +559,188 @@ export class PasswordsPage {
             console.log('Добавлено в избранное: ', vault.serviceName);
         }
     }
+
+    //#endregion
+  
+    //#region Группировка Vaults
+
+    groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags'>('none');
+
+    groupedVaults = computed(() => {
+        const vaults = this.activeVaults();
+        const group = this.groupBy();
+
+        if (group === 'none') {
+            return [{ title: 'Все записи', vaults }];
+        }
+
+        if (group === 'alphabet') {
+            const groups = new Map<string, VaultItemDisplay[]>();
+            for (const vault of vaults) {
+                const letter = vault.serviceName[0]?.toUpperCase() || '#';
+                if (!groups.has(letter))
+                    groups.set(letter, []);
+
+                groups.get(letter)!.push(vault);
+            }
+
+            return Array.from(groups.entries())
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([title, vaults]) => ({ title, vaults }));
+        }
+
+        if (group === 'type') {
+            const labels: Record<string, string> = {
+                [VaultTypeEnum.Password]: 'Пароли',
+                [VaultTypeEnum.ApiKey]: 'API ключи',
+                [VaultTypeEnum.CreditCard]: 'Банковские карты',
+                [VaultTypeEnum.Server]: 'Серверы',
+            };
+
+            const groups = new Map<string, VaultItemDisplay[]>();
+            for (const vault of vaults) {
+                const key = labels[vault.type] ?? 'Другое';
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key)!.push(vault);
+            }
+
+            return Array.from(groups.entries()).map(([title, vaults]) => ({ title, vaults }));
+        }
+
+        if (group === 'history') {
+            const updatedVaults = vaults.filter(vault => {
+                if (!vault.dateUpdate) 
+                    return false;
+                
+                const added = vault.dateAdded instanceof Date ? vault.dateAdded : new Date(vault.dateAdded ?? 0);
+                const updated = vault.dateUpdate instanceof Date ? vault.dateUpdate : new Date(vault.dateUpdate);
+                
+                return Math.abs(updated.getTime() - added.getTime()) > 60000;
+            });
+
+            if (updatedVaults.length === 0) {
+                return [{ title: 'Нет изменённых записей', vaults: [] }];
+            }
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+
+            const groups: Record<string, VaultItemDisplay[]> = {
+                'Изменены сегодня': [],
+                'Изменены вчера': [],
+                'Изменены на этой неделе': [],
+                'Изменены ранее': []
+            };
+
+            for (const vault of updatedVaults) {
+                const updated = vault.dateUpdate instanceof Date ? vault.dateUpdate : new Date(vault.dateUpdate!);
+                const updStart = new Date(updated.getFullYear(), updated.getMonth(), updated.getDate());
+
+                if (updStart.getTime() === today.getTime()) {
+                    groups['Изменены сегодня'].push(vault);
+                } else if (updStart.getTime() === yesterday.getTime()) {
+                    groups['Изменены вчера'].push(vault);
+                } else if (updated >= weekAgo) {
+                    groups['Изменены на этой неделе'].push(vault);
+                } else {
+                    groups['Изменены ранее'].push(vault);
+                }
+            }
+
+            const sortDesc = (a: VaultItemDisplay, b: VaultItemDisplay) => {
+                const da = a.dateUpdate instanceof Date ? a.dateUpdate : new Date(a.dateUpdate!);
+                const db = b.dateUpdate instanceof Date ? b.dateUpdate : new Date(b.dateUpdate!);
+                return db.getTime() - da.getTime();
+            };
+
+            return Object.entries(groups)
+                .filter(([, vaults]) => vaults.length > 0)
+                .map(([title, vaults]) => ({ title, vaults: vaults.sort(sortDesc) }));
+        }
+
+        if (group === 'date') {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const todayTime = today.getTime();
+            
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayTime = yesterday.getTime();
+            
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekAgoTime = weekAgo.getTime();
+
+            const groups: Record<string, VaultItemDisplay[]> = {
+                'Сегодня': [],
+                'Вчера': [],
+                'На этой неделе': [],
+                'В этом месяце': [],
+                'Ранее': []
+            };
+
+            for (const vault of vaults) {
+                const d = vault.dateAdded instanceof Date ? vault.dateAdded : new Date(vault.dateAdded);
+                
+                if (isNaN(d.getTime())) {
+                    groups['Ранее'].push(vault);
+                    continue;
+                }
+
+                const dStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                const dTime = dStart.getTime();
+
+                if (dTime === todayTime) {
+                    groups['Сегодня'].push(vault);
+                } else if (dTime === yesterdayTime) {
+                    groups['Вчера'].push(vault);
+                } else if (dTime >= weekAgoTime) {
+                    groups['На этой неделе'].push(vault);
+                } else if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+                    groups['В этом месяце'].push(vault);
+                } else {
+                    groups['Ранее'].push(vault);
+                }
+            }
+
+            return Object.entries(groups)
+                .filter(([, vaults]) => vaults.length > 0)
+                .map(([title, vaults]) => ({ title, vaults }));
+        }
+
+        if (group === 'tags') {
+            const groups = new Map<string, VaultItemDisplay[]>();
+            const untagged: VaultItemDisplay[] = [];
+
+            for (const vault of vaults) {
+                if (!vault.tags || vault.tags.length === 0) {
+                    untagged.push(vault);
+                    continue;
+                }
+                for (const tag of vault.tags) {
+                    const name = tag.name;
+                    if (!groups.has(name)) groups.set(name, []);
+                    groups.get(name)!.push(vault);
+                }
+            }
+
+            const result = Array.from(groups.entries())
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([title, vaults]) => ({ title, vaults }));
+
+            if (untagged.length > 0) {
+                result.push({ title: 'Без тегов', vaults: untagged });
+            }
+
+            return result;
+        }
+
+        return [{ title: 'Все записи', vaults }];
+    });
 
     //#endregion
 
