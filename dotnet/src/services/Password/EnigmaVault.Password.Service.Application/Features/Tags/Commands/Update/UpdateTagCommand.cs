@@ -4,6 +4,6 @@ using MediatR;
 
 namespace EnigmaVault.Password.Service.Application.Features.Tags.Commands.Update
 {
-    public sealed record UpdateTagCommand(Guid Id, Guid UserId, string Name, string Color) : IRequest<Result<Unit>>,
+    public sealed record UpdateTagCommand(Guid UserId, Guid Id, string Name, string Color) : IRequest<Result<Unit>>,
         IHasName;
 }

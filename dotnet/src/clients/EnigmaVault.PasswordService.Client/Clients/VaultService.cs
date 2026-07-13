@@ -276,5 +276,20 @@ namespace EnigmaVault.PasswordService.Client.Clients
                 return new Error(AppErrors.ApiError, ex.Message);
             }
         }
+
+        public async Task<Result<Unit>> UpdateTagsAsync(string vaultId, UpdateTagsRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PatchAsJsonAsync($"{_url}/{vaultId}/tags", request);
+                response.EnsureSuccessStatusCode();
+
+                return Unit.Value;
+            }
+            catch (Exception ex)
+            {
+                return new Error(AppErrors.ApiError, ex.Message);
+            }
+        }
     }
 }

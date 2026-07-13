@@ -31,6 +31,9 @@ import { VaultCryptoService } from "../../services/crypto-vault.service";
 import { UpdateVaultItemRequest } from "../../models/dto/update-vault-item.request";
 import { VaultItemViewComponent } from "../../components/view/vault-item-view.component";
 import { VaultItemView } from "../../models/modal/vault-item-view";
+import { AttachTagComponent } from "../../components/attach-tag/attach-tag.component";
+import { TagAttachmentData } from "../../models/modal/tag-attachment.data";
+import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
 
 @Component({
     selector: 'passwords-page',
@@ -414,6 +417,51 @@ export class PasswordsPage {
     }
 
     // Actions
+
+    async updateTags(vaultId: string) {
+        const vault = this.vaults().find(v => v.id === vaultId);
+        if (!vault) 
+            return;
+
+        const dialogRef = this.dialog.open<TagAttachmentResult, TagAttachmentData, AttachTagComponent>(
+            AttachTagComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    vault: vault,
+                    availableTags: this.tags()
+                }
+            }
+        );
+        
+        dialogRef.closed.subscribe(async result => {
+            if (!result) 
+                return;
+
+            const selectedTagIds = result.selectedTagIds;
+
+            const updateResult: Result = await this.vaultService.updateTagsAsync(vault.id, { tagIds: selectedTagIds });
+
+            updateResult.match(
+                () => {
+                    const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
+                    
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, tags: updatedTags } : v));
+
+                    const current = this.selectedVault();
+                    if (current?.id === vault.id) {
+                        this.selectedVault.update(v => v ? { ...v, tags: updatedTags } : null);
+                    }
+
+                    console.log('Тэги успешно обновлены');
+                },
+                errors => console.error('Ошибка обновления тэгов: ', this.mapErrors(errors))
+            );
+        });
+    }
+
     async onMoveToArchive(vault: VaultItemDisplay) {
         const result: Result = await this.vaultService.zipAsync(vault.id);
 
