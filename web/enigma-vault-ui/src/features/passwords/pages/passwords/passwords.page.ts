@@ -103,7 +103,7 @@ export class PasswordsPage {
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
 
     activeTab = signal<'tags' | 'icons'>('tags');
-    activeTemplate = signal<'detailed' | 'brief' | 'compact'>('brief');
+    activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
 
     //#region Vaults
 
@@ -559,19 +559,32 @@ export class PasswordsPage {
 
     //#endregion
   
-    //#region Группировка Vaults
+    //#region Группировка \ Сортировка Vaults
 
     groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags'>('none');
-
+    sortBy = signal<'none' | 'ascending' | 'descending'>('ascending');
+    
     groupedVaults = computed(() => {
         const vaults = this.activeVaults();
         const group = this.groupBy();
+        const sort = this.sortBy();
+
+        const applySort = (items: VaultItemDisplay[]) => {
+            if (sort === 'none')
+                return items;
+
+            return [...items].sort((a, b) => {
+                const nameA = a.serviceName.toLowerCase();
+                const nameB = b.serviceName.toLowerCase();
+                return sort === 'ascending' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+            });
+        };
+
+        let result: { title: string; vaults: VaultItemDisplay[] }[];
 
         if (group === 'none') {
-            return [{ title: 'Все записи', vaults }];
-        }
-
-        if (group === 'alphabet') {
+            result = [{ title: 'Все записи', vaults }];
+        } else if (group === 'alphabet') {
             const groups = new Map<string, VaultItemDisplay[]>();
             for (const vault of vaults) {
                 const letter = vault.serviceName[0]?.toUpperCase() || '#';
@@ -581,12 +594,10 @@ export class PasswordsPage {
                 groups.get(letter)!.push(vault);
             }
 
-            return Array.from(groups.entries())
+            result = Array.from(groups.entries())
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([title, vaults]) => ({ title, vaults }));
-        }
-
-        if (group === 'type') {
+        } else if (group === 'type') {
             const labels: Record<string, string> = {
                 [VaultTypeEnum.Password]: 'Пароли',
                 [VaultTypeEnum.ApiKey]: 'API ключи',
@@ -597,14 +608,14 @@ export class PasswordsPage {
             const groups = new Map<string, VaultItemDisplay[]>();
             for (const vault of vaults) {
                 const key = labels[vault.type] ?? 'Другое';
-                if (!groups.has(key)) groups.set(key, []);
+                if (!groups.has(key)) 
+                    groups.set(key, []);
+                
                 groups.get(key)!.push(vault);
             }
 
-            return Array.from(groups.entries()).map(([title, vaults]) => ({ title, vaults }));
-        }
-
-        if (group === 'history') {
+            result = Array.from(groups.entries()).map(([title, vaults]) => ({ title, vaults }));
+        } else if (group === 'history') {
             const updatedVaults = vaults.filter(vault => {
                 if (!vault.dateUpdate) 
                     return false;
@@ -616,50 +627,48 @@ export class PasswordsPage {
             });
 
             if (updatedVaults.length === 0) {
-                return [{ title: 'Нет изменённых записей', vaults: [] }];
-            }
+                result = [{ title: 'Нет изменённых записей', vaults: [] }];
+            } else {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
 
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const weekAgo = new Date(today);
-            weekAgo.setDate(weekAgo.getDate() - 7);
+                const groups: Record<string, VaultItemDisplay[]> = {
+                    'Изменены сегодня': [],
+                    'Изменены вчера': [],
+                    'Изменены на этой неделе': [],
+                    'Изменены ранее': []
+                };
 
-            const groups: Record<string, VaultItemDisplay[]> = {
-                'Изменены сегодня': [],
-                'Изменены вчера': [],
-                'Изменены на этой неделе': [],
-                'Изменены ранее': []
-            };
+                for (const vault of updatedVaults) {
+                    const updated = vault.dateUpdate instanceof Date ? vault.dateUpdate : new Date(vault.dateUpdate!);
+                    const updStart = new Date(updated.getFullYear(), updated.getMonth(), updated.getDate());
 
-            for (const vault of updatedVaults) {
-                const updated = vault.dateUpdate instanceof Date ? vault.dateUpdate : new Date(vault.dateUpdate!);
-                const updStart = new Date(updated.getFullYear(), updated.getMonth(), updated.getDate());
-
-                if (updStart.getTime() === today.getTime()) {
-                    groups['Изменены сегодня'].push(vault);
-                } else if (updStart.getTime() === yesterday.getTime()) {
-                    groups['Изменены вчера'].push(vault);
-                } else if (updated >= weekAgo) {
-                    groups['Изменены на этой неделе'].push(vault);
-                } else {
-                    groups['Изменены ранее'].push(vault);
+                    if (updStart.getTime() === today.getTime()) {
+                        groups['Изменены сегодня'].push(vault);
+                    } else if (updStart.getTime() === yesterday.getTime()) {
+                        groups['Изменены вчера'].push(vault);
+                    } else if (updated >= weekAgo) {
+                        groups['Изменены на этой неделе'].push(vault);
+                    } else {
+                        groups['Изменены ранее'].push(vault);
+                    }
                 }
+
+                const sortDesc = (a: VaultItemDisplay, b: VaultItemDisplay) => {
+                    const da = a.dateUpdate instanceof Date ? a.dateUpdate : new Date(a.dateUpdate!);
+                    const db = b.dateUpdate instanceof Date ? b.dateUpdate : new Date(b.dateUpdate!);
+                    return db.getTime() - da.getTime();
+                };
+
+                result = Object.entries(groups)
+                    .filter(([, vaults]) => vaults.length > 0)
+                    .map(([title, vaults]) => ({ title, vaults: vaults.sort(sortDesc) }));
             }
-
-            const sortDesc = (a: VaultItemDisplay, b: VaultItemDisplay) => {
-                const da = a.dateUpdate instanceof Date ? a.dateUpdate : new Date(a.dateUpdate!);
-                const db = b.dateUpdate instanceof Date ? b.dateUpdate : new Date(b.dateUpdate!);
-                return db.getTime() - da.getTime();
-            };
-
-            return Object.entries(groups)
-                .filter(([, vaults]) => vaults.length > 0)
-                .map(([title, vaults]) => ({ title, vaults: vaults.sort(sortDesc) }));
-        }
-
-        if (group === 'date') {
+        } else if (group === 'date') {
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const todayTime = today.getTime();
@@ -704,12 +713,10 @@ export class PasswordsPage {
                 }
             }
 
-            return Object.entries(groups)
+            result = Object.entries(groups)
                 .filter(([, vaults]) => vaults.length > 0)
                 .map(([title, vaults]) => ({ title, vaults }));
-        }
-
-        if (group === 'tags') {
+        } else if (group === 'tags') {
             const groups = new Map<string, VaultItemDisplay[]>();
             const untagged: VaultItemDisplay[] = [];
 
@@ -720,23 +727,25 @@ export class PasswordsPage {
                 }
                 for (const tag of vault.tags) {
                     const name = tag.name;
-                    if (!groups.has(name)) groups.set(name, []);
+                    if (!groups.has(name)) 
+                        groups.set(name, []);
+
                     groups.get(name)!.push(vault);
                 }
             }
 
-            const result = Array.from(groups.entries())
+            result = Array.from(groups.entries())
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([title, vaults]) => ({ title, vaults }));
 
             if (untagged.length > 0) {
                 result.push({ title: 'Без тегов', vaults: untagged });
             }
-
-            return result;
+        } else {
+            result = [{ title: 'Все записи', vaults }];
         }
 
-        return [{ title: 'Все записи', vaults }];
+        return result.map(g => ({ ...g, vaults: applySort(g.vaults) }));
     });
 
     //#endregion
