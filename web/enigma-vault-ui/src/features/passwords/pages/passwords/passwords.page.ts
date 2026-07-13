@@ -34,6 +34,7 @@ import { VaultItemView } from "../../models/modal/vault-item-view";
 import { AttachTagComponent } from "../../components/attach-tag/attach-tag.component";
 import { TagAttachmentData } from "../../models/modal/tag-attachment.data";
 import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
+import { TooltipDirective } from "../../../../shared/directives/tooltip.directive";
 
 @Component({
     selector: 'passwords-page',
@@ -45,6 +46,7 @@ import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
         ItemInputActionsComponent, 
         ComboboxComponent, 
         IconsComponent,
+        TooltipDirective,
         OverlayModule,
         CdkMenu,
         CdkMenuItem,

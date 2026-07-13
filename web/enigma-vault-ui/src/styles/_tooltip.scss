@@ -1,0 +1,48 @@
+.app-tooltip {
+  position: fixed;
+  padding: 8px 14px;
+  background: #0A0D16;
+  border: 1px solid #3f4552; 
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 99999;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  animation: tooltipIn 0.15s ease forwards;
+}
+
+.app-tooltip::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #3f4552;
+  z-index: 0;
+}
+
+.app-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #0A0D16; 
+  z-index: 1;
+}
+
+@keyframes tooltipIn {
+  to { opacity: 1; }
+}
