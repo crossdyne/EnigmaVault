@@ -4,6 +4,7 @@ import { Result } from "@crossdyne/toolkit";
 import { EncryptedVaultResponse } from "../models/dto/encrypted-vault.response";
 import { CreateVaultItemRequest } from "../models/dto/create-vault.request";
 import { UpdateVaultItemRequest } from "../models/dto/update-vault-item.request";
+import { UpdateTagsRequest } from "../models/dto/update-tags.request";
 
 @Injectable({
     providedIn: 'root'
@@ -64,5 +65,9 @@ export class VaultService extends HttpService {
 
     async changeIcon(vaultId: string, iconId: string): Promise<Result> {
         return this.patchAsync(`change/${vaultId}/icon/${iconId}`, null);
+    }
+
+    async updateTagsAsync(id: string, request: UpdateTagsRequest): Promise<Result> {
+        return await this.patchAsync(`${id}/tags`, request)
     }
 }

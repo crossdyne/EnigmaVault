@@ -41,6 +41,9 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
 
             builder.MapPatch("api/v1/vault/change/{vaultId}/icon/{iconId}", async ([FromRoute] string vaultId, [FromRoute] string iconId, [FromServices] IVaultService service)
                  => await service.ChangeIcon(vaultId, iconId).MapErrorOrOkAsync()).RequireAuthorization();
+
+            builder.MapPatch("api/v1/vault/{vaultId}/tags", async ([FromRoute] string vaultId, [FromBody] UpdateTagsRequest request, [FromServices] IVaultService service) 
+                => await service.UpdateTagsAsync(vaultId, request).MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
 }

@@ -1,0 +1,8 @@
+using Crossdyne.Toolkit.Results;
+using MediatR;
+using Unit = Crossdyne.Toolkit.Primitives.Unit;
+
+namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UpdateTags
+{
+    public sealed record UpdateTagsCommand(Guid UserId, Guid VaultId, List<Guid> TagIds) : IRequest<Result<Unit>>;
+}

@@ -121,6 +121,12 @@ namespace EnigmaVault.Password.Service.Domain.Models
             _tags.Add(tagId);
         }
 
+        public void SetTags(IEnumerable<TagId> tagIds)
+        {
+            _tags.Clear();
+            _tags.AddRange(tagIds.Distinct());
+        }
+
         public void RemoveTag(TagId tagId)
         {
             if (!_tags.Contains(tagId))

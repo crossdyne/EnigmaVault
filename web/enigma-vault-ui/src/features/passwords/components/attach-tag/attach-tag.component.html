@@ -1,0 +1,37 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Прикрепить тэги к «{{ vault.serviceName }}»</h2>
+      <button class="close-btn" (click)="onCancel()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Выберите тэги</label>
+        <div class="tags-selection">
+          @for (tag of availableTags; track tag.id) {
+            <div 
+              class="tag-item" 
+              [class.selected]="isSelected(tag.id)"
+              (click)="toggleTag(tag.id)">
+              <span class="tag-color" [style.background-color]="tag.color"></span>
+              <span class="tag-name">{{ tag.name }}</span>
+              @if (isSelected(tag.id)) {
+                <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              }
+            </div>
+          } @empty {
+            <div class="empty-state">Нет доступных тэгов. Создайте тэги в боковом меню.</div>
+          }
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onCancel()">Отмена</button>
+      <button class="btn-primary" (click)="onSave()">Сохранить</button>
+    </div>
+    
+  </div>
+</div>

@@ -14,6 +14,7 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Rest
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchive;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UnArchiveAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Update;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UpdateTags;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetById;
 using MediatR;
@@ -357,6 +358,25 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 return extractResult.Value.Result;
 
             var command = new RemoveTagFromVaultItemCommand(extractResult.Value.UserId, vaultId, tagId);
+
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+                return BadRequest(result.StringMessage);
+
+            return Ok();
+        }
+
+        [HttpPatch("{vaultId}/tags")]
+        [Authorize]
+        public async Task<IActionResult> AttachTags([FromRoute] Guid vaultId, [FromBody] UpdateTagsRequest request)
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var command = new UpdateTagsCommand(extractResult.Value.UserId, vaultId, [.. request.TagIds.Select(t => Guid.Parse(t))]);
 
             var result = await _mediator.Send(command);
 
