@@ -103,10 +103,7 @@ export class PasswordsPage {
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
 
     activeTab = signal<'tags' | 'icons'>('tags');
-
-    setActiveTab(tab: 'tags' | 'icons') {
-        this.activeTab.set(tab);
-    }
+    activeTemplate = signal<'detailed' | 'brief' | 'compact'>('brief');
 
     //#region Vaults
 
