@@ -7,6 +7,7 @@ import { StandardPassword } from "../models/domain/standard-password";
 import { Server } from "../models/domain/server";
 import { ApiKey } from "../models/domain/api-key";
 import { VaultTypeEnum } from "../models/domain/vault-type.enum";
+import { CryptoConstants } from "../../../core/constants/security.constants";
 
 @Injectable({
     providedIn: 'root'
@@ -35,10 +36,10 @@ export class VaultCryptoService {
     }
     
     async encryptOverview(payload: OverviewPayload): Promise<string> {
-        return await this.crypto.encryptData(payload, this.state.dek!);
+        return await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION);
     }
 
     async encryptDetails(payload: any): Promise<string> {
-        return await this.crypto.encryptData(payload, this.state.dek!);
+        return await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION);
     }
 }

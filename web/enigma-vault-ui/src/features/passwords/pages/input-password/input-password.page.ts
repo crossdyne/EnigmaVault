@@ -37,7 +37,7 @@ export class InputPasswordPage {
 
         const dekResponse = result.value;
 
-        const profile: CryptoProfile = CryptoProfileRegistry.getProfile(dekResponse.cryptoVersion as CryptoVersion);
+        const cryptoVersion: CryptoVersion = dekResponse.cryptoVersion as CryptoVersion;
         const login: string = dekResponse.login.toLowerCase();
         const encryptedDek = dekResponse.encryptedDek;
         const salt: Uint8Array = SecurityUtils.fromBase64(dekResponse.clientSalt);
@@ -45,8 +45,8 @@ export class InputPasswordPage {
         let decryptedDek: Uint8Array<ArrayBufferLike> | null = null;
 
         try {
-            const { kek } = await this.keyDerivationService.deriveKeysFromPassword(login, this.password(), salt, profile.kdfOptions);
-            decryptedDek = await this.cryptoService.decryptData<Uint8Array>(encryptedDek, kek, profile.aesGcmOptions, true);
+            const { kek } = await this.keyDerivationService.deriveKeysFromPassword(login, this.password(), salt, cryptoVersion);
+            decryptedDek = await this.cryptoService.decryptData<Uint8Array>(encryptedDek, kek, true);
     
         } catch (error) {
             this.errors.set('Вы ввели не верный пароль');
