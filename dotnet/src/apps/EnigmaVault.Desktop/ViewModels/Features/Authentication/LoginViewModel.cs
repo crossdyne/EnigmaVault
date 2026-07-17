@@ -12,6 +12,7 @@ using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
 using Shared.Contracts.Requests.Authentication;
+using Shared.Contracts.Responses.Authentication;
 using System.Security.Cryptography;
 using System.Windows;
 
@@ -44,9 +45,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
 
             CryptoVersion cryptoVersion = CryptoVersion.V1;
 
-            var srpProfile = SrpProfileRegistry.GetProfile(SrpGroup.Rfc5054_3072);
-            var srpContext = SrpContext.FromOptions(srpProfile.Options);
-
             var normalizeLogin = AuthLogin.ToLower();
 
             #endregion
@@ -59,7 +57,11 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
                 return;
             }
 
-            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, challengeResult.Value.Salt, challengeResult.Value.B, srpContext, cryptoVersion);
+            SrpChallengeResponse srpChallengeResponse = challengeResult.Value;
+            
+            var srpProfile = SrpProfileRegistry.GetProfile((SrpGroup)srpChallengeResponse.SrpVersion);
+            var srpContext = SrpContext.FromOptions(srpProfile.Options);
+            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, srpChallengeResponse.Salt, srpChallengeResponse.B, srpContext, cryptoVersion);
 
             var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(normalizeLogin, A, M1));
 
