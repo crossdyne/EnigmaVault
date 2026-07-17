@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Configuration;
 using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
 using EnigmaVault.AssetsService.Client.Clients;
@@ -20,7 +21,6 @@ using EnigmaVault.FileService.Client.Clients;
 using EnigmaVault.FileService.Client.Models;
 using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Options;
-using Shared.Contracts.Enums;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
@@ -432,9 +432,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand]
         public async Task CreateVault()
         {
-            (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
+            (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest(SelectedPasswordType.Key.ToString(), SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest((int)SelectedPasswordType.Key, SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails, (int)CryptoVersion));
 
             if (result.IsFailure)
             {
@@ -472,9 +472,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanUpdateVault))]
         private async Task UpdateVault()
         {
-            (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
+            (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(SelectedEncryptedOverview!.Id, SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(SelectedEncryptedOverview!.Id, SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails, (int)CryptoVersion));
 
             if (result.IsFailure)
             {

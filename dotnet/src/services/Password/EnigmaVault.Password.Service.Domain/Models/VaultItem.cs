@@ -1,6 +1,5 @@
 ﻿using Crossdyne.Toolkit.Results;
 using Crossdyne.Toolkit.Validation;
-using EnigmaVault.Password.Service.Domain.Enums;
 using EnigmaVault.Password.Service.Domain.ValueObjects.Password;
 using EnigmaVault.Password.Service.Domain.ValueObjects.Tag;
 using EnigmaVault.Password.Service.Domain.ValueObjects.User;
@@ -13,10 +12,11 @@ namespace EnigmaVault.Password.Service.Domain.Models
     public sealed class VaultItem : AggregateRoot<VaultItemId>
     {
         public UserId UserId { get; private set; }
-        public VaultType PasswordType { get; private set; }
+        public VaultType VaultType { get; private set; }
 
         public EncryptedData EncryptedOverview { get; private set; }
         public EncryptedData EncryptedDetails { get; private set; }
+        public CryptoVersion CryptoVersion { get; private set; }
 
         public bool IsFavorite { get; private set; }
         public bool IsArchive { get; private set; }
@@ -33,17 +33,18 @@ namespace EnigmaVault.Password.Service.Domain.Models
 
         private VaultItem() { }
 
-        private VaultItem(VaultItemId id, UserId userId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite) : base(id)
+        private VaultItem(VaultItemId id, UserId userId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, CryptoVersion cryptoVersion, bool isFavorite) : base(id)
         {
             UserId = userId;
             IconId = iconId;
-            PasswordType = type;
+            VaultType = type;
             EncryptedOverview = encryptedOverview;
             EncryptedDetails = encryptedDetails;
+            CryptoVersion = cryptoVersion;
             IsFavorite = isFavorite;
         }
 
-        public static VaultItem Create(UserId UserId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, bool isFavorite = false)
+        public static VaultItem Create(UserId UserId, VaultType type, IconId iconId, EncryptedData encryptedOverview, EncryptedData encryptedDetails, CryptoVersion cryptoVersion, bool isFavorite = false)
         {
             return new VaultItem(
                 VaultItemId.New(),
@@ -52,21 +53,24 @@ namespace EnigmaVault.Password.Service.Domain.Models
                 iconId,
                 encryptedOverview,
                 encryptedDetails,
+                cryptoVersion,
                 isFavorite)
             {
                 DateAdded = DateTime.UtcNow,
             };
         }
 
-        public void UpdateOverview(EncryptedData encryptedOverview)
+        public void UpdateOverview(EncryptedData encryptedOverview, CryptoVersion cryptoVersion)
         {
             EncryptedOverview = encryptedOverview;
+            CryptoVersion = cryptoVersion;
             UpdateDate();
         }
 
-        public void UpdateDetails(EncryptedData encryptedDetails)
+        public void UpdateDetails(EncryptedData encryptedDetails, CryptoVersion cryptoVersion)
         {
             EncryptedDetails = encryptedDetails;
+            CryptoVersion = cryptoVersion;
             UpdateDate();
         }
 

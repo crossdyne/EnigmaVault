@@ -42,7 +42,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         {
             #region Конфигурация
 
-            var cryptoProfile = CryptoProfileRegistry.GetProfile(CryptoVersion.V1);
+            CryptoVersion cryptoVersion = CryptoVersion.V1;
 
             var srpProfile = SrpProfileRegistry.GetProfile(SrpGroup.Rfc5054_3072);
             var srpContext = SrpContext.FromOptions(srpProfile.Options);
@@ -59,7 +59,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
                 return;
             }
 
-            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, challengeResult.Value.Salt, challengeResult.Value.B, srpContext);
+            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, challengeResult.Value.Salt, challengeResult.Value.B, srpContext, cryptoVersion);
 
             var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(normalizeLogin, A, M1));
 
@@ -96,14 +96,13 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
             var publicInfo = userPublicInfo.Value;
             byte[] salt = Convert.FromBase64String(publicInfo.ClientSalt);
 
-            var (kek, _) = keyDerivationService.DeriveKeysFromPassword(normalizeLogin, AuthPassword, salt, cryptoProfile.KdfOptions);
+            var (kek, _) = keyDerivationService.DeriveKeysFromPassword(normalizeLogin, AuthPassword, salt, cryptoVersion);
 
             byte[]? dek;
 
             try
             {
-                var dekBase64 = cryptoServices.DecryptData<string>(publicInfo.EncryptedDek, kek, cryptoProfile.AesGcmOptions);
-                dek = Convert.FromBase64String(dekBase64!);
+                dek = cryptoServices.DecryptData<byte[]>(publicInfo.EncryptedDek, kek);
             }
             catch (CryptographicException)
             {

@@ -1,7 +1,6 @@
 ﻿using Crossdyne.Toolkit.Results;
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
-using EnigmaVault.Password.Service.Domain.Enums;
 using EnigmaVault.Password.Service.Domain.Models;
 using EnigmaVault.Password.Service.Domain.ValueObjects.Password;
 using EnigmaVault.Password.Service.Domain.ValueObjects.User;
@@ -18,8 +17,13 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.
 
         public async Task<Result<string>> Handle(CreateVaultItemCommand request, CancellationToken cancellationToken)
         {
-            var type = Enum.Parse<VaultType>(request.PasswordType);
-            var vaultItem = VaultItem.Create(UserId.Create(request.UserId), type, IconId.Create(request.IconId), EncryptedData.Create(request.EncryptedOverview), EncryptedData.Create(request.EncryptedDetails));
+            var vaultItem = VaultItem.Create(
+                UserId.Create(request.UserId), 
+                VaultType.Create(request.PasswordType), 
+                IconId.Create(request.IconId), 
+                EncryptedData.Create(request.EncryptedOverview), 
+                EncryptedData.Create(request.EncryptedDetails), 
+                CryptoVersion.Create(request.CryptoVersion));
 
             await _vaultItemRepository.AddAsync(vaultItem, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

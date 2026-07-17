@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Crossdyne.Security.Abstractions;
+using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models.Vaults;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
-using Shared.Contracts.Enums;
 using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
 using System.Windows.Media;

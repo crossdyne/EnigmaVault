@@ -23,8 +23,8 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.
 
             var vault = maybeVault.Value;
 
-            vault.UpdateOverview(EncryptedData.Create(request.EncryptedOverview));
-            vault.UpdateDetails(EncryptedData.Create(request.EncryptedDetails));
+            vault.UpdateOverview(EncryptedData.Create(request.EncryptedOverview), CryptoVersion.Create(request.CryptoVersion));
+            vault.UpdateDetails(EncryptedData.Create(request.EncryptedDetails), CryptoVersion.Create(request.CryptoVersion));
             vault.SetIcon(IconId.Create(request.IconId));
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

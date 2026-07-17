@@ -185,7 +185,7 @@ export class PasswordsPage {
 
                     const vaultItem: VaultItemDisplay = {
                         id: vault.id,
-                        type: vault.type as VaultTypeEnum,
+                        type: Number(vault.type) as VaultTypeEnum,
                         serviceName: overview?.ServiceName!,
                         url: overview?.Url!,
                         dateAdded: vault.dateAdded,
@@ -227,13 +227,18 @@ export class PasswordsPage {
             if (!result) 
                 return;
 
-            const encryptedOVerView = await this.vaultCryptoService.encryptOverview({ 
+            const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({ 
                 ServiceName: result.common.name,
                 Url: result.common.url,
                 Note: result.common.description
             });
 
-            const encryptedDetails = await this.vaultCryptoService.encryptDetails(result.details);
+            const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
+
+            if (overViewCryptoVersion != detailsCryptoVersion)
+                return;
+
+            const cryptoVersion = overViewCryptoVersion;
 
             let iconId: string;
 
@@ -257,10 +262,11 @@ export class PasswordsPage {
             }
 
             const request: CreateVaultItemRequest = {
-                passwordType: result.type,
+                vaultType: result.type,
                 iconId: iconId,
-                encryptedOverview: encryptedOVerView,
-                encryptedDetails: encryptedDetails
+                encryptedOverview: encryptedOverView,
+                encryptedDetails: encryptedDetails,
+                cryptoVersion: cryptoVersion
             };
 
             const resultCreated: Result<string> = await this.vaultService.createAsync(request);
@@ -351,19 +357,25 @@ export class PasswordsPage {
                 return;
 
             if (result.id) {
-                const encryptedOverview = await this.vaultCryptoService.encryptOverview({
+                const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({
                     ServiceName: result.common.name,
                     Url: result.common.url,
                     Note: result.common.description
                 });
 
-                const encryptedDetails = await this.vaultCryptoService.encryptDetails(result.details);
+                const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
+
+                if (overViewCryptoVersion != detailsCryptoVersion)
+                    return;
+
+                const cryptoVersion = overViewCryptoVersion;
 
                 const request: UpdateVaultItemRequest = {
                     vaultItemId: item.id,
                     iconId: item.icon?.id!,
-                    encryptedOverview: encryptedOverview,
-                    encryptedDetails: encryptedDetails
+                    encryptedOverview: encryptedOverView,
+                    encryptedDetails: encryptedDetails,
+                    cryptoVersion: cryptoVersion
                 };
 
                 const resultUpdate = await this.vaultService.updateAsync(request);
