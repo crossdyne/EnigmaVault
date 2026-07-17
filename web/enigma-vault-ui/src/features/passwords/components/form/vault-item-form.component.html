@@ -8,16 +8,16 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-body">
       <div class="form-group">
         <div class="type-record">
-          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.Password" (click)="setActiveTab(VaultTypeEnum.Password)">
+          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Password" (click)="setActiveTab(VaultTypeEnum.Password)">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-keyhole-icon lucide-lock-keyhole"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
           </button>
-          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.Server" (click)="setActiveTab(VaultTypeEnum.Server)">
+          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Server" (click)="setActiveTab(VaultTypeEnum.Server)">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server-icon lucide-server"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
           </button>
-          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.CreditCard" (click)="setActiveTab(VaultTypeEnum.CreditCard)">
+          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.CreditCard" (click)="setActiveTab(VaultTypeEnum.CreditCard)">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
           </button>
-          <button class="side-bar-button" [class.active]="activeTab() === VaultTypeEnum.ApiKey" (click)="setActiveTab(VaultTypeEnum.ApiKey)">
+          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.ApiKey" (click)="setActiveTab(VaultTypeEnum.ApiKey)">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round-icon lucide-key-round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
           </button>
         </div>
