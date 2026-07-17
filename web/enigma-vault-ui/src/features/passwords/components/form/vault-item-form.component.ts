@@ -97,7 +97,7 @@ export class VaultItemFormComponent {
                         patch['password'] = d['Password'];
                         patch['email'] = d['Email'];
                         patch['phone'] = d['Phone'];
-                        patch['secretWord'] = d['SecredWord']; 
+                        patch['secretWord'] = d['SecretWord']; 
                         patch['recoveryKey'] = d['RecoveryKey'];
                         break;
 
@@ -169,7 +169,7 @@ export class VaultItemFormComponent {
                         Password: value.password,
                         Email: value.email,
                         Phone: value.phone,
-                        SecredWord: value.secretWord,
+                        SecretWord: value.secretWord,
                         RecoveryKey: value.recoveryKey
                     }
                 }
