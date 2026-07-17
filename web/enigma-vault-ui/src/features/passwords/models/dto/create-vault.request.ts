@@ -1,6 +1,7 @@
 export interface CreateVaultItemRequest {
-    passwordType: string;
+    vaultType: number;
     iconId: string;
     encryptedOverview: string;
     encryptedDetails: string;
+    cryptoVersion: number;
 }

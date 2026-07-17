@@ -20,7 +20,6 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetBy
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql.Replication;
 using Shared.Contracts.Requests.PasswordService;
 
 namespace EnigmaVault.Password.Service.Api.Controllers
@@ -44,10 +43,11 @@ namespace EnigmaVault.Password.Service.Api.Controllers
 
             var command = new CreateVaultItemCommand(
                      extractResult.Value.UserId,
-                     request.PasswordType,
+                     request.VaultType,
                      Guid.Parse(request.IconId),
                      request.EncryptedOverview,
-                     request.EncryptedDetails);
+                     request.EncryptedDetails,
+                     request.CryptoVersion);
 
             var result = await _mediator.Send(command);
 
@@ -73,7 +73,8 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 Guid.Parse(request.VaultItemId),
                 Guid.Parse(request.IconId),
                 request.EncryptedOverview,
-                request.EncryptedDetails);
+                request.EncryptedDetails,
+                request.CryptoVersion);
 
             var result = await _mediator.Send(command);
 

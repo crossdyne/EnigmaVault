@@ -3,6 +3,7 @@ using System;
 using EnigmaVault.Password.Service.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EnigmaContext))]
-    partial class EnigmaContextModelSnapshot : ModelSnapshot
+    [Migration("20260717092214_AddVersioningAlghoritm")]
+    partial class AddVersioningAlghoritm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

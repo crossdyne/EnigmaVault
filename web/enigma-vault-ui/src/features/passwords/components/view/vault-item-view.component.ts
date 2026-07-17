@@ -18,10 +18,10 @@ export class VaultItemViewComponent {
     private dialogRef = inject(DialogRef);
 
     vaultTypeEnToRu: Record<VaultTypeEnum, string> = {
-        Password: "Пароль",
-        CreditCard: "Кредитная карта",
-        Server: "Доступ к серверу",
-        ApiKey: "Апи ключ"
+        1: "Пароль",
+        2: "Кредитная карта",
+        3: "Доступ к серверу",
+        4: "Апи ключ"
     } 
 
     data = inject(DIALOG_DATA) as VaultItemView;

@@ -23,7 +23,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
                 .Select(x => new
                 {
                     x.Id,
-                    x.PasswordType,
+                    x.VaultType,
                     x.DateAdded,
                     x.DateUpdated,
                     x.DeletedAt,
@@ -39,7 +39,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
 
             var response = vaultItems.Select(x => new EncryptedVaultResponse(
                 x.Id.ToString(),
-                x.PasswordType.ToString(),
+                x.VaultType.ToString(),
                 x.DateAdded,
                 x.DateUpdated,
                 x.DeletedAt,

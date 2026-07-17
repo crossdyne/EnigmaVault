@@ -1,4 +1,4 @@
 ﻿namespace Shared.Contracts.Requests.PasswordService
 {
-    public sealed record CreateVaultItemRequest(string PasswordType, string IconId, string EncryptedOverview, string EncryptedDetails);
+    public sealed record CreateVaultItemRequest(int VaultType, string IconId, string EncryptedOverview, string EncryptedDetails, int CryptoVersion);
 }

@@ -29,10 +29,9 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Configurations
                     value => UserId.Create(value))
                 .IsRequired();
 
-            builder.Property(vi => vi.PasswordType)
-                .HasColumnName("PasswordType")
-                .HasConversion<string>()
-                .HasMaxLength(100)
+            builder.Property(vi => vi.VaultType)
+                .HasColumnName("VaultType")
+                .HasConversion(vaultType => vaultType.Value, db => VaultType.Create(db))
                 .IsRequired();
 
             builder.Property(vi => vi.EncryptedOverview)
@@ -43,6 +42,11 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Configurations
             builder.Property(vi => vi.EncryptedDetails)
                 .HasColumnName("EncryptedDetails")
                 .HasConversion(eo => eo.Value, db => EncryptedData.Create(db))
+                .IsRequired();
+
+            builder.Property(vi => vi.CryptoVersion)
+                .HasColumnName("crypto_version")
+                .HasConversion(cryptoVersion => cryptoVersion.Value, db => CryptoVersion.Create(db))
                 .IsRequired();
 
             builder.Property(vi => vi.IsFavorite)

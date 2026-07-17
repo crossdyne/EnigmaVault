@@ -1,6 +1,6 @@
 export enum VaultTypeEnum {
-    Password = 'Password',
-    CreditCard = 'CreditCard',
-    Server = 'Server',
-    ApiKey = 'ApiKey',
+    Password = 1,
+    CreditCard = 2,
+    Server = 3,
+    ApiKey = 4,
 }

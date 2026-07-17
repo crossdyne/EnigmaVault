@@ -18,7 +18,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
 
             return new EncryptedVaultResponse(
                 vault.Id.ToString(), 
-                vault.PasswordType.ToString(), 
+                vault.VaultType.ToString(), 
                 vault.DateAdded, 
                 vault.DateUpdated, 
                 vault.DeletedAt, 

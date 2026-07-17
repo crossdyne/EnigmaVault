@@ -21,7 +21,7 @@ export class VaultCryptoService {
     }
 
     async decryptDetails(type: VaultTypeEnum, encrypted: string) : Promise<StandardPassword | CreditCard | Server | ApiKey | null> {
-        switch (type) {
+        switch (type as number) {
             case VaultTypeEnum.Password:
                 return await this.crypto.decryptData<StandardPassword>(encrypted, this.state.dek!);
             case VaultTypeEnum.CreditCard:
@@ -35,11 +35,17 @@ export class VaultCryptoService {
         }
     }
     
-    async encryptOverview(payload: OverviewPayload): Promise<string> {
-        return await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION);
+    async encryptOverview(payload: OverviewPayload): Promise<{ encryptedOverView: string, cryptoVersion: number }> {
+        return {
+            encryptedOverView: await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION),
+            cryptoVersion: CryptoConstants.ACTUAL_CRYPTO_VERSION
+        };
     }
 
-    async encryptDetails(payload: any): Promise<string> {
-        return await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION);
+    async encryptDetails(payload: any): Promise<{ encryptedDetails: string, cryptoVersion: number }> {
+        return {
+            encryptedDetails: await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION),
+            cryptoVersion: CryptoConstants.ACTUAL_CRYPTO_VERSION
+        };
     }
 }

@@ -11,7 +11,7 @@ namespace EnigmaVault.Password.Service.Application.Mappers.Profiles
             CreateMap<VaultItem, EncryptedVaultResponse>()
              .ConstructUsing(src => new EncryptedVaultResponse(
                  src.Id.ToString(),
-                 src.PasswordType.ToString(),                                    
+                 src.VaultType.ToString(),                                    
                  src.DateAdded,
                  src.DateUpdated,                                
                  src.DeletedAt,

@@ -1,6 +1,6 @@
 export interface EncryptedVaultResponse {
     id: string; 
-    type: string;
+    type: number;
     dateAdded: Date;
     dateUpdate: Date | null;
     deletedAt: Date | null;

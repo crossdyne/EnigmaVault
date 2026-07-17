@@ -3,4 +3,5 @@ export interface UpdateVaultItemRequest {
     iconId: string; 
     encryptedOverview: string;
     encryptedDetails: string;
+    cryptoVersion: number;
 }
