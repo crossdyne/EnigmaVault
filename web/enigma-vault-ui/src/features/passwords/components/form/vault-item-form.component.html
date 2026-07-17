@@ -1,7 +1,7 @@
 <div class="modal-overlay">
   <div class="modal-container" role="dialog" aria-modal="true">
     <div class="modal-header">
-      <h2>{{ isEdit() ? 'Редактирование' : 'Создание' }}</h2>
+      <h2>{{ fullTitle() }}</h2>
       <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
     </div>
 

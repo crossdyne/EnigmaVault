@@ -1,6 +1,6 @@
 import { DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { VaultItemFormData } from "../../models/modal/vault-item-form.data";
 import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
@@ -62,7 +62,17 @@ export class VaultItemFormComponent {
 
     VaultTypeEnum = VaultTypeEnum;
 
+    vaultTypeEnToRu: Record<VaultTypeEnum, string> = {
+        1: "Пароля",
+        2: "Кредитной карты",
+        3: "Доступа к серверу",
+        4: "Апи ключа"
+    } 
+
     activeTab = signal<VaultTypeEnum>(VaultTypeEnum.Password);
+    title = computed(() => this.vaultTypeEnToRu[this.activeTab()]);
+    fullTitle = computed(() => `${this.isEdit() ? 'Редактирование' : 'Создание'} ${this.title()}`);
+
     readonly isEdit = signal(false);
     readonly vault = signal<VaultItemDisplay | null>(null);
 
