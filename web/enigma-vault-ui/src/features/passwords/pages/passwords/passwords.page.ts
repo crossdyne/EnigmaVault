@@ -202,12 +202,16 @@ export class PasswordsPage {
                     }
 
                     vaultItems.push(vaultItem);
-                    console.log(overview?.ServiceName);
                 }
                 this.vaults.set(vaultItems);
             },
             async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
         );
+    }
+
+    async reloadVaults() {
+        this.vaults.set([]);
+        await this.getVaults();
     }
 
     openAddVaultItem() {

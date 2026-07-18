@@ -884,6 +884,23 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
+        // ==============TopMenu====================
+
+        #region Команда [ReloadVaultsCommand]: Отвечает за повторную загрузку списка с паролями
+
+        [RelayCommand]
+        private async Task ReloadVaults()
+        {
+            Passwords.Clear();
+            await GetEncryptedOverview();
+            SelectedEncryptedOverview = null;
+            SetRightSideMenuAction(ActionOnData.Create);
+            SelectedPasswordType = PasswordTypes.FirstOrDefault(pt => pt.Key == VaultType.Password);
+            CreateViewModelForType(VaultType.Password, null!);
+        } 
+
+        #endregion
+
         // ====================================================================================
         //                                      МЕТОДЫ                                        
         // ====================================================================================
