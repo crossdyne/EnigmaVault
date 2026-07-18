@@ -561,10 +561,6 @@ export class PasswordsPage {
         );
     }
 
-    onCopyVault(vault: VaultItemDisplay) {
-        
-    }
-
     async onChangeFavorite(vault: VaultItemDisplay) {
         if (vault.isFavorite){
             vault.isFavorite = false;

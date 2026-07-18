@@ -1,0 +1,32 @@
+.copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0px solid;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.copy-btn:hover:not(:disabled) {
+    background: #f3f4f66e;
+    color: #111827;
+    border-color: #9ca3af;
+}
+
+.copy-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.copy-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.success-icon {
+    color: #16a34a;
+}
