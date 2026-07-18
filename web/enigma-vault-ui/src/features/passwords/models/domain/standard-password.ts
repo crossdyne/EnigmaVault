@@ -3,6 +3,6 @@ export interface StandardPassword {
     Password?: string;
     Email?: string;
     Phone?: string;
-    SecredWord?: string;
+    SecretWord?: string;
     RecoveryKey?: string;
 }

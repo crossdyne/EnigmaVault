@@ -200,20 +200,20 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 if (value.Tags.Contains(tag))
                     tag.AttachedTag();
                 else
-                    tag.DetatchedTag();
+                    tag.DetachedTag();
             }
         }
 
         #endregion
 
-        #region Свойсто: [SelectedArchivedEncryptedOverview] - Выбор зашифрованного элемента в архиве
+        #region Свойств: [SelectedArchivedEncryptedOverview] - Выбор зашифрованного элемента в архиве
 
         [ObservableProperty]
         private CredentialsVaultViewModel? _selectedArchivedEncryptedOverview;
 
         #endregion
 
-        #region Свойсто: [SelectedTrashEncryptedOverview] - Выбор зашифрованного элемента в корзине
+        #region Свойство: [SelectedTrashEncryptedOverview] - Выбор зашифрованного элемента в корзине
 
         [ObservableProperty]
         private CredentialsVaultViewModel? _selectedTrashEncryptedOverview;
@@ -233,7 +233,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Свойсто: [SelectedPasswordViewModel]
+        #region Свойство: [SelectedPasswordViewModel]
 
         [ObservableProperty]
         private CredentialItemBaseViewModel? _selectedCredentialItemBaseViewModel;
@@ -245,7 +245,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Свойство: [SelectedGrouping] - Выбор группровки списка паролей
+        #region Свойство: [SelectedGrouping] - Выбор группировки списка паролей
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SetGroupingPasswordsCommand))]
@@ -404,14 +404,14 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             SetReadOnly(value);
 
             if (value == ActionOnData.Create || value == ActionOnData.Update)
-                SelectedIcon = Icons.FirstOrDefault(i => i.Key == SelectedEncryptedOverview?.SvgCode);
+                SelectedIcon = Icons.FirstOrDefault(i => i.Id == SelectedEncryptedOverview?.IconId);
             else
                 SelectedIcon = null;
         }
 
         #endregion
 
-        #region Свойство: [CurrentTemplateTypePasswords] - Текущий отображаемый темплей у списка с паролями.
+        #region Свойство: [CurrentTemplateTypePasswords] - Текущий отображаемый темплейт у списка с паролями.
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SetTemplatePasswordsCommand))]
@@ -467,7 +467,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [UpdateVault]: Обноволение записи
+        #region Команда [UpdateVault]: Обновление записи
 
         [RelayCommand(CanExecute = nameof(CanUpdateVault))]
         private async Task UpdateVault()
@@ -493,7 +493,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         /*--Action--*/
 
-        #region Команда [SetFavorite]: Измнение статуса избранного
+        #region Команда [SetFavorite]: Изменение статуса избранного
 
         [RelayCommand(CanExecute = nameof(CanSetFavorite))]
         private async Task SetFavorite(CredentialsVaultViewModel model)
@@ -525,7 +525,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [SetArchive]: Измнение статуса архивации
+        #region Команда [SetArchive]: Изменение статуса архивации
 
         [RelayCommand(CanExecute = nameof(CanSetArchive))]
         private async Task SetArchive(CredentialsVaultViewModel model)
@@ -592,7 +592,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             SelectedEncryptedOverview.AddTag(tag.Id);
 
             if (tag.IsAttached)
-                tag.DetatchedTag();
+                tag.DetachedTag();
             else
                 tag.AttachedTag();
         }
@@ -612,14 +612,14 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             }
 
             SelectedEncryptedOverview.RemoveTag(tag.Id);
-            tag.DetatchedTag();
+            tag.DetachedTag();
         }
 
         #endregion
 
         /*--Trash--*/
 
-        #region Команда [MoveToTrashCommand]: Переносит запись в карзину (Мягкое удаление)
+        #region Команда [MoveToTrashCommand]: Переносит запись в корзину (Мягкое удаление)
 
         [RelayCommand(CanExecute = nameof(CanMoveToTrash))]
         private async Task MoveToTrash(CredentialsVaultViewModel model)
@@ -669,7 +669,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [RestoreAllTrashCommand] : Востановить все записи из корзины
+        #region Команда [RestoreAllTrashCommand] : Восстановить все записи из корзины
 
         [RelayCommand(CanExecute = nameof(CanRestoreAllTrash))]
         private async Task RestoreAllTrash()
@@ -753,7 +753,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        /*--PopupMenagement--*/
+        /*--PopupManagement--*/
 
         #region Команда [SelectAndShowPasswordMenuPopup]: Отвечает за выбор элемента списка паролей при открытие контекстного меню 
 
@@ -866,7 +866,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         // ==============SideMenu====================
 
-        #region Команда [SetLeftSideMenuControlCommand]: Отвечает за выбор текущего оборажаемого контрола на левой боковой понели
+        #region Команда [SetLeftSideMenuControlCommand]: Отвечает за выбор текущего отображаемого контрола на левой боковой панели
 
         [RelayCommand(CanExecute = nameof(CanSetLeftSideMenuControl))]
         private void SetLeftSideMenuControl(UserControlsName controlName) => CurrentDisplayUserControlLeftSideMenu = controlName;
@@ -875,12 +875,29 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [SetRightSideMenuActionCommand]: Отвечает за выбор текущего действия на правой боковой понели
+        #region Команда [SetRightSideMenuActionCommand]: Отвечает за выбор текущего действия на правой боковой панели
 
         [RelayCommand(CanExecute = nameof(CanSetRightSideMenuAction))]
         private void SetRightSideMenuAction(ActionOnData action) => CurrentActionRightSideMenu = action;
 
         private bool CanSetRightSideMenuAction(ActionOnData action) => CurrentActionRightSideMenu != action;
+
+        #endregion
+
+        // ==============TopMenu====================
+
+        #region Команда [ReloadVaultsCommand]: Отвечает за повторную загрузку списка с паролями
+
+        [RelayCommand]
+        private async Task ReloadVaults()
+        {
+            Passwords.Clear();
+            await GetEncryptedOverview();
+            SelectedEncryptedOverview = null;
+            SetRightSideMenuAction(ActionOnData.Create);
+            SelectedPasswordType = PasswordTypes.FirstOrDefault(pt => pt.Key == VaultType.Password);
+            CreateViewModelForType(VaultType.Password, null!);
+        } 
 
         #endregion
 
@@ -1051,7 +1068,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Взоимодейсвтие с ICollectionView
+        #region Взаимодействие с ICollectionView
 
         private void UpdateGroupingPassword()
         {

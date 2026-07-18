@@ -74,9 +74,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
         private string? _url;
 
         [ObservableProperty]
-        private string _svgCode = null!;
-
-        [ObservableProperty]
         private DrawingImage? _icon;
 
         [ObservableProperty]
@@ -171,7 +168,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
                 {
                     ServiceName = overview.ServiceName;
                     Url = overview.Url;
-                    SvgCode = overview.SvgIcon!;
                 }
             }
             catch

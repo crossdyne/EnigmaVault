@@ -1,5 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { CryptoProfile, CryptoProfileRegistry, CryptoService, CryptoVersion, KeyDerivationService, SecurityUtils } from "@crossdyne/security";
+import { CryptoService, CryptoVersion, KeyDerivationService, SecurityUtils } from "@crossdyne/security";
 import { CryptoHttpService } from "../../../../core/services/crypto-http.service";
 import { Result } from "@crossdyne/toolkit";
 import { DekResponse } from "../../../../core/contracts/crypto/dek.response";

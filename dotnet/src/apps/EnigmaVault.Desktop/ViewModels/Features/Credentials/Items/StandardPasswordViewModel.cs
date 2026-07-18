@@ -76,7 +76,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             Password = details?.Password;
             Email = details?.Email;
             Phone = details?.Phone;
-            SecretWord = details?.SecredWord;
+            SecretWord = details?.SecretWord;
             RecoveryKey = details?.RecoveryKey;
         }
 

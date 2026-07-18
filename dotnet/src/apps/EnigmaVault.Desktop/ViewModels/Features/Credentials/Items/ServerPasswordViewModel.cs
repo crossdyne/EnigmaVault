@@ -57,11 +57,13 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             SvgCode = overview?.SvgIcon;
 
             IpAddress = details.IpAddress;
-            Port = int.Parse(details.Port!);
             Domain = details.Domain;
             Login = details.Login;
             RootPassword = details.RootPassword;
             SshKey = details.SshKey;
+
+            if (int.TryParse(details?.Port, out int port))
+                Port = port;
         }
 
         public override (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) Encrypt(ICryptoServices secureData, IUserContext context)

@@ -1357,6 +1357,24 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="Reload" TargetType="Control">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="24" Height="24">
+                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                      StrokeThickness="2"
+                      StrokeLineJoin="Round"
+                      Data="
+                      M 3,12 
+                      A 9,9 0 1,0 12,3 
+                      A 9.75,9.75 0 0,0 5.26,5.74 
+                      L 3,8 
+                      M 3,3 
+                      v 5 
+                      h 5" />
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
     <!-- ╔═════════════════════════════════════════════════════════════════════════════╗ -->
     <!-- ║                              Управление окном                               ║ -->
     <!-- ╚═════════════════════════════════════════════════════════════════════════════╝ -->

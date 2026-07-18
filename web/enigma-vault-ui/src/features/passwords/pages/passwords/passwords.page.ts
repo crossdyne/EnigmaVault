@@ -202,12 +202,16 @@ export class PasswordsPage {
                     }
 
                     vaultItems.push(vaultItem);
-                    console.log(overview?.ServiceName);
                 }
                 this.vaults.set(vaultItems);
             },
             async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
         );
+    }
+
+    async reloadVaults() {
+        this.vaults.set([]);
+        await this.getVaults();
     }
 
     openAddVaultItem() {
@@ -262,7 +266,7 @@ export class PasswordsPage {
             }
 
             const request: CreateVaultItemRequest = {
-                vaultType: result.type,
+                vaultType: result.type as number,
                 iconId: iconId,
                 encryptedOverview: encryptedOverView,
                 encryptedDetails: encryptedDetails,
@@ -289,7 +293,7 @@ export class PasswordsPage {
                                 id: vault.id,
                                 serviceName: decryptedOverView?.ServiceName!,
                                 url: decryptedOverView?.Url!,
-                                type: vault.type as VaultTypeEnum,
+                                type: Number(vault.type) as VaultTypeEnum,
                                 dateAdded: vault.dateAdded,
                                 dateUpdate: vault.dateUpdate,
                                 deletedAt: vault.deletedAt,
