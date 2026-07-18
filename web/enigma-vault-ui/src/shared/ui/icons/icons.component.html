@@ -7,12 +7,24 @@
 </ng-template>
 
 <div class="assets-container">
-    @for (icon of icons(); track icon.assetId) {
-        <div 
-            class="svg-card-container"
-            [cdkContextMenuTriggerFor]="assetMenu"
-            [cdkContextMenuTriggerData]="{asset: icon}">
-            <img [src]="icon.url" [alt]="icon.assetName">
+    @for (group of groupedIcons(); track group.title) {
+        <div class="icon-group">
+            <h3 class="group-title">{{ group.title }}</h3>
+            
+            <div class="group-items">
+                @for (icon of group.icons; track icon.assetId) {
+                    <div 
+                        class="svg-card-container"
+                        [cdkContextMenuTriggerFor]="assetMenu"
+                        [cdkContextMenuTriggerData]="{asset: icon}"
+                        [appTooltip]="icon.assetName">
+                        <img [src]="icon.url" [alt]="icon.assetName">
+                        <!-- <span class="name">{{ icon.assetName }}</span> -->
+                    </div>
+                }
+            </div>
         </div>
+    } @empty {
+        <div class="empty-state">Нет доступных иконок</div>
     }
 </div>
