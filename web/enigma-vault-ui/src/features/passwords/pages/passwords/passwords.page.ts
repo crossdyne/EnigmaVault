@@ -8,7 +8,6 @@ import { CreateTagRequest } from "../../models/dto/create-tag.request";
 import { UpdateTagRequest } from "../../models/dto/update-tag.request";
 import { IconCategoryResponse } from "../../models/dto/icon-category.response";
 import { IconCategoryService } from "../../services/icon-category.service";
-import { ComboboxComponent } from "../../../../shared/ui/combobox/combobox.component";
 import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { AssetUrlResponse } from "../../models/dto/asset-urls.response";
 import { AssetService } from "../../services/asset.service";
@@ -44,7 +43,6 @@ import { TooltipDirective } from "../../../../shared/directives/tooltip.directiv
     imports: [
         TagsListComponent, 
         ItemInputActionsComponent, 
-        ComboboxComponent, 
         IconsComponent,
         TooltipDirective,
         OverlayModule,
@@ -559,10 +557,6 @@ export class PasswordsPage {
             () => this.vaults.update(vaults => vaults.filter(v => !v.isInTrash)),
             errors => console.error(this.mapErrors(errors))
         );
-    }
-
-    onCopyVault(vault: VaultItemDisplay) {
-        
     }
 
     async onChangeFavorite(vault: VaultItemDisplay) {

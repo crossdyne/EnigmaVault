@@ -5,9 +5,10 @@ COPY ["dotnet/Directory.Packages.props", "./"]
 
 COPY ["dotnet/src/apps/EnigmaVault.Web.Bff/EnigmaVault.Web.Bff.csproj", "dotnet/src/apps/EnigmaVault.Web.Bff/"]
 
-COPY ["dotnet/src/clients/EnigmaVault.Authentication.ApiClient/EnigmaVault.Authentication.ApiClient.csproj", "dotnet/src/clients/EnigmaVault.Authentication.ApiClient/"]
+COPY ["dotnet/src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj", "dotnet/src/clients/EnigmaVault.Authentication.Client/"]
 COPY ["dotnet/src/shared/contracts/Shared.Contracts/Shared.Contracts.csproj", "dotnet/src/shared/contracts/Shared.Contracts/"]
 COPY ["dotnet/src/shared/infrastructure/Shared.Redis/Shared.Redis.csproj", "dotnet/src/shared/infrastructure/Shared.Redis/"]
+COPY ["dotnet/src/shared/observability/Shared.Logging/Shared.Logging.csproj", "dotnet/src/shared/observability/Shared.Logging/"]
 
 RUN dotnet restore "dotnet/src/apps/EnigmaVault.Web.Bff/EnigmaVault.Web.Bff.csproj"
 

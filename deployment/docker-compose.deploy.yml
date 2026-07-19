@@ -1,5 +1,4 @@
 services:
-
   enigma-vault-bff:
     image: enigma-vault/bff:latest
     container_name: enigma-vault-bff
@@ -7,11 +6,13 @@ services:
       - "7007:80" 
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=80
       - Redis__ConnectionString=
-      - Urls__AuthService=
-      - Urls__UserManagementService=
-      - Urls__PasswordService=
-      - Urls__AssetsService=
+      - Urls__AuthService=http://nexus-auth-api:80
+      - Urls__UserManagementService=http://nexus-user-management-api:80
+      - Urls__PasswordService=http://enigma-vault-password-api:80
+      - Urls__AssetsService=http://glyph-assets-api:80
+      - Urls__FileService=http://flex-io:4000
     restart: unless-stopped
     volumes:
       - ./logs/bff:/logs
@@ -25,6 +26,7 @@ services:
       - "7008:80" 
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=80
       - ConnectionStrings__DefaultConnection= <<Postgres_Sql>>
       - JwtSettings__Secret=
       - JwtSettings__Issuer=

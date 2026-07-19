@@ -1,11 +1,16 @@
 using System.Reflection;
 using EnigmaVault.Web.Bff.Extensions;
+using Serilog;
+using Shared.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Assembly? assembly = Assembly.GetExecutingAssembly();
 IConfiguration configuration = builder.Configuration;
 IWebHostEnvironment environment = builder.Environment; 
+
+builder.Logging.ClearProviders();
+builder.Host.AddSerilogLogger(); 
 
 builder.Services
     //Default
@@ -30,6 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseSerilogRequestLogging();
 app.UseCors("AllowTrustedFrontend");
 app.UseAuthentication(); 
 app.UseAuthorization();  

@@ -102,18 +102,26 @@ $shadow-card: #061b33;
 
 .display-value {
     width: 100%;
-    padding: 0.625rem 0.875rem;
+    padding: 0.425rem 0.675rem;
     background: #111827;
     border: 1px solid $border-background-color;
     border-radius: 8px;
     font-size: 0.875rem;
+    font-size: 16px;
     box-sizing: border-box;
     color: #e2e8f0;
     line-height: 1.4;
     word-break: break-word;
-    min-height: 38px; // совпадает с высотой input
+    min-height: 38px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+
+    .display-text {
+        flex: 1;
+        word-break: break-word;
+        white-space: pre-wrap; 
+    }
 
     &--multiline {
         display: block;

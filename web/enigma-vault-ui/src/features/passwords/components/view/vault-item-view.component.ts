@@ -7,12 +7,16 @@ import { StandardPassword } from "../../models/domain/standard-password";
 import { ApiKey } from "../../models/domain/api-key";
 import { Server } from "../../models/domain/server";
 import { CreditCard } from "../../models/domain/credit-card";
+import { CopyButton } from "../../../../shared/ui/copy-button/copy-button";
 
 @Component({
     selector: 'vault-item-view',
     templateUrl: './vault-item-view.component.html',
     styleUrls: ['./vault-item-view.component.scss'],
-    standalone: true
+    standalone: true,
+    imports: [
+        CopyButton
+    ]
 })
 export class VaultItemViewComponent {
     private dialogRef = inject(DialogRef);
