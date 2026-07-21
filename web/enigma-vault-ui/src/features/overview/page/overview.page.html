@@ -1,16 +1,38 @@
 <div class="overview-container">
+    <style>
+        .disabled {
+            opacity: 0.85;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(0.6);
+            user-select: none;
+            transition: opacity 0.2s ease, filter 0.2s ease;
+        }
+        button.disabled,
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(0.6);
+            transition: opacity 0.2s ease, filter 0.2s ease;
+        }
+        
+        .disabled button,
+        button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+    </style>
+
     <div class="project-hello">
-        <!-- <svg class="svg-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
-            <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
-            <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
-            <path d="M2 12a10 10 0 0 1 18-6"/>
-            <path d="M2 16h.01"/>
-            <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
-            <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
-            <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
-            <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
-        </svg> -->
         <svg class="svg-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
             <path d="m9 12 2 2 4-4"/>
@@ -30,7 +52,7 @@
                 </svg>
                 <span>Пароли</span>
             </button>
-            <button class="notes">
+            <button class="notes disabled" disabled>
                 <svg class="svg-notes" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
                     <path d="M8 11h8"/>
@@ -38,7 +60,7 @@
                 </svg>
                 <span>Заметки</span>
             </button>
-            <button class="files">
+            <button class="files disabled" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
                 </svg>
@@ -123,7 +145,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-element">
+            <div class="card-element disabled">
                 <div class="header">
                     <svg class="svg-notes" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
@@ -176,7 +198,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-element">
+            <div class="card-element disabled">
                 <div class="header">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
