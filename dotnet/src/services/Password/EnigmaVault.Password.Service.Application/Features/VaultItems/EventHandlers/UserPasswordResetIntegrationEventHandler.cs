@@ -16,7 +16,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.EventHand
         {
             logger.LogInformation("Получение событие сброса пароля для UserId: {UserId}", @event.UserId);
 
-            int countEntitiesDeleted = await repository.RemoveAllAsync(UserId.Create(Guid.Parse(@event.UserId)), @event.OccurredAtUtc);
+            int countEntitiesDeleted = await repository.RemoveAllAsync(UserId.Create(@event.UserId), @event.OccurredOnUtc);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
