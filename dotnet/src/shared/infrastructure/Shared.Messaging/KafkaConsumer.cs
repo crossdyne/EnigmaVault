@@ -61,6 +61,7 @@ namespace Shared.Messaging
                         }
 
                         await ProcessEventAsync(integrationEvent, stoppingToken);
+                        consumer.Commit(consumeResult);
                     }
                     catch (OperationCanceledException)
                     {
