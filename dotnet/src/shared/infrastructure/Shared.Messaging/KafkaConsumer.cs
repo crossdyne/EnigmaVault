@@ -14,6 +14,13 @@ namespace Shared.Messaging
         IServiceProvider serviceProvider,
         ILogger<KafkaConsumer<TEvent>> logger) : BackgroundService where TEvent : class, IIntegrationEvent
     {
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = false
+        };
+
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
             => Task.Run(() => RunConsumerLoop(stoppingToken), stoppingToken);
 
@@ -38,7 +45,7 @@ namespace Shared.Messaging
                         TEvent? integrationEvent;
                         try
                         {
-                            integrationEvent = JsonSerializer.Deserialize<TEvent>(consumeResult.Message.Value);
+                            integrationEvent = JsonSerializer.Deserialize<TEvent>(consumeResult.Message.Value, JsonOptions);
                         }
                         catch (JsonException ex)
                         {
