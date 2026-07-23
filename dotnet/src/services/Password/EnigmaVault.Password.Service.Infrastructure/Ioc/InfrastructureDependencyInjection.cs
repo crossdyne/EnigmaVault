@@ -1,12 +1,14 @@
 ﻿using Confluent.Kafka;
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
+using EnigmaVault.Password.Service.Application.Features.Account.EventHandlers;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.EventHandlers;
 using EnigmaVault.Password.Service.Infrastructure.Persistence.Contexts;
 using EnigmaVault.Password.Service.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using Shared.Contracts.Messaging.Events;
 using Shared.Contracts.Messaging.Interfaces;
 
@@ -28,7 +30,9 @@ namespace EnigmaVault.Password.Service.Infrastructure.Ioc
 
             services.Configure<ConsumerConfig>(configuration.GetSection("Kafka:Consumer"));
             services.AddScoped<IIntegrationEventHandler<UserPasswordResetIntegrationEvent>, UserPasswordResetIntegrationEventHandler>();
+            services.AddScoped<IIntegrationEventHandler<UserAccountDeletedIntegrationEvent>, UserAccountDeletedIntegrationEventHandler>();
             services.AddKafkaConsumer<UserPasswordResetIntegrationEvent>("user-management.user.password-reset");
+            services.AddKafkaConsumer<UserAccountDeletedIntegrationEvent>("user-management.user.account-delete");
 
             return services;
         }

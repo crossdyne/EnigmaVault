@@ -9,6 +9,6 @@ namespace EnigmaVault.Password.Service.Application.Common.Repositories
         Task AddAsync(VaultItem vaultItem, CancellationToken clt);
         Task<Maybe<VaultItem>> GetAsync(Guid id, Guid UserId, CancellationToken clt);
         void Remove(VaultItem vaultItem);
-        Task<int> RemoveAllAsync(UserId userId, DateTime eventTimeUtc);
+        Task<int> RemoveAllAsync(UserId userId, DateTime? eventTimeUtc);
     }
 }

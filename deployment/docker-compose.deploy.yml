@@ -31,6 +31,11 @@ services:
       - JwtSettings__Secret=
       - JwtSettings__Issuer=
       - JwtSettings__Audience=
+      - Kafka__Consumer__BootstrapServers=
+      - Kafka__Consumer__GroupId=enigma-vault-password-service-consumer-group
+      - Kafka__Consumer__AutoOffsetReset=Latest
+      - Kafka__Consumer__EnableAutoCommit=false
+      - Kafka__Consumer__EnablePartitionEof=false
     restart: unless-stopped
     volumes:
       - ./logs/password:/logs

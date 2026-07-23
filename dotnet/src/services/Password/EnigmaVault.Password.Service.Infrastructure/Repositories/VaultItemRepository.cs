@@ -18,9 +18,14 @@ namespace EnigmaVault.Password.Service.Infrastructure.Repositories
         public async Task<Maybe<VaultItem>> GetAsync(Guid id, Guid UserId, CancellationToken clt)
             => await _context.Set<VaultItem>().FirstOrDefaultAsync(v => v.Id == id && v.UserId == UserId, clt);
 
-        public async Task<int> RemoveAllAsync(UserId userId, DateTime eventTimeUtc)
+        public async Task<int> RemoveAllAsync(UserId userId, DateTime? eventTimeUtc)
         {
-            List<VaultItem> vaultItems = await _context.Set<VaultItem>().Where(vi => vi.UserId == userId && vi.DateAdded < eventTimeUtc).ToListAsync();
+            IQueryable<VaultItem> query = _context.Set<VaultItem>().Where(vi => vi.UserId == userId);
+
+            if (eventTimeUtc is not null)
+                query = query.Where(vi => vi.DateAdded < eventTimeUtc);
+
+            List<VaultItem> vaultItems = await query.ToListAsync();
             _context.Set<VaultItem>().RemoveRange(vaultItems);
 
             return vaultItems.Count;
