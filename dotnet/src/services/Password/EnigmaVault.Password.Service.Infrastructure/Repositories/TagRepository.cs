@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Domain.Models;
+using EnigmaVault.Password.Service.Domain.ValueObjects.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace EnigmaVault.Password.Service.Infrastructure.Repositories
@@ -16,5 +17,13 @@ namespace EnigmaVault.Password.Service.Infrastructure.Repositories
 
         public async Task<Maybe<Tag>> GetAsync(Guid id, Guid UserId, CancellationToken token = default)
             => await _context.Set<Tag>().FirstOrDefaultAsync(ic => ic.Id == id && ic.UserId == UserId, token);
+
+        public async Task<int> RemoveAllAsync(UserId userId)
+        {
+            List<Tag> tags = await _context.Set<Tag>().Where(t => t.UserId == userId).ToListAsync();
+            _context.Set<Tag>().RemoveRange(tags);
+
+            return tags.Count;
+        }
     }
 }

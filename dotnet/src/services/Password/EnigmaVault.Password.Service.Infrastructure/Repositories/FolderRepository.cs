@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Domain.Models;
+using EnigmaVault.Password.Service.Domain.ValueObjects.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace EnigmaVault.Password.Service.Infrastructure.Repositories
@@ -19,5 +20,13 @@ namespace EnigmaVault.Password.Service.Infrastructure.Repositories
 
         public async Task<bool> Exist(string name, Guid userId, Guid? parentFolderId, CancellationToken token)
             => await _context.Set<Folder>().AnyAsync(f =>f.UserId == userId && f.ParentFolderId == parentFolderId && f.FolderName == name, token);
+
+        public async Task<int> RemoveAllAsync(UserId userId)
+        {
+            List<Folder> folders = await _context.Set<Folder>().Where(f => f.UserId == userId).ToListAsync();
+            _context.Set<Folder>().RemoveRange(folders);
+
+            return folders.Count;
+        }
     }
 }
