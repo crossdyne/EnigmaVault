@@ -36,6 +36,7 @@ services:
       - Kafka__Consumer__AutoOffsetReset=Latest
       - Kafka__Consumer__EnableAutoCommit=false
       - Kafka__Consumer__EnablePartitionEof=false
+      - AutoMapper__AutoMapperKey=
     restart: unless-stopped
     volumes:
       - ./logs/password:/logs
