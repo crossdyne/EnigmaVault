@@ -8,6 +8,7 @@ COPY ["dotnet/src/services/Password/EnigmaVault.Password.Service.Application/Eni
 COPY ["dotnet/src/services/Password/EnigmaVault.Password.Service.Infrastructure/EnigmaVault.Password.Service.Infrastructure.csproj", "dotnet/src/services/Password/EnigmaVault.Password.Service.Infrastructure/"]
 COPY ["dotnet/src/services/Password/EnigmaVault.Password.Service.Domain/EnigmaVault.Password.Service.Domain.csproj", "dotnet/src/services/Password/EnigmaVault.Password.Service.Domain/"]
 
+COPY ["dotnet/src/shared/infrastructure/Shared.Messaging/Shared.Messaging.csproj", "dotnet/src/shared/infrastructure/Shared.Messaging/"]
 COPY ["dotnet/src/shared/contracts/Shared.Contracts/Shared.Contracts.csproj", "dotnet/src/shared/contracts/Shared.Contracts/"]
 COPY ["dotnet/src/shared/core/Shared.Application/Shared.Application.csproj", "dotnet/src/shared/core/Shared.Application/"]
 COPY ["dotnet/src/shared/core/Shared.Kernel/Shared.Kernel.csproj", "dotnet/src/shared/core/Shared.Kernel/"]
