@@ -104,6 +104,7 @@ export class PasswordsPage {
 
     activeTab = signal<'tags' | 'icons'>('tags');
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
+    activePopup = signal<'trash' | 'archive' | null>(null);
 
     //#region Vaults
 
@@ -117,39 +118,35 @@ export class PasswordsPage {
     // Popups
     popupArchivePositions: ConnectedPosition[] = [
         {
-            originX: 'end',
-            originY: 'center',
-            overlayX: 'start', 
-            overlayY: 'center',
-            offsetX: 8, 
-            offsetY: -75
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
         },
         {
-            originX: 'start',
-            originY: 'center',
-            overlayX: 'end',
-            overlayY: 'center',
-            offsetX: -8,
-            offsetY: -75
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
         }
     ];
 
     popupTrashPositions: ConnectedPosition[] = [
         {
-            originX: 'end',
-            originY: 'center',
-            overlayX: 'start',
-            overlayY: 'center',
-            offsetX: 8,
-            offsetY: -22
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
         },
         {
-            originX: 'start',
-            originY: 'center',
-            overlayX: 'end',
-            overlayY: 'center',
-            offsetX: -8,
-            offsetY: -22
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
         }
     ];
 
