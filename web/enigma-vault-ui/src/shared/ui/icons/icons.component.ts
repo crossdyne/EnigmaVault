@@ -1,8 +1,9 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { AssetUrlResponse } from '../../../features/passwords/models/dto/asset-urls.response';
-import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
 import { IconCategoryResponse } from '../../../features/passwords/models/dto/icon-category.response';
 import { TooltipDirective } from '../../directives/tooltip.directive';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeIconData } from './modal/change-icon.data';
 
 @Component({
   selector: 'icons',
@@ -10,21 +11,37 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
   styleUrl: './icons.component.scss',
   standalone: true,
   imports: [
-    TooltipDirective,
-    CdkMenu,
-    CdkMenuItem,
-    CdkContextMenuTrigger
+    TooltipDirective
   ]
 })
 export class IconsComponent {
-  icons = input.required<AssetUrlResponse[]>();
-  categories = input.required<IconCategoryResponse[]>();
+
+  constructor() {
+    effect(() => {
+      const icon = this.selectedIcon();
+
+      if(!icon)
+        return;
+
+      this.dialogRef.close(icon!);
+    });
+  }
+
+  private dialogRef = inject(DialogRef<AssetUrlResponse>);
+  data = inject(DIALOG_DATA) as ChangeIconData;
+
+  serviceName = signal<string>(this.data.serviceName);
+
+  selectedIcon = signal<AssetUrlResponse | null>(null);
+
+  icons = signal<AssetUrlResponse[]>(this.data.icons);
+  categories = signal<IconCategoryResponse[]>(this.data.categories);
   groupedIcons = computed(() =>{
     const icons = this.icons();
     const categories = this.categories();
 
     const categoryMap = new Map<string, string>();
-    for (const cat of categories) {
+    for(const cat of categories) {
       categoryMap.set(cat.categoryId, cat.name);
     }
 
@@ -47,5 +64,11 @@ export class IconsComponent {
       })
   });
 
-  selectedIcon = output<AssetUrlResponse>();
+  navigateToCreateAssets(){
+    window.open('https://assets.crossdyne.com/', '_blank')
+  }
+
+  onCancel() {
+    this.dialogRef.close();
+  }
 }

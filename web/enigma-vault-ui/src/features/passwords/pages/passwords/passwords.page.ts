@@ -2,13 +2,10 @@ import { Component, computed, effect, inject, model, signal, viewChild } from "@
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/dto/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
-import { TagsListComponent } from "../../../../shared/ui/tags/tags-list.component";
-import { ItemInputActionsComponent } from "../../../../shared/ui/item-input-actions/item-input-actions.component";
 import { CreateTagRequest } from "../../models/dto/create-tag.request";
 import { UpdateTagRequest } from "../../models/dto/update-tag.request";
 import { IconCategoryResponse } from "../../models/dto/icon-category.response";
 import { IconCategoryService } from "../../services/icon-category.service";
-import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { AssetUrlResponse } from "../../models/dto/asset-urls.response";
 import { AssetService } from "../../services/asset.service";
 import { EncryptedVaultResponse } from "../../models/dto/encrypted-vault.response";
@@ -34,6 +31,8 @@ import { AttachTagComponent } from "../../components/attach-tag/attach-tag.compo
 import { TagAttachmentData } from "../../models/modal/tag-attachment.data";
 import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
 import { TooltipDirective } from "../../../../shared/directives/tooltip.directive";
+import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
+import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.data";
 
 @Component({
     selector: 'passwords-page',
@@ -41,9 +40,6 @@ import { TooltipDirective } from "../../../../shared/directives/tooltip.directiv
     styleUrls: ['./passwords.page.scss'],
     standalone: true,
     imports: [
-        TagsListComponent, 
-        ItemInputActionsComponent, 
-        IconsComponent,
         TooltipDirective,
         OverlayModule,
         CdkMenu,
@@ -406,24 +402,45 @@ export class PasswordsPage {
         });
     }
 
-    async onUpdateVaultIcon(icon: AssetUrlResponse) {
-        const vault = this.selectedVault();
-
-        if (!vault) {
-            console.warn('Сначала выберите запись в списке слева');
-            return;
-        }
-
-        const result = await this.vaultService.changeIcon(vault.id, icon.assetId);
-
-        result.match(
-            () => {
-                const newIcon: IconUrl = { id: icon.assetId, url: icon.url };
-                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
-                this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
-            },
-            errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
+    async onUpdateVaultIcon() {
+        const dialogRef = this.dialog.open<AssetUrlResponse, ChangeIconData, IconsComponent>(
+            IconsComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    icons: this.icons(),
+                    categories: this.iconCategories(),
+                    serviceName: this.selectedVault()?.serviceName!
+                }
+            }
         );
+
+        dialogRef.closed.subscribe(async selectedIcon => {
+            if (!selectedIcon){
+                console.log('Иконка не была выбрана');
+                return;
+            }
+            
+            const vault = this.selectedVault();
+
+            if (!vault) {
+                console.warn('Сначала выберите запись в списке слева');
+                return;
+            }
+
+            const result = await this.vaultService.changeIcon(vault.id, selectedIcon.assetId);
+
+            result.match(
+                () => {
+                    const newIcon: IconUrl = { id: selectedIcon.assetId, url: selectedIcon.url };
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
+                    this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
+                },
+                errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
+            );
+        });
     }
 
     // Actions
