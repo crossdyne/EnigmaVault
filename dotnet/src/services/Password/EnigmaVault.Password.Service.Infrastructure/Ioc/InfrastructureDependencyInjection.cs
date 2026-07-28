@@ -3,6 +3,7 @@ using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Application.Features.Account.EventHandlers;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.EventHandlers;
+using EnigmaVault.Password.Service.Infrastructure.BackgroundServices;
 using EnigmaVault.Password.Service.Infrastructure.Persistence.Contexts;
 using EnigmaVault.Password.Service.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ namespace EnigmaVault.Password.Service.Infrastructure.Ioc
             services.AddScoped<IIntegrationEventHandler<UserAccountDeletedIntegrationEvent>, UserAccountDeletedIntegrationEventHandler>();
             services.AddKafkaConsumer<UserPasswordResetIntegrationEvent>("user-management.user.password-reset");
             services.AddKafkaConsumer<UserAccountDeletedIntegrationEvent>("user-management.user.account-delete");
+
+            services.AddHostedService<TrashCleanupBackgroundService>();
 
             return services;
         }
