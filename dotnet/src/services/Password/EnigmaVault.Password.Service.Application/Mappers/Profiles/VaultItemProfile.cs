@@ -20,7 +20,7 @@ namespace EnigmaVault.Password.Service.Application.Mappers.Profiles
                  src.IsInTrash,
                  src.EncryptedOverview, 
                  src.EncryptedDetails,    
-                 new List<string>(src.Tags.Select(x => x.Value.ToString())),
+                 new List<string>(src.Tags.Select(x => x.TagId.ToString())),
                  src.IconId.ToString()
              ));
         }

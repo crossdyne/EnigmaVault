@@ -2,13 +2,10 @@ import { Component, computed, effect, inject, model, signal, viewChild } from "@
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/dto/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
-import { TagsListComponent } from "../../../../shared/ui/tags/tags-list.component";
-import { ItemInputActionsComponent } from "../../../../shared/ui/item-input-actions/item-input-actions.component";
 import { CreateTagRequest } from "../../models/dto/create-tag.request";
 import { UpdateTagRequest } from "../../models/dto/update-tag.request";
 import { IconCategoryResponse } from "../../models/dto/icon-category.response";
 import { IconCategoryService } from "../../services/icon-category.service";
-import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { AssetUrlResponse } from "../../models/dto/asset-urls.response";
 import { AssetService } from "../../services/asset.service";
 import { EncryptedVaultResponse } from "../../models/dto/encrypted-vault.response";
@@ -34,6 +31,8 @@ import { AttachTagComponent } from "../../components/attach-tag/attach-tag.compo
 import { TagAttachmentData } from "../../models/modal/tag-attachment.data";
 import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
 import { TooltipDirective } from "../../../../shared/directives/tooltip.directive";
+import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
+import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.data";
 
 @Component({
     selector: 'passwords-page',
@@ -41,9 +40,6 @@ import { TooltipDirective } from "../../../../shared/directives/tooltip.directiv
     styleUrls: ['./passwords.page.scss'],
     standalone: true,
     imports: [
-        TagsListComponent, 
-        ItemInputActionsComponent, 
-        IconsComponent,
         TooltipDirective,
         OverlayModule,
         CdkMenu,
@@ -104,6 +100,7 @@ export class PasswordsPage {
 
     activeTab = signal<'tags' | 'icons'>('tags');
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
+    activePopup = signal<'trash' | 'archive' | null>(null);
 
     //#region Vaults
 
@@ -117,39 +114,35 @@ export class PasswordsPage {
     // Popups
     popupArchivePositions: ConnectedPosition[] = [
         {
-            originX: 'end',
-            originY: 'center',
-            overlayX: 'start', 
-            overlayY: 'center',
-            offsetX: 8, 
-            offsetY: -75
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
         },
         {
-            originX: 'start',
-            originY: 'center',
-            overlayX: 'end',
-            overlayY: 'center',
-            offsetX: -8,
-            offsetY: -75
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
         }
     ];
 
     popupTrashPositions: ConnectedPosition[] = [
         {
-            originX: 'end',
-            originY: 'center',
-            overlayX: 'start',
-            overlayY: 'center',
-            offsetX: 8,
-            offsetY: -22
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
         },
         {
-            originX: 'start',
-            originY: 'center',
-            overlayX: 'end',
-            overlayY: 'center',
-            offsetX: -8,
-            offsetY: -22
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
         }
     ];
 
@@ -409,69 +402,186 @@ export class PasswordsPage {
         });
     }
 
-    async onUpdateVaultIcon(icon: AssetUrlResponse) {
-        const vault = this.selectedVault();
-
-        if (!vault) {
-            console.warn('Сначала выберите запись в списке слева');
-            return;
-        }
-
-        const result = await this.vaultService.changeIcon(vault.id, icon.assetId);
-
-        result.match(
-            () => {
-                const newIcon: IconUrl = { id: icon.assetId, url: icon.url };
-                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
-                this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
-            },
-            errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
-        );
-    }
-
-    // Actions
-
-    async updateTags(vaultId: string) {
-        const vault = this.vaults().find(v => v.id === vaultId);
-        if (!vault) 
-            return;
-
-        const dialogRef = this.dialog.open<TagAttachmentResult, TagAttachmentData, AttachTagComponent>(
-            AttachTagComponent, { 
+    async onUpdateVaultIcon() {
+        const dialogRef = this.dialog.open<AssetUrlResponse, ChangeIconData, IconsComponent>(
+            IconsComponent, { 
                 width: '500px',
                 disableClose: false,
                 hasBackdrop: true,
                 backdropClass: 'custom-backdrop',
                 data: {
-                    vault: vault,
-                    availableTags: this.tags()
+                    icons: this.icons(),
+                    categories: this.iconCategories(),
+                    serviceName: this.selectedVault()?.serviceName!
                 }
             }
         );
-        
+
+        dialogRef.closed.subscribe(async selectedIcon => {
+            if (!selectedIcon){
+                console.log('Иконка не была выбрана');
+                return;
+            }
+            
+            const vault = this.selectedVault();
+
+            if (!vault) {
+                console.warn('Сначала выберите запись в списке слева');
+                return;
+            }
+
+            const result = await this.vaultService.changeIcon(vault.id, selectedIcon.assetId);
+
+            result.match(
+                () => {
+                    const newIcon: IconUrl = { id: selectedIcon.assetId, url: selectedIcon.url };
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
+                    this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
+                },
+                errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
+            );
+        });
+    }
+
+    // Actions
+
+    async openTagAttachment(vault: VaultItemDisplay) {
+        const actualVault = this.vaults().find(v => v.id === vault.id) || vault;
+
+        const dialogRef = this.dialog.open<TagAttachmentResult, TagAttachmentData, AttachTagComponent>(
+            AttachTagComponent, {
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    vault: actualVault,
+                    availableTags: this.tags,
+                    initialSelectedTagIds: new Set(actualVault.tags.map(t => t.id)),
+                    actions: {
+                        createTag: async (name: string, color: string) => {
+                            const request: CreateTagRequest = { 
+                                id: '', 
+                                name, 
+                                color 
+                            };
+
+                            const result = await this.tagService.createAsync(request);
+                            let success = false;
+
+                            result.match(
+                                id => {
+                                    this.tags.update(tags => [{ id, name, color }, ...tags]);
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка создания тега: ', this.mapErrors(errors))
+                            );
+
+                            return success;
+                        },
+                        updateTag: async (id: string, name: string, color: string) => {
+                            const request: UpdateTagRequest = { 
+                                id, 
+                                name, 
+                                color
+                            };
+
+                            const result = await this.tagService.updateAsync(request);
+                            let success = false;
+
+                            result.match(
+                                () => {
+                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t));
+                                    
+                                    this.vaults.update(vaults => 
+                                        vaults.map(v => {
+                                            const tagIdx = v.tags.findIndex(t => t.id === id);
+                                            
+                                            if (tagIdx !== -1) {
+                                                const newTags = [...v.tags];
+                                                newTags[tagIdx] = { ...newTags[tagIdx], name, color };
+                                                return { ...v, tags: newTags };
+                                            }
+                                            return v;
+                                        })
+                                    );
+
+                                    const current = this.selectedVault();
+                                    if (current) {
+                                        const tagIdx = current.tags.findIndex(t => t.id === id);
+                                        if (tagIdx !== -1) {
+                                            const newTags = [...current.tags];
+                                            newTags[tagIdx] = { ...newTags[tagIdx], name, color };
+                                            this.selectedVault.set({ ...current, tags: newTags });
+                                        }
+                                    }
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка обновления тега: ', this.mapErrors(errors))
+                            );
+                            return success;
+                        },
+                        deleteTag: async (id: string) => {
+                            const result = await this.tagService.removeAsync(id);
+                            let success = false;
+                            result.match(
+                                () => {
+                                    this.tags.update(tags => tags.filter(t => t.id !== id));
+                                    
+                                    this.vaults.update(vaults => 
+                                        vaults.map(v => {
+                                            const newTags = v.tags.filter(t => t.id !== id);
+                                            if (newTags.length !== v.tags.length) {
+                                                return { ...v, tags: newTags };
+                                            }
+                                            return v;
+                                        })
+                                    );
+
+                                    const current = this.selectedVault();
+                                    if (current) {
+                                        const newTags = current.tags.filter(t => t.id !== id);
+                                        if (newTags.length !== current.tags.length) {
+                                            this.selectedVault.set({ ...current, tags: newTags });
+                                        }
+                                    }
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка удаления тега: ', this.mapErrors(errors))
+                            );
+                            return success;
+                        }
+                    }
+                }
+            }
+        );
+
         dialogRef.closed.subscribe(async result => {
             if (!result) 
                 return;
 
-            const selectedTagIds = result.selectedTagIds;
+            if (result.tagsModified) {
+                const selectedTagIds = result.selectedTagIds;
+                
+                const updateResult = await this.vaultService.updateTagsAsync(actualVault.id, { tagIds: selectedTagIds });
+                updateResult.match(
+                    () => {
+                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
 
-            const updateResult: Result = await this.vaultService.updateTagsAsync(vault.id, { tagIds: selectedTagIds });
+                        this.vaults.update(vaults => 
+                            vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags } : v)
+                        );
 
-            updateResult.match(
-                () => {
-                    const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
-                    
-                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, tags: updatedTags } : v));
+                        const current = this.selectedVault();
+                        if (current?.id === actualVault.id) {
+                            this.selectedVault.set({ ...current, tags: updatedTags });
+                        }
 
-                    const current = this.selectedVault();
-                    if (current?.id === vault.id) {
-                        this.selectedVault.update(v => v ? { ...v, tags: updatedTags } : null);
-                    }
-
-                    console.log('Тэги успешно обновлены');
-                },
-                errors => console.error('Ошибка обновления тэгов: ', this.mapErrors(errors))
-            );
+                        console.log('Тэги успешно обновлены для записи');
+                    },
+                    errors => console.error('Ошибка обновления тэгов записи: ', this.mapErrors(errors))
+                );
+            }
         });
     }
 
@@ -794,69 +904,6 @@ export class PasswordsPage {
             errors => console.log(this.mapErrors(errors))
         );
     } 
-
-    async onCreateTag(name: string) {
-        let request: CreateTagRequest = {
-            id: '',
-            name: name,
-            color: '#F0F0F0'
-        } 
-
-        const result: Result<string> = await this.tagService.createAsync(request);
-
-        result.match(
-            id => {
-                request.id = id;
-                const update = [request, ...this.tags()];
-                this.tags.set(update);
-            },
-            errors => console.log(this.mapErrors(errors))
-        );
-    }
-
-    async onUpdateTag(tag: TagResponse) {
-        const request: UpdateTagRequest = {
-            id: this.editingTag()?.id as string,
-            name: tag.name,
-            color: tag.color
-        }
-
-        const result: Result = await this.tagService.updateAsync(request);
-
-        result.match(
-            () => {
-                const id = this.editingTag()?.id;
-
-                if (!id)
-                    return;
-
-                const updatedTag: TagResponse = {
-                    id: this.editingTag()?.id as string,
-                    name: tag.name,
-                    color: tag.color
-                } 
-
-                this.tags.update(tags => tags.map(t => t.id === updatedTag.id ? updatedTag : t));  
-            },
-            errors => console.error('Ошибка обновления: ', this.mapErrors(errors))
-        );
-
-        this.editingTag.set(null);
-    }
-
-    async onDeleteTag(id: string){
-        const result: Result = await this.tagService.removeAsync(id);
-
-        result.match(
-            () => {
-                this.tags.update(tags => tags.filter(t => t.id !== id));
-
-                if (this.selectedTag()?.id === id)
-                    this.selectedTag.set(null);
-            },
-            errors => console.error('Ошибка удаления: ', this.mapErrors(errors))
-        );
-    }
 
     //#endregion
 

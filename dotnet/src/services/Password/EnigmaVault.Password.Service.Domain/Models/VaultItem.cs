@@ -28,8 +28,8 @@ namespace EnigmaVault.Password.Service.Domain.Models
 
         public IconId IconId { get; private set; }
 
-        private readonly List<TagId> _tags = [];
-        public IReadOnlyCollection<TagId> Tags => _tags.AsReadOnly();
+        private readonly List<VaultTags> _tags = [];
+        public IReadOnlyCollection<VaultTags> Tags => _tags.AsReadOnly();
 
         private VaultItem() { }
 
@@ -119,24 +119,32 @@ namespace EnigmaVault.Password.Service.Domain.Models
 
         public void AddTag(TagId tagId)
         {
-            if (_tags.Contains(tagId))
+            if (_tags.Any(t => t.TagId == tagId))
                 return;
 
-            _tags.Add(tagId);
+            _tags.Add(VaultTags.Create(this.Id, tagId));
         }
 
         public void SetTags(IEnumerable<TagId> tagIds)
         {
             _tags.Clear();
-            _tags.AddRange(tagIds.Distinct());
+            
+            if (tagIds == null) return;
+
+            foreach (var tagId in tagIds.Distinct())
+            {
+                _tags.Add(VaultTags.Create(this.Id, tagId));
+            }
         }
 
         public void RemoveTag(TagId tagId)
         {
-            if (!_tags.Contains(tagId))
+             var vaultTag = _tags.FirstOrDefault(t => t.TagId == tagId);
+
+            if (vaultTag is null)
                 return;
 
-            _tags.Remove(tagId);
+            _tags.Remove(vaultTag);
         }
 
         public void ClearTags() => _tags.Clear();

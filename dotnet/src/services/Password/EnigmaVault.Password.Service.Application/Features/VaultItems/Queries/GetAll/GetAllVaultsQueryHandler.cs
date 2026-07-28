@@ -19,6 +19,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
         {
             var vaultItems = await _context.Set<VaultItem>()
                 .AsNoTracking()
+                .Include(vi => vi.Tags)
                 .Where(v => v.UserId == request.UserId)
                 .Select(x => new
                 {
@@ -32,7 +33,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
                     x.IsInTrash,
                     x.EncryptedOverview,
                     x.EncryptedDetails,
-                    TagValues = x.Tags,
+                    Tags = x.Tags,
                     x.IconId
                 })
                 .ToListAsync(cancellationToken);
@@ -48,7 +49,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
                 x.IsInTrash,
                 x.EncryptedOverview,
                 x.EncryptedDetails,
-                [.. x.TagValues.Select(v => v.ToString())],
+                [.. x.Tags.Select(vt => vt.TagId.ToString())],
                 x.IconId.ToString()
             )).ToList();
 

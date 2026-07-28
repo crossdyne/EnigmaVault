@@ -1,30 +1,38 @@
-<ng-template #assetMenu let-icon="asset">
-    <div class="icon-context-menu" cdkMenu>
-        <button class="menu-item" (click)="selectedIcon.emit(icon)" cdkMenuItem>
-            Установить
-        </button>
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Выбор иконки для записи «{{ serviceName() }}»</h2>
+      <button class="close-btn" (click)="onCancel()">×</button>
     </div>
-</ng-template>
-
-<div class="assets-container">
-    @for (group of groupedIcons(); track group.title) {
-        <div class="icon-group">
-            <h3 class="group-title">{{ group.title }}</h3>
-            
-            <div class="group-items">
-                @for (icon of group.icons; track icon.assetId) {
-                    <div 
-                        class="svg-card-container"
-                        [cdkContextMenuTriggerFor]="assetMenu"
-                        [cdkContextMenuTriggerData]="{asset: icon}"
-                        [appTooltip]="icon.assetName">
-                        <img [src]="icon.url" [alt]="icon.assetName">
-                        <!-- <span class="name">{{ icon.assetName }}</span> -->
+    
+    <div class="modal-body">
+        <div class="assets-container">
+            @for (group of groupedIcons(); track group.title) {
+                <div class="icon-group">
+                    <h3 class="group-title">{{ group.title }}</h3>
+                    
+                    <div class="group-items">
+                        @for (icon of group.icons; track icon.assetId) {
+                            <div 
+                                class="svg-card-container"
+                                [appTooltip]="icon.assetName"
+                                (click)="selectedIcon.set(icon)">
+                                <img [src]="icon.url" [alt]="icon.assetName">
+                            </div>
+                        }
                     </div>
-                }
-            </div>
+                </div>
+            } @empty {
+                <div class="empty-state">Нет доступных иконок</div>
+            }
         </div>
-    } @empty {
-        <div class="empty-state">Нет доступных иконок</div>
-    }
+    </div>
+    
+    <div class="modal-footer">
+        <button class="btn-secondary add-icon" (click)="navigateToCreateAssets()">Добавить</button>
+        <button class="btn-secondary" (click)="onCancel()">Отмена</button>
+    </div>
+    
+  </div>
 </div>

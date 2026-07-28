@@ -14,14 +14,14 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.
     {
         public async Task<Result<Unit>> Handle(UpdateTagsCommand request, CancellationToken cancellationToken)
         {
-            var vault = await context.Set<VaultItem>().FirstOrDefaultAsync(v => v.Id == request.VaultId && v.UserId == request.UserId, cancellationToken);
-
-            Console.WriteLine("Пошел хендлер");
+            var vault = await context.Set<VaultItem>()
+                .Include(v => v.Tags)
+                .FirstOrDefaultAsync(v => v.Id == request.VaultId && v.UserId == request.UserId, cancellationToken);
 
             if (vault == null)
                 return new Error(ErrorCode.NotFound, "Запись не найдена, возможно она была удалена");
 
-            vault.SetTags(request.TagIds.Select(t => TagId.Create(t)));
+            vault.SetTags(request.TagIds.Select(id => TagId.Create(id)));
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
