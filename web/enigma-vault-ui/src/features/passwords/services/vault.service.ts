@@ -31,7 +31,7 @@ export class VaultService extends HttpService {
         return this.getAsync(`${id}`);
     }
 
-    async moveToTrashAsync(id: string): Promise<Result> {
+    async moveToTrashAsync(id: string): Promise<Result<Date>> {
         return this.patchAsync(`trash/${id}`, null);
     }
 

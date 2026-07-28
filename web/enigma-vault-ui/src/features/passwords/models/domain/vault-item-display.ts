@@ -9,7 +9,7 @@ export interface VaultItemDisplay {
     type: VaultTypeEnum;
     dateAdded: Date;
     dateUpdate: Date | null;
-    deletedAt: Date | null;
+    deletedAt: number | null;
     isFavorite: boolean;
     isArchive: boolean; 
     isInTrash: boolean;

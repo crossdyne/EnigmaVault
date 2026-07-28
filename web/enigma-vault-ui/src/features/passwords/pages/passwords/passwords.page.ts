@@ -33,6 +33,7 @@ import { TagAttachmentResult } from "../../models/modal/tag-attachment.result";
 import { TooltipDirective } from "../../../../shared/directives/tooltip.directive";
 import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.data";
+import { DateHelper } from "../../../../core/helpers/date.helper";
 
 @Component({
     selector: 'passwords-page',
@@ -173,7 +174,7 @@ export class PasswordsPage {
                         icon = { id: iconUrl?.assetId, url: iconUrl?.url }
 
                     const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
-
+                
                     const vaultItem: VaultItemDisplay = {
                         id: vault.id,
                         type: Number(vault.type) as VaultTypeEnum,
@@ -181,7 +182,7 @@ export class PasswordsPage {
                         url: overview?.Url!,
                         dateAdded: vault.dateAdded,
                         dateUpdate: vault.dateUpdate,
-                        deletedAt: vault.deletedAt,
+                        deletedAt: DateHelper.difference(vault.deletedAt),
                         isFavorite: vault.isFavorite,
                         isArchive: vault.isArchive,
                         isInTrash: vault.isInTrash,
@@ -287,7 +288,7 @@ export class PasswordsPage {
                                 type: Number(vault.type) as VaultTypeEnum,
                                 dateAdded: vault.dateAdded,
                                 dateUpdate: vault.dateUpdate,
-                                deletedAt: vault.deletedAt,
+                                deletedAt: DateHelper.difference(vault.deletedAt),
                                 isFavorite: vault.isFavorite,
                                 isArchive: vault.isArchive,
                                 isInTrash: vault.isInTrash,
@@ -619,11 +620,11 @@ export class PasswordsPage {
     }
 
     async onMoveToTrash(vault: VaultItemDisplay) {
-        const result: Result = await this.vaultService.moveToTrashAsync(vault.id);
+        const result: Result<Date> = await this.vaultService.moveToTrashAsync(vault.id);
 
         result.match(
-            () => {         
-                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isInTrash: true } : v));
+            date => {         
+                this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isInTrash: true, deletedAt: DateHelper.difference(date) } : v));
 
                 if (this.selectedVault()?.id === vault.id) {
                     this.selectedVault.set(null);
