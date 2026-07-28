@@ -64,13 +64,24 @@ export class AttachTagComponent {
 
   async onCreateTag() {
     const name = this.newTagName().trim();
+    const color = this.newTagColor();
     if (!name) 
       return;
 
-    const success = await this.data.actions.createTag(name, this.newTagColor());
+    const success = await this.data.actions.createTag(name, color);
     if (success) {
       this.tagsModified.set(true);
       this.isCreating.set(false);
+      
+      const newTag = this.availableTags().find(t => t.name === name && t.color === color);
+      if (newTag) {
+        this.selectedTagIds.update(set => {
+          const newSet = new Set(set);
+          newSet.add(newTag.id);
+
+          return newSet;
+        });
+      }
     }
   }
 

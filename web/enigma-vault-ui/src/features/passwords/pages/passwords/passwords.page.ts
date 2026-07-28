@@ -446,6 +446,8 @@ export class PasswordsPage {
     // Actions
 
     async openTagAttachment(vault: VaultItemDisplay) {
+        const actualVault = this.vaults().find(v => v.id === vault.id) || vault;
+
         const dialogRef = this.dialog.open<TagAttachmentResult, TagAttachmentData, AttachTagComponent>(
             AttachTagComponent, {
                 width: '500px',
@@ -453,9 +455,9 @@ export class PasswordsPage {
                 hasBackdrop: true,
                 backdropClass: 'custom-backdrop',
                 data: {
-                    vault: vault,
+                    vault: actualVault,
                     availableTags: this.tags,
-                    initialSelectedTagIds: new Set(vault.tags.map(t => t.id)),
+                    initialSelectedTagIds: new Set(actualVault.tags.map(t => t.id)),
                     actions: {
                         createTag: async (name: string, color: string) => {
                             const request: CreateTagRequest = { 
@@ -561,17 +563,17 @@ export class PasswordsPage {
             if (result.tagsModified) {
                 const selectedTagIds = result.selectedTagIds;
                 
-                const updateResult = await this.vaultService.updateTagsAsync(vault.id, { tagIds: selectedTagIds });
+                const updateResult = await this.vaultService.updateTagsAsync(actualVault.id, { tagIds: selectedTagIds });
                 updateResult.match(
                     () => {
                         const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
 
                         this.vaults.update(vaults => 
-                            vaults.map(v => v.id === vault.id ? { ...v, tags: updatedTags } : v)
+                            vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags } : v)
                         );
 
                         const current = this.selectedVault();
-                        if (current?.id === vault.id) {
+                        if (current?.id === actualVault.id) {
                             this.selectedVault.set({ ...current, tags: updatedTags });
                         }
 
