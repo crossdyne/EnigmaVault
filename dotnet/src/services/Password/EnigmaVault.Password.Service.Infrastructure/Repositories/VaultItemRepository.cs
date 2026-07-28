@@ -16,7 +16,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Repositories
         public void Remove(VaultItem vaultItem) => _context.Set<VaultItem>().Remove(vaultItem);
 
         public async Task<Maybe<VaultItem>> GetAsync(Guid id, Guid UserId, CancellationToken clt)
-            => await _context.Set<VaultItem>().FirstOrDefaultAsync(v => v.Id == id && v.UserId == UserId, clt);
+            => await _context.Set<VaultItem>().Include(vi => vi.Tags).FirstOrDefaultAsync(v => v.Id == id && v.UserId == UserId, clt);
 
         public async Task<int> RemoveAllAsync(UserId userId, DateTime? eventTimeUtc)
         {

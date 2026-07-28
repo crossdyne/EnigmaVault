@@ -445,47 +445,141 @@ export class PasswordsPage {
 
     // Actions
 
-    async updateTags(vaultId: string) {
-        const vault = this.vaults().find(v => v.id === vaultId);
-        if (!vault) 
-            return;
-
+    async openTagAttachment(vault: VaultItemDisplay) {
         const dialogRef = this.dialog.open<TagAttachmentResult, TagAttachmentData, AttachTagComponent>(
-            AttachTagComponent, { 
+            AttachTagComponent, {
                 width: '500px',
                 disableClose: false,
                 hasBackdrop: true,
                 backdropClass: 'custom-backdrop',
                 data: {
                     vault: vault,
-                    availableTags: this.tags()
+                    availableTags: this.tags,
+                    initialSelectedTagIds: new Set(vault.tags.map(t => t.id)),
+                    actions: {
+                        createTag: async (name: string, color: string) => {
+                            const request: CreateTagRequest = { 
+                                id: '', 
+                                name, 
+                                color 
+                            };
+
+                            const result = await this.tagService.createAsync(request);
+                            let success = false;
+
+                            result.match(
+                                id => {
+                                    this.tags.update(tags => [{ id, name, color }, ...tags]);
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка создания тега: ', this.mapErrors(errors))
+                            );
+
+                            return success;
+                        },
+                        updateTag: async (id: string, name: string, color: string) => {
+                            const request: UpdateTagRequest = { 
+                                id, 
+                                name, 
+                                color
+                            };
+
+                            const result = await this.tagService.updateAsync(request);
+                            let success = false;
+
+                            result.match(
+                                () => {
+                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t));
+                                    
+                                    this.vaults.update(vaults => 
+                                        vaults.map(v => {
+                                            const tagIdx = v.tags.findIndex(t => t.id === id);
+                                            
+                                            if (tagIdx !== -1) {
+                                                const newTags = [...v.tags];
+                                                newTags[tagIdx] = { ...newTags[tagIdx], name, color };
+                                                return { ...v, tags: newTags };
+                                            }
+                                            return v;
+                                        })
+                                    );
+
+                                    const current = this.selectedVault();
+                                    if (current) {
+                                        const tagIdx = current.tags.findIndex(t => t.id === id);
+                                        if (tagIdx !== -1) {
+                                            const newTags = [...current.tags];
+                                            newTags[tagIdx] = { ...newTags[tagIdx], name, color };
+                                            this.selectedVault.set({ ...current, tags: newTags });
+                                        }
+                                    }
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка обновления тега: ', this.mapErrors(errors))
+                            );
+                            return success;
+                        },
+                        deleteTag: async (id: string) => {
+                            const result = await this.tagService.removeAsync(id);
+                            let success = false;
+                            result.match(
+                                () => {
+                                    this.tags.update(tags => tags.filter(t => t.id !== id));
+                                    
+                                    this.vaults.update(vaults => 
+                                        vaults.map(v => {
+                                            const newTags = v.tags.filter(t => t.id !== id);
+                                            if (newTags.length !== v.tags.length) {
+                                                return { ...v, tags: newTags };
+                                            }
+                                            return v;
+                                        })
+                                    );
+
+                                    const current = this.selectedVault();
+                                    if (current) {
+                                        const newTags = current.tags.filter(t => t.id !== id);
+                                        if (newTags.length !== current.tags.length) {
+                                            this.selectedVault.set({ ...current, tags: newTags });
+                                        }
+                                    }
+                                    success = true;
+                                },
+                                errors => console.error('Ошибка удаления тега: ', this.mapErrors(errors))
+                            );
+                            return success;
+                        }
+                    }
                 }
             }
         );
-        
+
         dialogRef.closed.subscribe(async result => {
             if (!result) 
                 return;
 
-            const selectedTagIds = result.selectedTagIds;
+            if (result.tagsModified) {
+                const selectedTagIds = result.selectedTagIds;
+                
+                const updateResult = await this.vaultService.updateTagsAsync(vault.id, { tagIds: selectedTagIds });
+                updateResult.match(
+                    () => {
+                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
 
-            const updateResult: Result = await this.vaultService.updateTagsAsync(vault.id, { tagIds: selectedTagIds });
+                        this.vaults.update(vaults => 
+                            vaults.map(v => v.id === vault.id ? { ...v, tags: updatedTags } : v)
+                        );
 
-            updateResult.match(
-                () => {
-                    const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
-                    
-                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, tags: updatedTags } : v));
+                        const current = this.selectedVault();
+                        if (current?.id === vault.id) {
+                            this.selectedVault.set({ ...current, tags: updatedTags });
+                        }
 
-                    const current = this.selectedVault();
-                    if (current?.id === vault.id) {
-                        this.selectedVault.update(v => v ? { ...v, tags: updatedTags } : null);
-                    }
-
-                    console.log('Тэги успешно обновлены');
-                },
-                errors => console.error('Ошибка обновления тэгов: ', this.mapErrors(errors))
-            );
+                        console.log('Тэги успешно обновлены для записи');
+                    },
+                    errors => console.error('Ошибка обновления тэгов записи: ', this.mapErrors(errors))
+                );
+            }
         });
     }
 
@@ -808,69 +902,6 @@ export class PasswordsPage {
             errors => console.log(this.mapErrors(errors))
         );
     } 
-
-    async onCreateTag(name: string) {
-        let request: CreateTagRequest = {
-            id: '',
-            name: name,
-            color: '#F0F0F0'
-        } 
-
-        const result: Result<string> = await this.tagService.createAsync(request);
-
-        result.match(
-            id => {
-                request.id = id;
-                const update = [request, ...this.tags()];
-                this.tags.set(update);
-            },
-            errors => console.log(this.mapErrors(errors))
-        );
-    }
-
-    async onUpdateTag(tag: TagResponse) {
-        const request: UpdateTagRequest = {
-            id: this.editingTag()?.id as string,
-            name: tag.name,
-            color: tag.color
-        }
-
-        const result: Result = await this.tagService.updateAsync(request);
-
-        result.match(
-            () => {
-                const id = this.editingTag()?.id;
-
-                if (!id)
-                    return;
-
-                const updatedTag: TagResponse = {
-                    id: this.editingTag()?.id as string,
-                    name: tag.name,
-                    color: tag.color
-                } 
-
-                this.tags.update(tags => tags.map(t => t.id === updatedTag.id ? updatedTag : t));  
-            },
-            errors => console.error('Ошибка обновления: ', this.mapErrors(errors))
-        );
-
-        this.editingTag.set(null);
-    }
-
-    async onDeleteTag(id: string){
-        const result: Result = await this.tagService.removeAsync(id);
-
-        result.match(
-            () => {
-                this.tags.update(tags => tags.filter(t => t.id !== id));
-
-                if (this.selectedTag()?.id === id)
-                    this.selectedTag.set(null);
-            },
-            errors => console.error('Ошибка удаления: ', this.mapErrors(errors))
-        );
-    }
 
     //#endregion
 

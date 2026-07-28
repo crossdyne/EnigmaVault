@@ -78,19 +78,26 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Configurations
                 .HasConversion(iconId => iconId.Value, db => IconId.Create(db))
                 .IsRequired();
 
-            builder.Property(vi => vi.Tags)
-                .HasColumnName("TagsIds")
-                .HasColumnType("uuid[]")
-                .HasField("_tags")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasConversion(
-                    tags => tags.Select(t => t.Value).ToArray(),
-                    ids => (ids ?? Array.Empty<Guid>()).Select(id => TagId.Create(id)).ToList())
-                 .Metadata.SetValueComparer(new ValueComparer<IReadOnlyCollection<TagId>>(
-                     (c1, c2) => c1!.SequenceEqual(c2!),
-                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.Value.GetHashCode())),
-                     c => c.ToList()
-            ));
+            builder.HasMany(vi => vi.Tags)
+                .WithOne()
+                .HasForeignKey(vi => vi.VaultItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Navigation(u => u.Tags).HasField("_tags").UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // builder.Property(vi => vi.Tags)
+            //     .HasColumnName("TagsIds")
+            //     .HasColumnType("uuid[]")
+            //     .HasField("_tags")
+            //     .UsePropertyAccessMode(PropertyAccessMode.Field)
+            //     .HasConversion(
+            //         tags => tags.Select(t => t.Value).ToArray(),
+            //         ids => (ids ?? Array.Empty<Guid>()).Select(id => TagId.Create(id)).ToList())
+            //      .Metadata.SetValueComparer(new ValueComparer<IReadOnlyCollection<TagId>>(
+            //          (c1, c2) => c1!.SequenceEqual(c2!),
+            //          c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.Value.GetHashCode())),
+            //          c => c.ToList()
+            // ));
         }
     }
 }

@@ -10,7 +10,7 @@ import { UpdateTagRequest } from "../models/dto/update-tag.request";
 })
 export class TagService extends HttpService {
     constructor(){
-        super('api/v1/tag')
+        super('api/v1/tag/')
     }
 
     async createAsync(request: CreateTagRequest): Promise<Result<string>> {
@@ -22,7 +22,7 @@ export class TagService extends HttpService {
     }
 
     async removeAsync(id: string): Promise<Result> {
-        return await this.deleteAsync(id);
+        return await this.deleteAsync(`${id}`);
     }
 
     async getAllAsync(): Promise<Result<TagResponse[]>> {

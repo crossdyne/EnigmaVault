@@ -45,7 +45,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers
             if (extractResult.IsFailure)
                 return extractResult.Value.Result;
 
-            var result = await _mediator.Send(new UpdateTagCommand(Guid.Parse(request.Id), extractResult.Value.UserId, request.Name, request.Color));
+            var result = await _mediator.Send(new UpdateTagCommand(extractResult.Value.UserId, Guid.Parse(request.Id), request.Name, request.Color));
 
             return result.Match<IActionResult>(
                 onSuccess: () => Ok(),

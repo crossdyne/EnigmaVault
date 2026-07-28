@@ -26,7 +26,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Configurations
                 .IsRequired(true);
 
             builder.Property(t => t.Name)
-                .HasColumnName("IconName")
+                .HasColumnName("Name")
                 .HasConversion(name => name.Value, dbValue => TagName.Create(dbValue))
                 .UseCollation(PostgresConstants.COLLATION_NAME);
 

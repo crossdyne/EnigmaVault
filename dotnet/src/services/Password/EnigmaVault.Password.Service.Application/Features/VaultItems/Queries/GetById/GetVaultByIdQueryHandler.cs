@@ -27,7 +27,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.G
                 vault.IsInTrash, 
                 vault.EncryptedOverview, 
                 vault.EncryptedDetails, 
-                [.. vault.Tags.Select(t => t.ToString())], 
+                [.. vault.Tags.Select(vt => vt.TagId.ToString())], 
                 vault.IconId.ToString());
         }
     }
