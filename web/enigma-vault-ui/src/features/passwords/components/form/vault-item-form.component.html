@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="form-body"> 
+      <div class="modal-body"> 
         <div class="form-group">
           <input id="name" type="text" formControlName="name" placeholder="Название" />
           <input id="url" type="text" formControlName="url" placeholder="Ссылка на ресурс" />
@@ -80,8 +80,8 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="onCancel()">Отмена</button>
-        <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        <button type="button" class="modal-button-cancel" (click)="onCancel()">Отмена</button>
+        <button type="submit" class="modal-button-save" [disabled]="form.invalid">
           {{ isEdit() ? 'Сохранить' : 'Добавить' }}
         </button>
       </div>
