@@ -21,6 +21,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Requests.PasswordService;
+using Shared.Contracts.Responses.PasswordService;
 
 namespace EnigmaVault.Password.Service.Api.Controllers
 {
@@ -194,7 +195,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers
             if (result.IsFailure)
                return BadRequest(result.StringMessage);
 
-            return Ok();
+            return Ok(new DateUpdateResponse(result.Value));
         }
 
         /*--Delete----------------------------------------------------------------------------------------*/
@@ -384,7 +385,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers
             if (result.IsFailure)
                 return BadRequest(result.StringMessage);
 
-            return Ok();
+            return Ok(new DateUpdateResponse(result.Value));
         }
     }
 }
