@@ -1,8 +1,6 @@
+@use '../../../../variables' as *;
 @use '../../../../styles/button' as *;
 @use '../../../../styles/modal' as *;
-
-$card-background-color: #0A0D16;
-$border-background-color: #191a1b;
 
 .form-group {
     label {
@@ -196,42 +194,5 @@ $border-background-color: #191a1b;
         background: #1E2F3A;
         color: #e2e8f0;
         border-color: #2a3b4a;
-    }
-}
-
-.btn-secondary {
-    padding: 0.625rem 1.25rem;
-    border-radius: 8px;
-    border: 1px solid $border-background-color;
-    background: transparent;
-    color: #94a3b8;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-
-    &:hover {
-        background: #1E2F3A;
-        color: #e2e8f0;
-    }
-}
-
-.btn-primary {
-    padding: 0.625rem 1.25rem;
-    border-radius: 8px;
-    border: none;
-    background: #0095F6;
-    color: white;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: background 0.2s ease;
-
-    &:hover:not(:disabled) {
-        background: #007acc;
-    }
-
-    &:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
     }
 }

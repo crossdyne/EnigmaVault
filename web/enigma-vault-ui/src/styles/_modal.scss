@@ -1,7 +1,5 @@
+@use '../variables' as *;
 @use './mixins' as *;
-
-$card-background-color: #0A0D16;
-$border-background-color: #191a1b;
 
 .modal-overlay {
     position: fixed;
