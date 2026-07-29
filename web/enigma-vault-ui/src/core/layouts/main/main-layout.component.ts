@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import { Component, signal, ViewEncapsulation } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { environment } from "../../../environments/environment";
 
@@ -11,6 +11,8 @@ import { environment } from "../../../environments/environment";
     imports: [RouterOutlet]
 })
 export class MainLayoutComponent{
+    accountUrl = signal<string>(environment.accountUrl);
+    
     async logout() {
         const currentUrl = encodeURIComponent(window.location.href);
         window.location.href = `${environment.returnAuthUrlBase}?logout=true&returnUrl=${currentUrl}`;

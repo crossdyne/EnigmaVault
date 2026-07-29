@@ -144,3 +144,45 @@
         }
     }
 }
+
+@media (max-width: 768px) {
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+                
+    span {
+        font-size: 20px;
+    }
+
+    .btn-account {
+        width: 115px;
+        height: 40px;
+
+        svg {
+            width: 15px;
+        }
+
+        span {
+            font-size: 15px;
+        }
+
+    }
+    
+    .btn-exit {
+        display: flex;
+        flex-direction: row;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+            background-color: #fa0d05;
+        }
+
+        svg {
+            width: 15px;
+        }
+    }
+}
