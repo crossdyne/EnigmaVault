@@ -1,4 +1,5 @@
 @use '../../../../styles/button' as *;
+@use '../../../../styles/mixins' as *;
 
 $card-background-color: #0A0D16; 
 $border-background-color: #191a1b;
@@ -24,162 +25,178 @@ $shadow-card: #061b33;
     width: 100%;
     max-width: 500px;
     max-height: 90vh;
-    overflow: auto;
     border: 2px solid $border-background-color;
     box-shadow: 0 20px 60px rgba(6, 27, 51, 0.6);
-}
-
-.modal-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid $border-background-color;
+    flex-direction: column;
+    overflow: hidden;
 
-    h2 { 
-        margin: 0; 
-        font-size: 1.25rem; 
-        color: #e2e8f0;
-        font-weight: 600;
-    }
-}
-
-.close-btn {
-    background: none; 
-    border: none; 
-    font-size: 1.5rem; 
-    cursor: pointer;
-    color: #6b7280; 
-    line-height: 1;
-    padding: 4px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-
-    &:hover { 
-        color: #e2e8f0;
-        background: #1E2F3A;
-    }
-}
-
-.modal-body { 
-    padding: 1.5rem; 
-}
-
-.form-group { 
-    margin-bottom: 1.25rem;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-
-    .type-record {
+    .modal-header {
+        flex-shrink: 0;
         display: flex;
-        margin-bottom: 15px;
-        gap: 6px;
-    }
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid $border-background-color;
 
-    label {
-        display: block; 
-        margin-bottom: 0.5rem;
-        font-weight: 500; 
-        font-size: 0.875rem; 
-        color: #94a3b8;
-    }
-
-    input,
-    textarea,
-    select {
-        width: 100%; 
-        padding: 0.625rem 0.875rem;
-        background: #111827;
-        border: 1px solid $border-background-color; 
-        border-radius: 8px;
-        font-size: 0.875rem; 
-        box-sizing: border-box;
-        color: #e2e8f0;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        margin: 7.5px 0px 7.5px 0px;
-
-        &::placeholder {
-            color: #475569;
-        }
-
-        &:focus {
-            outline: none; 
-            border-color: #0095F6; 
-            box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
-        }
-
-        .combobox {
-            margin-bottom: 10px;
-        }
-    }
-
-    select {
-        cursor: pointer;
-        
-        option {
-            background: $card-background-color;
+        h2 { 
+            margin: 0; 
+            font-size: 1.25rem; 
             color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none; 
+            border: none; 
+            font-size: 1.5rem; 
+            cursor: pointer;
+            color: #6b7280; 
+            line-height: 1;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+
+            &:hover { 
+                color: #e2e8f0;
+                background: #1E2F3A;
+            }
         }
     }
 
-    textarea {
-        resize: vertical;
-        min-height: 80px;
-    }
-}
+    .modal-form { 
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
 
-.error { 
-    color: #ff4d4f; 
-    font-size: 0.75rem;
-    margin-top: 0.375rem; 
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+        .template-selector {
+            flex-shrink: 0;
+            padding: 1.5rem 1.5rem 0 1.5rem;
 
-.modal-footer {
-    display: flex; 
-    justify-content: flex-end; 
-    gap: 0.75rem;
-    padding: 1rem 1.5rem; 
-    border-top: 1px solid $border-background-color;
-}
+            .type-record {
+                display: flex;
+                margin-bottom: 15px;
+                gap: 6px;
+            }
+        }
 
-.btn-secondary {
-    padding: 0.625rem 1.25rem; 
-    border-radius: 8px;
-    border: 1px solid $border-background-color; 
-    background: transparent;
-    color: #94a3b8;
-    cursor: pointer; 
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
+        .form-body {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding: 1.5rem;
+            @include custom-scrollbar;
 
-    &:hover { 
-        background: #1E2F3A;
-        color: #e2e8f0;
-    }
-}
+            .form-group {
+                margin-bottom: 1.25rem;
 
-.btn-primary {
-    padding: 0.625rem 1.25rem; 
-    border-radius: 8px;
-    border: none; 
-    background: #0095F6; 
-    color: white;
-    cursor: pointer; 
-    font-size: 0.875rem; 
-    font-weight: 500;
-    transition: background 0.2s ease;
+                &:last-child {
+                    margin-bottom: 0;
+                }
 
-    &:hover:not(:disabled) { 
-        background: #007acc; 
-    }
+                .empty-state {
+                    color: #6b7280;
+                    font-size: 0.875rem;
+                    text-align: center;
+                    padding: 1rem 0;
+                }
+            }
+        }
 
-    &:disabled {
-        opacity: 0.4; 
-        cursor: not-allowed; 
+        .form-group {
+            label {
+                display: block; 
+                margin-bottom: 0.5rem;
+                font-weight: 500; 
+                font-size: 0.875rem; 
+                color: #94a3b8;
+            }
+
+            input,
+            textarea,
+            select {
+                width: 100%; 
+                padding: 0.625rem 0.875rem;
+                background: #111827;
+                border: 1px solid $border-background-color; 
+                border-radius: 8px;
+                font-size: 0.875rem; 
+                box-sizing: border-box;
+                color: #e2e8f0;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                margin: 7.5px 0px 7.5px 0px;
+
+                &::placeholder {
+                    color: #475569;
+                }
+
+                &:focus {
+                    outline: none; 
+                    border-color: #0095F6; 
+                    box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
+                }
+            }
+
+            select {
+                cursor: pointer;
+                
+                option {
+                    background: $card-background-color;
+                    color: #e2e8f0;
+                }
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 80px;
+            }
+        }
+
+        .modal-footer {
+            flex-shrink: 0;
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 0.75rem;
+            padding: 1rem 1.5rem 1.5rem 1.5rem; 
+            border-top: 1px solid $border-background-color;
+
+            .btn-secondary {
+                padding: 0.625rem 1.25rem; 
+                border-radius: 8px;
+                border: 1px solid $border-background-color; 
+                background: transparent;
+                color: #94a3b8;
+                cursor: pointer; 
+                font-size: 0.875rem;
+                transition: all 0.2s ease;
+
+                &:hover { 
+                    background: #1E2F3A;
+                    color: #e2e8f0;
+                }
+            }
+
+            .btn-primary {
+                padding: 0.625rem 1.25rem; 
+                border-radius: 8px;
+                border: none; 
+                background: #0095F6; 
+                color: white;
+                cursor: pointer; 
+                font-size: 0.875rem; 
+                font-weight: 500;
+                transition: background 0.2s ease;
+
+                &:hover:not(:disabled) { 
+                    background: #007acc; 
+                }
+
+                &:disabled {
+                    opacity: 0.4; 
+                    cursor: not-allowed; 
+                }
+            }
+        }
     }
 }
