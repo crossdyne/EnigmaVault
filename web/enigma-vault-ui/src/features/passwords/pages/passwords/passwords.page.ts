@@ -332,7 +332,9 @@ export class PasswordsPage {
     }
 
     async openEditVaultItem(item: VaultItemDisplay) {
-        const decryptedDetails = await this.vaultCryptoService.decryptDetails(item.type, item.encryptedDetails);
+        const actualItem = this.vaults().find(v => v.id === item.id) ?? item;
+
+        const decryptedDetails = await this.vaultCryptoService.decryptDetails(actualItem.type, actualItem.encryptedDetails);
 
         const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
             VaultItemFormComponent, { 
@@ -342,7 +344,7 @@ export class PasswordsPage {
                 backdropClass: 'custom-backdrop',
                 data: {
                     mode: 'edit',
-                    item: item,
+                    item: actualItem,
                     decryptedDetails: decryptedDetails
                 }
             }
@@ -367,8 +369,8 @@ export class PasswordsPage {
                 const cryptoVersion = overViewCryptoVersion;
 
                 const request: UpdateVaultItemRequest = {
-                    vaultItemId: item.id,
-                    iconId: item.icon?.id!,
+                    vaultItemId: actualItem.id,
+                    iconId: actualItem.icon?.id!,
                     encryptedOverview: encryptedOverView,
                     encryptedDetails: encryptedDetails,
                     cryptoVersion: cryptoVersion
@@ -379,19 +381,32 @@ export class PasswordsPage {
                 resultUpdate.match(
                     id => {
                         const now = new Date();
-                        
+
                         this.vaults.update(vaults => 
-                            vaults.map(v => v.id === item.id 
-                                ? { ...v, dateUpdate: now } 
+                            vaults.map(v => v.id === actualItem.id 
+                                ? { 
+                                    ...v, 
+                                    dateUpdate: now,
+                                    serviceName: result.common.name,
+                                    url: result.common.url!,
+                                    note: result.common.description!,
+                                    encryptedOverview: encryptedOverView,
+                                    encryptedDetails: encryptedDetails,
+                                } 
                                 : v
                             )
                         );
                         
                         const current = this.selectedVault();
-                        if (current?.id === item.id) {
+                        if (current?.id === actualItem.id) {
                             this.selectedVault.set({
                                 ...current,
-                                dateUpdate: now
+                                dateUpdate: now,
+                                serviceName: result.common.name,
+                                url: result.common.url!,
+                                note: result.common.description!,
+                                encryptedOverview: encryptedOverView,
+                                encryptedDetails: encryptedDetails,
                             });
                         }
                         
