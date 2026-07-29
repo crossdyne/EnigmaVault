@@ -1,5 +1,5 @@
 @use '../variables' as *;
-@use './mixins' as *;
+@use './scrollbar' as *;
 
 .modal-overlay {
     position: fixed;
