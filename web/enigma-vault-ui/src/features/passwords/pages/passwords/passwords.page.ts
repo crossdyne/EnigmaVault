@@ -34,6 +34,7 @@ import { TooltipDirective } from "../../../../shared/directives/tooltip.directiv
 import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.data";
 import { DateHelper } from "../../../../core/helpers/date.helper";
+import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 
 @Component({
     selector: 'passwords-page',
@@ -42,6 +43,7 @@ import { DateHelper } from "../../../../core/helpers/date.helper";
     standalone: true,
     imports: [
         TooltipDirective,
+        TagsOverflowDirective,
         OverlayModule,
         CdkMenu,
         CdkMenuItem,
