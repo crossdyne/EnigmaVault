@@ -1,6 +1,7 @@
 @use '../../../../variables' as *;
 @use '../../../../styles/button' as *;
 @use '../../../../styles/modal' as *;
+@use '../../../../styles/empty' as *;
 
 .form-group {
     label {
@@ -165,13 +166,6 @@
             color: #ef4444;
             background: rgba(239, 68, 68, 0.1);
         }
-    }
-
-    .empty-state {
-        padding: 24px;
-        text-align: center;
-        color: #6b7280;
-        font-size: 0.875rem;
     }
 }
 

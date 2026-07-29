@@ -2,6 +2,7 @@
 @use '../../../styles/mixins' as *;
 @use '../../../styles/button' as *;
 @use '../../../styles/modal' as *;
+@use '../../../styles/empty' as *;
 
 .assets-container {
     flex: 1;
@@ -10,13 +11,6 @@
     overflow-y: auto;
     min-height: 0;
     @include custom-scrollbar;
-
-    .empty-state {
-        text-align: center;
-        padding: 48px 24px;
-        color: #8a8a8a;
-        font-size: 14px;
-    }
 
     .icon-group {
         margin-bottom: 16px;

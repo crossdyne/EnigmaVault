@@ -1,6 +1,7 @@
 @use '../../../../variables' as *;
 @use '../../../../styles/button' as *;
 @use '../../../../styles/modal' as *;
+@use '../../../../styles/empty' as *;
 
 .modal-form { 
     display: flex;
@@ -30,13 +31,6 @@
 
         &:last-child {
             margin-bottom: 0;
-        }
-
-        .empty-state {
-            color: #6b7280;
-            font-size: 0.875rem;
-            text-align: center;
-            padding: 1rem 0;
         }
 
         input,
