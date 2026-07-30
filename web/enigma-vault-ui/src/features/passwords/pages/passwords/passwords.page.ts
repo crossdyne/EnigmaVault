@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, model, signal, viewChild } from "@angular/core";
+import { Component, computed, effect, HostListener, inject, model, signal, viewChild } from "@angular/core";
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/dto/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
@@ -36,6 +36,7 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
+import { TaggedTemplateLiteral } from "@angular/compiler";
 
 @Component({
     selector: 'passwords-page',
@@ -695,6 +696,31 @@ export class PasswordsPage {
             vault.isFavorite = true;
             console.log('Добавлено в избранное: ', vault.serviceName);
         }
+    }
+
+    //Сброс выделение элемента
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+
+        if (target.closest('.item-container')){
+            return;
+        }
+
+        if (target.closest('.cdk-overlay-container')){
+            return;
+        }
+
+        if (target.closest('.top-sorting-menu-container')) {
+            return;
+        }
+
+        if (target.closest('.modal-overlay')){
+            return;
+        }
+
+        this.selectedVault.set(null);
     }
 
     //#endregion
