@@ -704,21 +704,20 @@ export class PasswordsPage {
     onDocumentClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
 
-        if (target.closest('.item-container')){
+        if (target.closest('.item-container'))
             return;
-        }
 
-        if (target.closest('.cdk-overlay-container')){
+        if (target.closest('.cdk-overlay-container'))
             return;
-        }
 
-        if (target.closest('.top-sorting-menu-container')) {
+        if (target.closest('.top-sorting-menu-container'))
             return;
-        }
 
-        if (target.closest('.modal-overlay')){
+        if (target.closest('.modal-overlay'))
             return;
-        }
+
+        if (target.closest('.context-menu'))
+            return;
 
         this.selectedVault.set(null);
     }
