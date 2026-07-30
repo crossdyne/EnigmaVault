@@ -4,15 +4,14 @@ using EnigmaVault.Password.Service.Domain.Models;
 using EnigmaVault.Password.Service.Domain.ValueObjects.Tag;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Unit = Crossdyne.Toolkit.Primitives.Unit;
 
 namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UpdateTags
 {
     public sealed class UpdateTagsCommandHandler(
         IApplicationDbContext context,
-        IUnitOfWork unitOfWork) : IRequestHandler<UpdateTagsCommand, Result<Unit>>
+        IUnitOfWork unitOfWork) : IRequestHandler<UpdateTagsCommand, Result<DateTime>>
     {
-        public async Task<Result<Unit>> Handle(UpdateTagsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<DateTime>> Handle(UpdateTagsCommand request, CancellationToken cancellationToken)
         {
             var vault = await context.Set<VaultItem>()
                 .Include(v => v.Tags)
@@ -25,7 +24,7 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return vault.DateUpdated!;
         }
     }
 }

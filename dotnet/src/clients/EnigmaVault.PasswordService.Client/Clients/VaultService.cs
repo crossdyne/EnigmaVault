@@ -262,14 +262,14 @@ namespace EnigmaVault.PasswordService.Client.Clients
             }
         }
 
-        public async Task<Result<Unit>> ChangeIcon(string vaultId, string iconId)
+        public async Task<Result<DateUpdateResponse>> ChangeIcon(string vaultId, string iconId)
         {
             try
             {
                 var response = await _httpClient.PatchAsync($"{_url}/change/{vaultId}/icon/{iconId}", null);
                 response.EnsureSuccessStatusCode();
 
-                return Unit.Value;
+                return await response.Content.ReadFromJsonAsync<DateUpdateResponse>();
             }
             catch (Exception ex)
             {
@@ -277,14 +277,14 @@ namespace EnigmaVault.PasswordService.Client.Clients
             }
         }
 
-        public async Task<Result<Unit>> UpdateTagsAsync(string vaultId, UpdateTagsRequest request)
+        public async Task<Result<DateUpdateResponse>> UpdateTagsAsync(string vaultId, UpdateTagsRequest request)
         {
             try
             {
                 var response = await _httpClient.PatchAsJsonAsync($"{_url}/{vaultId}/tags", request);
                 response.EnsureSuccessStatusCode();
 
-                return Unit.Value;
+                return await response.Content.ReadFromJsonAsync<DateUpdateResponse>();
             }
             catch (Exception ex)
             {

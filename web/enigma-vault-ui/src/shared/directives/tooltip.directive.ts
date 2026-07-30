@@ -12,7 +12,7 @@ export class TooltipDirective implements OnDestroy {
 
   @HostListener('mouseenter')
   onMouseEnter() {
-    if (!this.text) 
+    if (!this.text || this.isMobile) 
       return;
 
     this.tooltip = this.renderer.createElement('div');
@@ -129,6 +129,13 @@ export class TooltipDirective implements OnDestroy {
     this.renderer.setStyle(this.tooltip, 'top', `${top}px`);
     this.renderer.setStyle(this.tooltip, 'left', `${left}px`);
     this.renderer.setStyle(this.tooltip, '--arrow-offset', arrowOffset);
+  }
+
+  private get isMobile(): boolean {
+    if (typeof window === 'undefined') 
+      return false;
+    
+    return window.matchMedia('(hover: none)').matches || window.matchMedia('(max-width: 768px)').matches;
   }
 
   private destroy() {

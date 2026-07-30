@@ -5,6 +5,7 @@ import { EncryptedVaultResponse } from "../models/dto/encrypted-vault.response";
 import { CreateVaultItemRequest } from "../models/dto/create-vault.request";
 import { UpdateVaultItemRequest } from "../models/dto/update-vault-item.request";
 import { UpdateTagsRequest } from "../models/dto/update-tags.request";
+import { DateUpdateResponse } from "../models/dto/date-update.response";
 
 @Injectable({
     providedIn: 'root'
@@ -63,11 +64,11 @@ export class VaultService extends HttpService {
         return this.patchAsync(`unzip/all`, null);
     }
 
-    async changeIcon(vaultId: string, iconId: string): Promise<Result> {
+    async changeIcon(vaultId: string, iconId: string): Promise<Result<DateUpdateResponse>> {
         return this.patchAsync(`change/${vaultId}/icon/${iconId}`, null);
     }
 
-    async updateTagsAsync(id: string, request: UpdateTagsRequest): Promise<Result> {
+    async updateTagsAsync(id: string, request: UpdateTagsRequest): Promise<Result<DateUpdateResponse>> {
         return await this.patchAsync(`${id}/tags`, request)
     }
 }

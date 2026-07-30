@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, model, signal, viewChild } from "@angular/core";
+import { Component, computed, effect, HostListener, inject, model, signal, viewChild } from "@angular/core";
 import { TagService } from "../../services/tag.service";
 import { TagResponse } from "../../models/dto/tag.response";
 import { ErrorList, Result } from "@crossdyne/toolkit";
@@ -35,6 +35,8 @@ import { IconsComponent } from "../../../../shared/ui/icons/icons.component";
 import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.data";
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
+import { DateUpdateResponse } from "../../models/dto/date-update.response";
+import { TaggedTemplateLiteral } from "@angular/compiler";
 
 @Component({
     selector: 'passwords-page',
@@ -448,13 +450,14 @@ export class PasswordsPage {
                 return;
             }
 
-            const result = await this.vaultService.changeIcon(vault.id, selectedIcon.assetId);
+            const result: Result<DateUpdateResponse> = await this.vaultService.changeIcon(vault.id, selectedIcon.assetId);
 
             result.match(
-                () => {
+                date => {
+                    const parsedDate = new Date(date.dateUpdate);
+
                     const newIcon: IconUrl = { id: selectedIcon.assetId, url: selectedIcon.url };
-                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon } : v));
-                    this.selectedVault.update(v => v ? { ...v, icon: newIcon } : null);
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, icon: newIcon, dateUpdate: parsedDate } : v));
                 },
                 errors => console.error('Ошибка смены иконки: ', this.mapErrors(errors))
             );
@@ -581,19 +584,17 @@ export class PasswordsPage {
             if (result.tagsModified) {
                 const selectedTagIds = result.selectedTagIds;
                 
-                const updateResult = await this.vaultService.updateTagsAsync(actualVault.id, { tagIds: selectedTagIds });
+                const updateResult: Result<DateUpdateResponse> = await this.vaultService.updateTagsAsync(actualVault.id, { tagIds: selectedTagIds });
+                
                 updateResult.match(
-                    () => {
+                    date => {
+                        const parsedDate = new Date(date.dateUpdate);
+
                         const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
 
                         this.vaults.update(vaults => 
-                            vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags } : v)
+                            vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags, dateUpdate: parsedDate} : v)
                         );
-
-                        const current = this.selectedVault();
-                        if (current?.id === actualVault.id) {
-                            this.selectedVault.set({ ...current, tags: updatedTags });
-                        }
 
                         console.log('Тэги успешно обновлены для записи');
                     },
@@ -695,6 +696,30 @@ export class PasswordsPage {
             vault.isFavorite = true;
             console.log('Добавлено в избранное: ', vault.serviceName);
         }
+    }
+
+    //Сброс выделение элемента
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+
+        if (target.closest('.item-container'))
+            return;
+
+        if (target.closest('.cdk-overlay-container'))
+            return;
+
+        if (target.closest('.top-sorting-menu-container'))
+            return;
+
+        if (target.closest('.modal-overlay'))
+            return;
+
+        if (target.closest('.context-menu'))
+            return;
+
+        this.selectedVault.set(null);
     }
 
     //#endregion

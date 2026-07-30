@@ -76,14 +76,17 @@ namespace EnigmaVault.Password.Service.Domain.Models
 
         public void SetFavorite(bool isFavorite)
         {
-            if (IsFavorite == isFavorite) return;
+            if (IsFavorite == isFavorite) 
+                return;
 
             IsFavorite = isFavorite;
+            UpdateDate();
         }
 
         public void SetIcon(IconId iconId)
         {
             IconId = iconId;
+            UpdateDate();
         }
 
         public void SetArchive(bool isArchive)
@@ -123,6 +126,7 @@ namespace EnigmaVault.Password.Service.Domain.Models
                 return;
 
             _tags.Add(VaultTags.Create(this.Id, tagId));
+            UpdateDate();
         }
 
         public void SetTags(IEnumerable<TagId> tagIds)
@@ -132,9 +136,9 @@ namespace EnigmaVault.Password.Service.Domain.Models
             if (tagIds == null) return;
 
             foreach (var tagId in tagIds.Distinct())
-            {
                 _tags.Add(VaultTags.Create(this.Id, tagId));
-            }
+
+            UpdateDate();
         }
 
         public void RemoveTag(TagId tagId)
@@ -145,16 +149,11 @@ namespace EnigmaVault.Password.Service.Domain.Models
                 return;
 
             _tags.Remove(vaultTag);
+            UpdateDate();
         }
 
         public void ClearTags() => _tags.Clear();
 
         private void UpdateDate() => DateUpdated = DateTime.UtcNow;
-
-        public void ChangeIcon(IconId iconId)
-        {
-            if (IconId != iconId)
-                IconId = iconId;
-        }
     }
 }
