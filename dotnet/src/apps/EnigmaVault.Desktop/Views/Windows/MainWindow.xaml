@@ -183,7 +183,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Command="{Binding OpenPageCommand}"
+                        <!--<Button Command="{Binding OpenPageCommand}"
                                 CommandParameter="{x:Static enums:PagesName.Secret}"
                                 Style="{StaticResource Button.MainWindow.SideMenu}"
                                 DockPanel.Dock="Top">
@@ -199,9 +199,9 @@
                                     <Control Template="{StaticResource Lock}" Foreground="White"/>
                                 </Viewbox>
                             </StackPanel>
-                        </Button>
+                        </Button>-->
                         
-                        <Button Command="{Binding OpenPageCommand}"
+                        <!--<Button Command="{Binding OpenPageCommand}"
                                 CommandParameter="{x:Static enums:PagesName.Note}"
                                 Style="{StaticResource Button.MainWindow.SideMenu}"
                                 DockPanel.Dock="Top">
@@ -217,7 +217,7 @@
                                     <Control Template="{StaticResource Notebook}" Foreground="White"/>
                                 </Viewbox>
                             </StackPanel>
-                        </Button>
+                        </Button>-->
 
                         <Button Command="{Binding OpenPageCommand}"
                                 CommandParameter="{x:Static enums:PagesName.Setting}"
