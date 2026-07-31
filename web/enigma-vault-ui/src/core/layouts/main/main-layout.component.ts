@@ -1,5 +1,5 @@
 import { Component, signal, ViewEncapsulation } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { RouterLink, RouterOutlet } from "@angular/router";
 import { environment } from "../../../environments/environment";
 
 @Component({
@@ -8,7 +8,10 @@ import { environment } from "../../../environments/environment";
     styleUrl: './main-layout.component.scss',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [RouterOutlet]
+    imports: [
+        RouterOutlet,
+        RouterLink
+    ]
 })
 export class MainLayoutComponent{
     accountUrl = signal<string>(environment.accountUrl);

@@ -11,7 +11,6 @@ export class CryptoStateService {
     set(dek: Uint8Array<ArrayBufferLike>, version: number) {
         this.dek = dek;
         this.cryptoVersion = version as CryptoVersion;
-        this.cryptoVersion = CryptoVersion.V1;
     }
 
     clear() {
