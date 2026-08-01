@@ -754,7 +754,7 @@ export class PasswordsPage {
   
     //#region Группировка \ Сортировка Vaults
 
-    groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags'>('none');
+    groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags' | 'favorite'>('none');
     sortBy = signal<'none' | 'ascending' | 'descending'>('ascending');
     
     groupedVaults = computed(() => {
@@ -934,6 +934,24 @@ export class PasswordsPage {
             if (untagged.length > 0) {
                 result.push({ title: 'Без тегов', vaults: untagged });
             }
+        } else if (group === 'favorite') {
+            const favorite = 'В избранном';
+            const notFavorite = 'Не в избранном';
+
+            const groups = new Map<string, VaultItemDisplay[]>();
+
+            const favoritesVaults = vaults.filter(v => v.isFavorite);
+            const notFavoritesVaults = vaults.filter(v => !v.isFavorite);
+
+            if (favoritesVaults.length > 0)
+                groups.set(favorite, favoritesVaults);
+
+            groups.set(notFavorite, notFavoritesVaults);
+
+            result = Array.from(groups.entries())
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([title, vaults]) => ({ title, vaults }));
+
         } else {
             result = [{ title: 'Все записи', vaults }];
         }
