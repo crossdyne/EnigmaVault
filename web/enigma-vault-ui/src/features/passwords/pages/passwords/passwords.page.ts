@@ -36,7 +36,6 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
-import { TaggedTemplateLiteral } from "@angular/compiler";
 
 @Component({
     selector: 'passwords-page',
@@ -102,6 +101,7 @@ export class PasswordsPage {
     }
 
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
+    byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
 
     activeTab = signal<'tags' | 'icons'>('tags');
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
@@ -170,7 +170,7 @@ export class PasswordsPage {
 
                 for (const vault of vaults) {
                     
-                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id)).sort(this.byName);
                     const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
 
                     let icon: IconUrl | undefined = undefined;
@@ -492,7 +492,7 @@ export class PasswordsPage {
 
                             result.match(
                                 id => {
-                                    this.tags.update(tags => [{ id, name, color }, ...tags]);
+                                    this.tags.update(tags => [...tags, { id, name, color }].sort(this.byName));
                                     success = true;
                                 },
                                 errors => console.error('Ошибка создания тега: ', this.mapErrors(errors))
@@ -512,8 +512,8 @@ export class PasswordsPage {
 
                             result.match(
                                 () => {
-                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t));
-                                    
+                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t).sort(this.byName));
+
                                     this.vaults.update(vaults => 
                                         vaults.map(v => {
                                             const tagIdx = v.tags.findIndex(t => t.id === id);
@@ -590,7 +590,7 @@ export class PasswordsPage {
                     date => {
                         const parsedDate = new Date(date.dateUpdate);
 
-                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
+                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id)).sort(this.byName);
 
                         this.vaults.update(vaults => 
                             vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags, dateUpdate: parsedDate} : v)
@@ -635,6 +635,44 @@ export class PasswordsPage {
             () => this.vaults.update(vaults => vaults.map(v => v.isArchive ? { ...v, isArchive: false } : v)),
             errors => console.error(this.mapErrors(errors))
         );
+    }
+
+    async changeFavorite(vault: VaultItemDisplay){
+        if(vault.isFavorite){
+            const result: Result = await this.vaultService.unFavorite(vault.id);
+
+            result.match(
+                () =>{
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isFavorite: false } : v))
+
+                    const current = this.selectedVault();
+                    if (current?.id === vault.id){
+                        this.selectedVault.set({
+                            ...current,
+                            isFavorite: false
+                        })
+                    } 
+                },
+                errors => console.error(this.mapErrors(errors))
+            );
+        } else {
+            const result: Result = await this.vaultService.favorite(vault.id);
+
+            result.match(
+                () => {
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isFavorite: true } : v));
+
+                    const current = this.selectedVault();
+                    if (current?.id === vault.id){
+                        this.selectedVault.set({
+                            ...current,
+                            isFavorite: true
+                        })
+                    }   
+                },
+                errors => console.error(this.mapErrors(errors))
+            );
+        }
     }
 
     async onMoveToTrash(vault: VaultItemDisplay) {
@@ -688,16 +726,6 @@ export class PasswordsPage {
         );
     }
 
-    async onChangeFavorite(vault: VaultItemDisplay) {
-        if (vault.isFavorite){
-            vault.isFavorite = false;
-            console.log('Удалено из избранного: ', vault.serviceName);
-        } else {
-            vault.isFavorite = true;
-            console.log('Добавлено в избранное: ', vault.serviceName);
-        }
-    }
-
     //Сброс выделение элемента
 
     @HostListener('document:click', ['$event'])
@@ -726,7 +754,7 @@ export class PasswordsPage {
   
     //#region Группировка \ Сортировка Vaults
 
-    groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags'>('none');
+    groupBy = signal<'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags' | 'favorite'>('none');
     sortBy = signal<'none' | 'ascending' | 'descending'>('ascending');
     
     groupedVaults = computed(() => {
@@ -906,6 +934,24 @@ export class PasswordsPage {
             if (untagged.length > 0) {
                 result.push({ title: 'Без тегов', vaults: untagged });
             }
+        } else if (group === 'favorite') {
+            const favorite = 'В избранном';
+            const notFavorite = 'Не в избранном';
+
+            const groups = new Map<string, VaultItemDisplay[]>();
+
+            const favoritesVaults = vaults.filter(v => v.isFavorite);
+            const notFavoritesVaults = vaults.filter(v => !v.isFavorite);
+
+            if (favoritesVaults.length > 0)
+                groups.set(favorite, favoritesVaults);
+
+            groups.set(notFavorite, notFavoritesVaults);
+
+            result = Array.from(groups.entries())
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([title, vaults]) => ({ title, vaults }));
+
         } else {
             result = [{ title: 'Все записи', vaults }];
         }
@@ -943,7 +989,7 @@ export class PasswordsPage {
         const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
 
         result.match(
-            tags => this.tags.set(tags),
+            tags => this.tags.set(tags.sort(this.byName)),
             errors => console.log(this.mapErrors(errors))
         );
     } 

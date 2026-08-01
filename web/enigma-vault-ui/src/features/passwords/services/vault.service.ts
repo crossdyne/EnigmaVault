@@ -71,4 +71,12 @@ export class VaultService extends HttpService {
     async updateTagsAsync(id: string, request: UpdateTagsRequest): Promise<Result<DateUpdateResponse>> {
         return await this.patchAsync(`${id}/tags`, request)
     }
+
+    async favorite(id: string): Promise<Result> {
+        return await this.patchAsync(`${id}/favorite`, null);
+    }
+
+    async unFavorite(id: string): Promise<Result> {
+        return await this.patchAsync(`${id}/unfavorite`, null);
+    }
 }
