@@ -44,6 +44,12 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
 
             builder.MapPatch("api/v1/vault/{vaultId}/tags", async ([FromRoute] string vaultId, [FromBody] UpdateTagsRequest request, [FromServices] IVaultService service) 
                 => await service.UpdateTagsAsync(vaultId, request).MapErrorOrOkAsync()).RequireAuthorization();
+
+            builder.MapPatch("api/v1/vault/{vaultId}/favorite", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
+                => await service.AddToFavoritesAsync(vaultId).MapErrorOrOkAsync()).RequireAuthorization();
+
+             builder.MapPatch("api/v1/vault/{vaultId}/unfavorite", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
+                => await service.RemoveFromFavoritesAsync(vaultId).MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
 }

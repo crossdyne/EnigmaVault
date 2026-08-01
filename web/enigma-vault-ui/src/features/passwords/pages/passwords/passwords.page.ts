@@ -637,6 +637,44 @@ export class PasswordsPage {
         );
     }
 
+    async changeFavorite(vault: VaultItemDisplay){
+        if(vault.isFavorite){
+            const result: Result = await this.vaultService.unFavorite(vault.id);
+
+            result.match(
+                () =>{
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isFavorite: false } : v))
+
+                    const current = this.selectedVault();
+                    if (current?.id === vault.id){
+                        this.selectedVault.set({
+                            ...current,
+                            isFavorite: false
+                        })
+                    } 
+                },
+                errors => console.error(this.mapErrors(errors))
+            );
+        } else {
+            const result: Result = await this.vaultService.favorite(vault.id);
+
+            result.match(
+                () => {
+                    this.vaults.update(vaults => vaults.map(v => v.id === vault.id ? { ...v, isFavorite: true } : v));
+
+                    const current = this.selectedVault();
+                    if (current?.id === vault.id){
+                        this.selectedVault.set({
+                            ...current,
+                            isFavorite: true
+                        })
+                    }   
+                },
+                errors => console.error(this.mapErrors(errors))
+            );
+        }
+    }
+
     async onMoveToTrash(vault: VaultItemDisplay) {
         const result: Result<Date> = await this.vaultService.moveToTrashAsync(vault.id);
 
@@ -686,16 +724,6 @@ export class PasswordsPage {
             () => this.vaults.update(vaults => vaults.filter(v => !v.isInTrash)),
             errors => console.error(this.mapErrors(errors))
         );
-    }
-
-    async onChangeFavorite(vault: VaultItemDisplay) {
-        if (vault.isFavorite){
-            vault.isFavorite = false;
-            console.log('Удалено из избранного: ', vault.serviceName);
-        } else {
-            vault.isFavorite = true;
-            console.log('Добавлено в избранное: ', vault.serviceName);
-        }
     }
 
     //Сброс выделение элемента
