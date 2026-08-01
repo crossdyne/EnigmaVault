@@ -9,16 +9,27 @@
 :host {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    min-height: 100vh;
+    color: #f0f2f5;
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(ellipse 80% 60% at 15% 30%, rgba(0, 195, 11, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 85% 20%, rgba(0, 144, 255, 0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 100%, rgba(108, 99, 255, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 40% at 70% 70%, rgba(0, 195, 11, 0.03) 0%, transparent 50%),
+        #050814;
 }
 
 .app-content {
+    position: relative;
+    z-index: 1;
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
+    padding-top: 72px;
 }
 
 .app-content > *:not(router-outlet) {
@@ -29,116 +40,141 @@
 }
 
 .navbar {
-    position: relative;
-    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
-    background: #04050B;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid $card-bg-border;
-    padding: 0 2rem;
+    height: 72px;
+    background: rgba(5, 8, 20, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-.navbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100px;
-        
-    .logo-container {
-        display: flex;
-        flex-direction: row;
-            
-        svg {
-            width: 40px;
-            height: 40px;
-            align-self: center;
-            margin-right: 5px;
-            color: #00f028;
-            background-color: #032809;
-            border-radius: 10px;
-            padding: 4px;
-        }
-            
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-                
-            span {
-                background: #00BD0B;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            }
-        }
-    }
-        
-    .navigation {
-        display: block;
-            
-        a {
-            margin-right: 15px;
-        }
-    }
-
-    .nav-actions {
+    .navbar-inner {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        margin-left: 1rem;
-        
-        .btn-account {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: $bg-card-primary;
-            border: 1px solid $card-bg-border;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: $text-secondary;
-            transition: all 0.3s ease;
-            
-            svg {
-                flex-shrink: 0;
-                opacity: 0.9;
-                transition: opacity 0.3s ease;
-            }
-                    
-            &:hover svg {
-                opacity: 1;
-            }
-                    
-            &:hover {
-                border-color: #6c63ff;
-                color: $text-primary;
-                background: rgba(108, 99, 255, 0.1);
-                box-shadow: 0 4px 20px rgba(108, 99, 255, 0.3);
-                transform: translateY(-1px);
-            }
-        }
-                
-        .btn-exit {
+        justify-content: space-between;
+        height: 100%;
+        width: 100%;
+        padding: 0 40px;
+
+        .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #111524;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: $text-primary;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-            
-            &:hover {
-                    background-color: #fa0d05;
+            gap: 12px;
+
+            .svg-logo {
+                width: 36px;
+                height: 36px;
+                color: #00C30B;
+                background: rgba(0, 195, 11, 0.1);
+                border: 1px solid rgba(0, 195, 11, 0.2);
+                border-radius: 10px;
+                padding: 6px;
+                flex-shrink: 0;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+
+                .logo-text {
+                    font-size: 1.3rem;
+                    font-weight: 800;
+                    letter-spacing: -0.5px;
+                    background: linear-gradient(135deg, #00C30B 0%, #0090FF 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+            }
+        }
+
+        .navigation {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            a {
+                padding: 8px 16px;
+                border-radius: 8px;
+                color: #8b9bb4;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    color: #f0f2f5;
+                    background: rgba(255, 255, 255, 0.04);
+                }
+            }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .btn-account {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #8b9bb4;
+                text-decoration: none;
+                transition: all 0.25s ease;
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                    flex-shrink: 0;
+                }
+
+                .btn-account-text {
+                    white-space: nowrap;
+                }
+
+                &:hover {
+                    background: rgba(0, 144, 255, 0.1);
+                    border-color: rgba(0, 144, 255, 0.3);
+                    color: #4db8ff;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 16px rgba(0, 144, 255, 0.15);
+                }
+            }
+
+            .btn-exit {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                color: #8b9bb4;
+                cursor: pointer;
+                transition: all 0.25s ease;
+
+                .icon svg {
+                    width: 18px;
+                    height: 18px;
+                }
+
+                &:hover {
+                    background: rgba(250, 13, 5, 0.12);
+                    border-color: rgba(250, 13, 5, 0.35);
+                    color: #ff6b66;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 16px rgba(250, 13, 5, 0.15);
                 }
             }
         }
@@ -146,43 +182,99 @@
 }
 
 @media (max-width: 768px) {
-    svg {
-        width: 24px;
-        height: 24px;
-    }
-                
-    span {
-        font-size: 20px;
-    }
+    .navbar {
+        height: 60px;
 
-    .btn-account {
-        width: 115px;
-        height: 40px;
+        .navbar-inner {
+            padding: 0 20px;
 
-        svg {
-            width: 15px;
+            .logo-container {
+                .svg-logo {
+                    width: 32px;
+                    height: 32px;
+                    padding: 5px;
+                }
+
+                .logo-text {
+                    font-size: 1.1rem;
+                }
+            }
+
+            .nav-actions {
+                .btn-account {
+                    height: 36px;
+                    padding: 0 12px;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                    }
+
+                    .btn-account-text {
+                        font-size: 13px;
+                    }
+                }
+
+                .btn-exit {
+                    width: 36px;
+                    height: 36px;
+
+                    .icon svg {
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
         }
-
-        span {
-            font-size: 15px;
-        }
-
     }
-    
-    .btn-exit {
-        display: flex;
-        flex-direction: row;
-        width: 40px;
-        height: 40px;
-        justify-content: center;
-        align-items: center;
 
-        &:hover {
-            background-color: #fa0d05;
-        }
+    .app-content {
+        padding-top: 60px;
+    }
+}
 
-        svg {
-            width: 15px;
+@media (max-width: 480px) {
+    .navbar {
+        .navbar-inner {
+            padding: 0 16px;
+
+            .logo-container {
+                gap: 8px;
+
+                .svg-logo {
+                    width: 28px;
+                    height: 28px;
+                    padding: 4px;
+                }
+
+                .logo-text {
+                    font-size: 1rem;
+                }
+            }
+
+            .nav-actions {
+                gap: 8px;
+
+                .btn-account {
+                    width: 36px;
+                    height: 36px;
+                    padding: 0;
+                    justify-content: center;
+
+                    .btn-account-text {
+                        display: none;
+                    }
+
+                    svg {
+                        margin: 0;
+                    }
+                }
+
+                .btn-exit {
+                    width: 34px;
+                    height: 34px;
+                }
+            }
         }
     }
 }
