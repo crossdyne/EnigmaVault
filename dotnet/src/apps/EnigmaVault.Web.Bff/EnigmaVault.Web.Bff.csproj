@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
     <PackageReference Include="DistributedLock.Redis" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="Crossdyne.Security.Cryptography"/>
   </ItemGroup>
 
   <ItemGroup>

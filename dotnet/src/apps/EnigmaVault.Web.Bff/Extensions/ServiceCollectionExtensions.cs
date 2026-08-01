@@ -1,3 +1,5 @@
+using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Cryptography;
 using EnigmaVault.Web.Bff.Services;
 using Shared.Redis;
 
@@ -9,7 +11,8 @@ namespace EnigmaVault.Web.Bff.Extensions
         {
             services.AddSingleton<IJwtReadService, JwtReadService>();
             services.AddCashService(configuration);
-            
+            services.AddSingleton<ICryptoServices, CryptoService>();
+
             return services;
         }
     }
