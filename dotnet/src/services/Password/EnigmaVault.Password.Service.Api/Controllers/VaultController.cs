@@ -1,4 +1,5 @@
-﻿using EnigmaVault.Password.Service.Api.Extensions;
+﻿using Crossdyne.Toolkit.Results;
+using EnigmaVault.Password.Service.Api.Extensions;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddTag;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.AddToFavorites;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Archive;
@@ -17,6 +18,7 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Upda
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.UpdateTags;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetAll;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetById;
+using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetCountRecords;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -327,6 +329,24 @@ namespace EnigmaVault.Password.Service.Api.Controllers
                 return BadRequest(result.StringMessage);
 
             return Ok(result.Value);
+        }
+
+        [HttpGet("records/count")]
+        [Authorize]
+        public async Task<IActionResult> GetCount()
+        {
+            var extractResult = this.ExtractCredentials(User);
+
+            if (extractResult.IsFailure)
+                return extractResult.Value.Result;
+
+            var query = new GetCountVaultsQuery(extractResult.Value.UserId);
+            Result<int> result = await _mediator.Send(query);
+
+            if (result.IsFailure)
+                return BadRequest(result.StringMessage);
+
+            return Ok(new PasswordsCountRecordsResponse(result.Value));
         }
 
         /*--Tags------------------------------------------------------------------------------------------*/

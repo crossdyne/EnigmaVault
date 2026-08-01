@@ -25,5 +25,6 @@ namespace EnigmaVault.PasswordService.Client.Clients
         Task<Result<Unit>> RemoveTagAsync(string vaultId, string tagId);
         Task<Result<DateUpdateResponse>> ChangeIcon(string vaultId, string iconId);
         Task<Result<DateUpdateResponse>> UpdateTagsAsync(string vaultId, UpdateTagsRequest detachTagsRequest);
+        Task<Result<int>> CountRecordsAsync();
     }
 }

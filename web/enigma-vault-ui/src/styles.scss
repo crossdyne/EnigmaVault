@@ -1,11 +1,13 @@
 @use './variables' as *;
 @use './styles/tooltip' as *;
+@use './styles/scrollbar' as *;
 
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
+    @include custom-scrollbar;
 }
 
 html {

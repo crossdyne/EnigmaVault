@@ -291,5 +291,22 @@ namespace EnigmaVault.PasswordService.Client.Clients
                 return new Error(AppErrors.ApiError, ex.Message);
             }
         }
+
+        public async Task<Result<int>> CountRecordsAsync()
+        {           
+             try
+            {
+                var response = await _httpClient.GetAsync($"{_url}/records/count");
+                response.EnsureSuccessStatusCode();
+
+                var countsResponse = await response.Content.ReadFromJsonAsync<PasswordsCountRecordsResponse>();
+
+                return countsResponse!.Count;
+            }
+            catch (Exception ex)
+            {
+                return new Error(AppErrors.ApiError, ex.Message);
+            }
+        }
     }
 }
