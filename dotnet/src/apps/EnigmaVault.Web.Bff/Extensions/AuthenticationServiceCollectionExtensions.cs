@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
+using Shared.Contracts.Cache.Abstractions;
 using Shared.Contracts.Common;
 using Shared.Contracts.Requests;
-using Shared.Redis;
 using StackExchange.Redis;
 
 namespace EnigmaVault.Web.Bff.Extensions
@@ -105,7 +105,7 @@ namespace EnigmaVault.Web.Bff.Extensions
                     }
 
                     var cacheSessionKey = RedisKeyExtensions.SessionKey(sessionId!);
-                    var cache = context.HttpContext.RequestServices.GetRequiredService<IRedisCacheService>();
+                    var cache = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();
                     var cryptoService = context.HttpContext.RequestServices.GetRequiredService<ICryptoServices>();
                     var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
                     var key = Convert.FromBase64String(configuration.GetValue<string>(ConfigurationConstants.RedisDataEncryptionKey) ?? throw new InvalidOperationException($"{ConfigurationConstants.RedisDataEncryptionKey} не настроен"));

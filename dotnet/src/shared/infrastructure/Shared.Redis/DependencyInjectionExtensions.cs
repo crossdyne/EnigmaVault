@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Contracts.Cache.Abstractions;
 using StackExchange.Redis;
 
 namespace Shared.Redis
@@ -22,7 +23,7 @@ namespace Shared.Redis
                 return ConnectionMultiplexer.Connect(config);
             });
 
-            services.AddScoped<IRedisCacheService, RedisCacheService>();
+            services.AddScoped<ICacheService, RedisCacheService>();
 
             return services;
         }

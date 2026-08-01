@@ -2,8 +2,8 @@ using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Domain.ValueObjects.User;
 using Microsoft.Extensions.Logging;
+using Shared.Contracts.Messaging.Abstractions;
 using Shared.Contracts.Messaging.Events;
-using Shared.Contracts.Messaging.Interfaces;
 
 namespace EnigmaVault.Password.Service.Application.Features.Account.EventHandlers
 {

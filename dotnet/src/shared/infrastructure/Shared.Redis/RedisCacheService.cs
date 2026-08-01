@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
+using Shared.Contracts.Cache.Abstractions;
 using StackExchange.Redis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Shared.Redis
 {
-    internal sealed class RedisCacheService : IRedisCacheService
+    internal sealed class RedisCacheService : ICacheService
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly RedisOptions _options;
