@@ -56,7 +56,7 @@ namespace EnigmaVault.Desktop.Handlers
                         return response;
                     }
 
-                    var refreshResult = await authService.RefreshTokens(new LoginByTokenRequest(refreshToken, currentAccessToken!));
+                    var refreshResult = await authService.RefreshTokens(new LoginByTokenRequest(refreshToken));
 
                     if (refreshResult.IsSuccess && refreshResult.Value is not null)
                     {

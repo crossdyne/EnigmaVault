@@ -8,6 +8,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=80
       - Redis__ConnectionString=
+      - Redis__DataEncryptionKey=Base64 32+ bit key, generate this command - openssl rand -base64 32
       - Urls__AuthService=http://nexus-auth-api:80
       - Urls__UserManagementService=http://nexus-user-management-api:80
       - Urls__PasswordService=http://enigma-vault-password-api:80

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using Shared.Contracts.Messaging.Abstractions;
 using Shared.Contracts.Messaging.Events;
-using Shared.Contracts.Messaging.Interfaces;
 
 namespace EnigmaVault.Password.Service.Infrastructure.Ioc
 {

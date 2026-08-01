@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
+using Shared.Contracts.Cache.Abstractions;
 using StackExchange.Redis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Shared.Redis
 {
-    internal sealed class RedisCacheService : IRedisCacheService
+    internal sealed class RedisCacheService : ICacheService
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly RedisOptions _options;
@@ -85,6 +86,17 @@ namespace Shared.Redis
 
                 return result;
             }, "RemoveAsync");
+        }
+        
+        public async Task<bool> SetRemoveAsync(string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be null or empty", nameof(key));
+
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Value cannot be null or empty", nameof(value));
+
+            return await ExecuteWithRetryAsync(async () => await _database.SetRemoveAsync(key, value), "SetRemoveAsync");
         }
 
         #endregion

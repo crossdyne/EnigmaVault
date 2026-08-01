@@ -34,7 +34,7 @@ namespace EnigmaVault.Desktop.Services.Initializers
             tokenMaybe.Match(
                 onSome: async token =>
                 {
-                    var authResult = await _authService!.RefreshTokens(new LoginByTokenRequest(token.RefreshToken, token.AccessToken));
+                    var authResult = await _authService!.RefreshTokens(new LoginByTokenRequest(token.RefreshToken));
 
                     authResult.Switch(
                         onSuccess: async () =>
