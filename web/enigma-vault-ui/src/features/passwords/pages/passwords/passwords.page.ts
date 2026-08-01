@@ -36,7 +36,6 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
-import { TaggedTemplateLiteral } from "@angular/compiler";
 
 @Component({
     selector: 'passwords-page',
@@ -102,6 +101,7 @@ export class PasswordsPage {
     }
 
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
+    byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
 
     activeTab = signal<'tags' | 'icons'>('tags');
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
@@ -170,7 +170,7 @@ export class PasswordsPage {
 
                 for (const vault of vaults) {
                     
-                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id)).sort(this.byName);
                     const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
 
                     let icon: IconUrl | undefined = undefined;
@@ -492,7 +492,7 @@ export class PasswordsPage {
 
                             result.match(
                                 id => {
-                                    this.tags.update(tags => [{ id, name, color }, ...tags]);
+                                    this.tags.update(tags => [...tags, { id, name, color }].sort(this.byName));
                                     success = true;
                                 },
                                 errors => console.error('Ошибка создания тега: ', this.mapErrors(errors))
@@ -512,8 +512,8 @@ export class PasswordsPage {
 
                             result.match(
                                 () => {
-                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t));
-                                    
+                                    this.tags.update(tags => tags.map(t => t.id === id ? { ...t, name, color } : t).sort(this.byName));
+
                                     this.vaults.update(vaults => 
                                         vaults.map(v => {
                                             const tagIdx = v.tags.findIndex(t => t.id === id);
@@ -590,7 +590,7 @@ export class PasswordsPage {
                     date => {
                         const parsedDate = new Date(date.dateUpdate);
 
-                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id));
+                        const updatedTags = this.tags().filter(t => selectedTagIds.includes(t.id)).sort(this.byName);
 
                         this.vaults.update(vaults => 
                             vaults.map(v => v.id === actualVault.id ? { ...v, tags: updatedTags, dateUpdate: parsedDate} : v)
@@ -943,7 +943,7 @@ export class PasswordsPage {
         const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
 
         result.match(
-            tags => this.tags.set(tags),
+            tags => this.tags.set(tags.sort(this.byName)),
             errors => console.log(this.mapErrors(errors))
         );
     } 
