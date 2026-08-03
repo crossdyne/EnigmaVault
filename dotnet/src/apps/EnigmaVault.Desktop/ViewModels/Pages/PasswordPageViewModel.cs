@@ -30,7 +30,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EnigmaVault.Desktop.ViewModels.Pages
 {
@@ -42,7 +41,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         private readonly IAssetCategoryClient _iconCategoryService;
         private readonly IFileServiceClient _fileService;
         private readonly IUserContext _userContext;
-        private readonly ICryptoServices _cryptoServices;
+        private readonly ICryptoService _cryptoServices;
 
         // ====================================================================================
         //                                      ИНИЦИАЛИЗАЦИЯ                                        
@@ -56,7 +55,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             IAssetCategoryClient iconCategoryService,
             IFileServiceClient fileService,
             IUserContext userContext,
-            ICryptoServices cryptoServices)
+            ICryptoService cryptoServices)
         {
             WebSiteUrls = urlsOptions.Value;
 

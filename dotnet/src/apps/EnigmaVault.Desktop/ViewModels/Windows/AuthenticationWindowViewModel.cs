@@ -21,7 +21,7 @@ namespace EnigmaVault.Desktop.ViewModels.Windows
         private readonly IKeyManager _keyManager;
         private readonly ISrpClient _srpClient;
         private readonly IKeyDerivationService _keyDerivationService;
-        private readonly ICryptoServices _cryptoServices;
+        private readonly ICryptoService _cryptoServices;
 
         public AuthenticationWindowViewModel(
         IWindowNavigation windowNavigation,
@@ -33,7 +33,7 @@ namespace EnigmaVault.Desktop.ViewModels.Windows
         IKeyManager keyManager,
         ISrpClient srpClient,
         IKeyDerivationService keyDerivationService,
-        ICryptoServices cryptoServices) : base(windowNavigation, pageNavigation)
+        ICryptoService cryptoServices) : base(windowNavigation, pageNavigation)
         {
             _windowNavigation = windowNavigation;
             _pageNavigation = pageNavigation;

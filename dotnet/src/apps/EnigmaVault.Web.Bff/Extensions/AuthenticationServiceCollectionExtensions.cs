@@ -106,7 +106,7 @@ namespace EnigmaVault.Web.Bff.Extensions
 
                     var cacheSessionKey = RedisKeyExtensions.SessionKey(sessionId!);
                     var cache = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();
-                    var cryptoService = context.HttpContext.RequestServices.GetRequiredService<ICryptoServices>();
+                    var cryptoService = context.HttpContext.RequestServices.GetRequiredService<ICryptoService>();
                     var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
                     var key = Convert.FromBase64String(configuration.GetValue<string>(ConfigurationConstants.RedisDataEncryptionKey) ?? throw new InvalidOperationException($"{ConfigurationConstants.RedisDataEncryptionKey} не настроен"));
 

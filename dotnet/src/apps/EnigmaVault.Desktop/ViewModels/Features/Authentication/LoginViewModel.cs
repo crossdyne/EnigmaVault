@@ -28,7 +28,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         IKeyManager keyManager,
         ISrpClient srpClient,
         IKeyDerivationService keyDerivationService,
-        ICryptoServices cryptoServices) : BaseViewModel
+        ICryptoService cryptoServices) : BaseViewModel
     {
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
