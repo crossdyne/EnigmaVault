@@ -115,6 +115,36 @@ export class PasswordsPage {
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
     activePopup = signal<'trash' | 'archive' | null>(null);
 
+    // Toast 
+    toastVisibility = signal(false);
+    toastMessage = signal('');
+    toastType = signal<'success' | 'error'>('success');
+
+    private toastTimeout: any;
+    private fieldNames: Record<string, string> = {
+        'Login': 'Логин',
+        'Password': 'Пароль',
+        'Email': 'Электронная почта',
+        'Phone': 'Номер телефона',
+        'IpAddress': 'IP-адрес',
+        'Port': 'Порт',
+        'RootPassword': 'Пароль root',
+        'CardNumber': 'Номер карты',
+        'CardHolder': 'Владелец карты',
+        'CvvCode': 'CVV-код',
+        'Key': 'API-ключ'
+    };
+
+    private showToast(message: string, type: 'success' | 'error' = 'success') {
+        clearTimeout(this.toastTimeout);
+
+        this.toastMessage.set(message);
+        this.toastType.set(type);
+        this.toastVisibility.set(true);
+
+        this.toastTimeout = setTimeout(() => this.toastVisibility.set(false), 2500);
+    }
+
     //#region Vaults
 
     vaults = signal<VaultItemDisplay[]>([]);
@@ -736,15 +766,22 @@ export class PasswordsPage {
 
     async copyVaultField(vault: VaultItemDisplay, field: string) {
         const details = await this.vaultCryptoService.decryptDetails(vault.type, vault.encryptedDetails);
-        
-        if (!details) 
+        const fieldLabel = this.fieldNames[field] || field;
+
+        if (!details) {
+            this.showToast('Не удалось расшифровать данные', 'error');
             return;
-        
+        }
+            
         const value = (details as Record<string, string | undefined>)[field];
         
-        if (value) {
-            this.clipboard.copy(value);
+        if (!value || value.trim().length === 0) {
+            this.showToast(`Поле "${fieldLabel}" пустое`, 'error');
+            return;
         }
+
+        this.clipboard.copy(value);
+        this.showToast(`Скопированное поле: ${fieldLabel}`);
     }
 
     //Сброс выделение элемента
