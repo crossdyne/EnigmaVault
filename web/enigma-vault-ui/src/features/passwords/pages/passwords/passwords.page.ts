@@ -36,6 +36,11 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
+import { StandardPassword } from "../../models/domain/standard-password";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { Server } from "../../models/domain/server";
+import { CreditCard } from "../../models/domain/credit-card";
+import { ApiKey } from "../../models/domain/api-key";
 
 @Component({
     selector: 'passwords-page',
@@ -55,6 +60,7 @@ import { DateUpdateResponse } from "../../models/dto/date-update.response";
 export class PasswordsPage {
     private router = inject(Router);
     private dialog = inject(Dialog);
+    private clipboard = inject(Clipboard);
     private tagService = inject(TagService);
     private iconCategoryService = inject(IconCategoryService);
     private assetService = inject(AssetService);
@@ -99,6 +105,8 @@ export class PasswordsPage {
         await this.getIcons();
         await this.getVaults();
     }
+
+    VaultType = VaultTypeEnum;
 
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
     byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
@@ -724,6 +732,19 @@ export class PasswordsPage {
             () => this.vaults.update(vaults => vaults.filter(v => !v.isInTrash)),
             errors => console.error(this.mapErrors(errors))
         );
+    }
+
+    async copyVaultField(vault: VaultItemDisplay, field: string) {
+        const details = await this.vaultCryptoService.decryptDetails(vault.type, vault.encryptedDetails);
+        
+        if (!details) 
+            return;
+        
+        const value = (details as Record<string, string | undefined>)[field];
+        
+        if (value) {
+            this.clipboard.copy(value);
+        }
     }
 
     //Сброс выделение элемента

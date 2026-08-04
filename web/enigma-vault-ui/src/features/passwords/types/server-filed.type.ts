@@ -1,0 +1,1 @@
+type ServerFieldType = 'IpAddress' | 'Port' | 'Login' | 'RootPassword';
