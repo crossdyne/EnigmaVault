@@ -53,7 +53,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
 
         #endregion
 
-        public override void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoServices secureData, IUserContext context)
+        public override void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoService secureData, IUserContext context)
         {
             OverviewPayload overview;
             StandardPassword details;
@@ -80,13 +80,13 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             RecoveryKey = details?.RecoveryKey;
         }
 
-        public override (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) Encrypt(ICryptoServices secureData, IUserContext context)
+        public override (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) Encrypt(ICryptoService secureData, IUserContext context)
         {
             var overview = new OverviewPayload(ServiceName, Url!, Note, SvgCode);
             var details = new StandardPassword(Login, Password, Email, Phone, SecretWord, RecoveryKey);
 
-            var encryptedOverview = secureData.EncryptedData(overview, context.Dek, CryptoConstants.CurrentCryptoVersion);
-            var encryptedDetails = secureData.EncryptedData(details, context.Dek);
+            var encryptedOverview = secureData.EncryptData(overview, context.Dek, CryptoConstants.CurrentCryptoVersion);
+            var encryptedDetails = secureData.EncryptData(details, context.Dek);
 
             return (encryptedOverview, encryptedDetails, CryptoConstants.CurrentCryptoVersion);
         }

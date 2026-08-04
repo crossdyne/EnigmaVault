@@ -13,10 +13,10 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
     public sealed partial class CredentialsVaultViewModel : BaseViewModel
     {
         private readonly EncryptedVaultResponse _model;
-        private readonly ICryptoServices _crypto;
+        private readonly ICryptoService _crypto;
         private readonly byte[] _key;
 
-        public CredentialsVaultViewModel(EncryptedVaultResponse model, ICryptoServices crypto, byte[] key, IReadOnlyCollection<TagViewModel> tags)
+        public CredentialsVaultViewModel(EncryptedVaultResponse model, ICryptoService crypto, byte[] key, IReadOnlyCollection<TagViewModel> tags)
         {
             _model = model;
             _crypto = crypto;
