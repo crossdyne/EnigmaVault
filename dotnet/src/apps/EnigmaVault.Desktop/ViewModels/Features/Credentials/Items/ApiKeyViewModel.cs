@@ -76,8 +76,8 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             var overView = new OverviewPayload(ServiceName, Url!, Note, SvgCode);
             var details = new ApiKey(ApiKey, BaseUrl, ClientId, ClientSecret, ExpirationDate?.ToString("o"), Environment, Scope);
 
-            var encryptedDetails = secureData.EncryptedData(details, context.Dek, CryptoConstants.CurrentCryptoVersion);
-            var overviewEncrypted = secureData.EncryptedData(overView, context.Dek);
+            var encryptedDetails = secureData.EncryptData(details, context.Dek, CryptoConstants.CurrentCryptoVersion);
+            var overviewEncrypted = secureData.EncryptData(overView, context.Dek);
 
             return (overviewEncrypted, encryptedDetails, CryptoConstants.CurrentCryptoVersion);
         }

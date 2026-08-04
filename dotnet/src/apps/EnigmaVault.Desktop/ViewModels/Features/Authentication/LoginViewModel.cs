@@ -27,6 +27,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         ITokenManager tokenManager,
         IKeyManager keyManager,
         ISrpClient srpClient,
+        ISrpKeyDerivationService srpKeyDerivationService,
         IKeyDerivationService keyDerivationService,
         ICryptoService cryptoServices) : BaseViewModel
     {
@@ -58,10 +59,10 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
             }
 
             SrpChallengeResponse srpChallengeResponse = challengeResult.Value;
-            
-            var srpProfile = SrpProfileRegistry.GetProfile((SrpGroup)srpChallengeResponse.SrpVersion);
-            var srpContext = SrpContext.FromOptions(srpProfile.Options);
-            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, AuthPassword, srpChallengeResponse.Salt, srpChallengeResponse.B, srpContext, cryptoVersion);
+
+            var saltBytes = Convert.FromBase64String(srpChallengeResponse.Salt);
+            var authHashBytes = srpKeyDerivationService.DeriveAuthHashForSrp(AuthLogin, AuthPassword, saltBytes, (SrpGroup)srpChallengeResponse.SrpVersion, cryptoVersion);
+            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, authHashBytes, srpChallengeResponse.Salt, srpChallengeResponse.B, (SrpGroup)srpChallengeResponse.SrpVersion);
 
             var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(normalizeLogin, A, M1));
 
@@ -77,7 +78,7 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
                 return;
             }
 
-            var isServerValid = srpClient.VerifyServerM2(A, M1, S, verifierResult.Value.M2, srpContext);
+            var isServerValid = srpClient.VerifyServerM2(A, M1, S, verifierResult.Value.M2, (SrpGroup)srpChallengeResponse.SrpVersion);
 
             if (!isServerValid)
             {
