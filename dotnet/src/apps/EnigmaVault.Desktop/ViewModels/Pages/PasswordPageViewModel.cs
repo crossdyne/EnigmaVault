@@ -802,6 +802,119 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
+        #region Команда [CopyFieldCommand]: Копирует выбранное свойсво
+
+        [RelayCommand]
+        private void CopyField(FieldToCopy field)
+        {
+            if (SelectedEncryptedOverview == null)
+                return;
+
+            Action action = SelectedEncryptedOverview.Type switch
+            {
+                VaultType.Password => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var standardPassword = SelectedCredentialItemBaseViewModel as StandardPasswordViewModel;
+
+                    if (standardPassword is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.StandartPasswordLogin:
+                            Clipboard.SetText(standardPassword.Login!);
+                            break;
+                        case FieldToCopy.StandartPassword:
+                            Clipboard.SetText(standardPassword.Password!);
+                            break;
+                        case FieldToCopy.StandartPasswordEmail:
+                            Clipboard.SetText(standardPassword.Email!);
+                            break;
+                        case FieldToCopy.StandartPasswordPhoneNumber:
+                            Clipboard.SetText(standardPassword.Phone!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.Server => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var server = SelectedCredentialItemBaseViewModel as ServerPasswordViewModel;
+
+                    if (server is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.ServerAddres:
+                            Clipboard.SetText(server.IpAddress!);
+                            break;
+                        case FieldToCopy.ServerPort:
+                            Clipboard.SetText(server.Port?.ToString()!);
+                            break;
+                        case FieldToCopy.ServerLogin:
+                            Clipboard.SetText(server.Login!);
+                            break;
+                        case FieldToCopy.ServerPassword:
+                            Clipboard.SetText(server.RootPassword!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.CreditCard => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var creditCard = SelectedCredentialItemBaseViewModel as CreditCardViewModel;
+
+                    if (creditCard is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.CreditCardNumber:
+                            Clipboard.SetText(creditCard.CardNumber!);
+                            break;
+                        case FieldToCopy.CreditCardOwner:
+                            Clipboard.SetText(creditCard.CardHolder!);
+                            break;
+                        case FieldToCopy.CreditCardCVV:
+                            Clipboard.SetText(creditCard.CvvCode!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.ApiKey => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var apiKey = SelectedCredentialItemBaseViewModel as ApiKeyViewModel;
+
+                    if (apiKey is null)
+                        return;
+
+                    Clipboard.SetText(apiKey.ApiKey!);
+                }
+                ,
+                _ => () => throw new Exception("Выбранный формат не поддерживается")
+            };
+
+            action?.Invoke();
+
+            PasswordMenuPopup.HideCommand.Execute(null);
+        }
+
+        #endregion
+
         // =================Tag======================
 
         #region Команда [CreateTagCommand]: Создает тэг

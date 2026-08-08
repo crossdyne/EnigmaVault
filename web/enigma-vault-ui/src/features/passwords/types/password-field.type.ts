@@ -1,0 +1,1 @@
+type PasswordFieldType = 'Login' | 'Password' | 'Email' | 'Phone';

@@ -36,6 +36,11 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
+import { StandardPassword } from "../../models/domain/standard-password";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { Server } from "../../models/domain/server";
+import { CreditCard } from "../../models/domain/credit-card";
+import { ApiKey } from "../../models/domain/api-key";
 
 @Component({
     selector: 'passwords-page',
@@ -55,6 +60,7 @@ import { DateUpdateResponse } from "../../models/dto/date-update.response";
 export class PasswordsPage {
     private router = inject(Router);
     private dialog = inject(Dialog);
+    private clipboard = inject(Clipboard);
     private tagService = inject(TagService);
     private iconCategoryService = inject(IconCategoryService);
     private assetService = inject(AssetService);
@@ -100,12 +106,44 @@ export class PasswordsPage {
         await this.getVaults();
     }
 
+    VaultType = VaultTypeEnum;
+
     trigger = viewChild.required<CdkMenuTrigger>('trigger')
     byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
 
     activeTab = signal<'tags' | 'icons'>('tags');
     activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
     activePopup = signal<'trash' | 'archive' | null>(null);
+
+    // Toast 
+    toastVisibility = signal(false);
+    toastMessage = signal('');
+    toastType = signal<'success' | 'error'>('success');
+
+    private toastTimeout: any;
+    private fieldNames: Record<string, string> = {
+        'Login': 'Логин',
+        'Password': 'Пароль',
+        'Email': 'Электронная почта',
+        'Phone': 'Номер телефона',
+        'IpAddress': 'IP-адрес',
+        'Port': 'Порт',
+        'RootPassword': 'Пароль root',
+        'CardNumber': 'Номер карты',
+        'CardHolder': 'Владелец карты',
+        'CvvCode': 'CVV-код',
+        'Key': 'API-ключ'
+    };
+
+    private showToast(message: string, type: 'success' | 'error' = 'success') {
+        clearTimeout(this.toastTimeout);
+
+        this.toastMessage.set(message);
+        this.toastType.set(type);
+        this.toastVisibility.set(true);
+
+        this.toastTimeout = setTimeout(() => this.toastVisibility.set(false), 2500);
+    }
 
     //#region Vaults
 
@@ -724,6 +762,26 @@ export class PasswordsPage {
             () => this.vaults.update(vaults => vaults.filter(v => !v.isInTrash)),
             errors => console.error(this.mapErrors(errors))
         );
+    }
+
+    async copyVaultField(vault: VaultItemDisplay, field: string) {
+        const details = await this.vaultCryptoService.decryptDetails(vault.type, vault.encryptedDetails);
+        const fieldLabel = this.fieldNames[field] || field;
+
+        if (!details) {
+            this.showToast('Не удалось расшифровать данные', 'error');
+            return;
+        }
+            
+        const value = (details as Record<string, string | undefined>)[field];
+        
+        if (!value || value.trim().length === 0) {
+            this.showToast(`Поле "${fieldLabel}" пустое`, 'error');
+            return;
+        }
+
+        this.clipboard.copy(value);
+        this.showToast(`Скопированное поле: ${fieldLabel}`);
     }
 
     //Сброс выделение элемента
