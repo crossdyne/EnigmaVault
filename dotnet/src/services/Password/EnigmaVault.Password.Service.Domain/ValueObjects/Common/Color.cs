@@ -20,14 +20,10 @@ namespace EnigmaVault.Password.Service.Domain.ValueObjects.Common
         public static Color FromHex(string hexCode)
         {
             if (string.IsNullOrWhiteSpace(hexCode))
-            {
                 throw new ArgumentNullException(nameof(hexCode), "Шестнадцатеричный код не может быть пустым.");
-            }
 
             if (!HexColorRegex.IsMatch(hexCode))
-            {
                 throw new FormatException($"Недопустимый шестнадцатеричный формат цвета: {hexCode}. Ожидаемый формат: #RRGGBB.");
-            }
 
             return new Color(hexCode.ToUpperInvariant());
         }
