@@ -1,22 +1,25 @@
+using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
 using EnigmaVault.Password.Service.Application.Common;
+using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Domain.Models;
 using EnigmaVault.Password.Service.Domain.ValueObjects.Password;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.ChangeIcon
 {
     public sealed class ChangeIconCommandHandler(
-        IApplicationDbContext context,
+        IVaultItemRepository repository,
         IUnitOfWork unitOfWork) : IRequestHandler<ChangeIconCommand, Result<DateTime>>
     {
         public async Task<Result<DateTime>> Handle(ChangeIconCommand request, CancellationToken cancellationToken)
         {
-            var vault = await context.Set<VaultItem>().FirstOrDefaultAsync(v => v.UserId == request.UseId && v.Id == request.VaultId);
+            Maybe<VaultItem> maybe = await repository.GetAsync(request.VaultId, request.UseId, cancellationToken);
 
-            if (vault == null)
+            if (maybe.IsNone)
                 return new Error(ErrorCode.NotFound, "Данная запись не найдена, возможно она была удалена");
+
+            VaultItem vault = maybe.Value;
 
             vault.SetIcon(IconId.Create(request.IconId));
 
