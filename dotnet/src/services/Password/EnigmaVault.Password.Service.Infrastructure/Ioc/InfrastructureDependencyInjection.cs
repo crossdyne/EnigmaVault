@@ -4,12 +4,12 @@ using EnigmaVault.Password.Service.Application.Common.Repositories;
 using EnigmaVault.Password.Service.Application.Features.Account.EventHandlers;
 using EnigmaVault.Password.Service.Application.Features.VaultItems.EventHandlers;
 using EnigmaVault.Password.Service.Infrastructure.BackgroundServices;
+using EnigmaVault.Password.Service.Infrastructure.Persistence;
 using EnigmaVault.Password.Service.Infrastructure.Persistence.Contexts;
 using EnigmaVault.Password.Service.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using Shared.Contracts.Messaging.Abstractions;
 using Shared.Contracts.Messaging.Events;
 
@@ -23,7 +23,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Ioc
 
             services.AddDbContext<EnigmaContext>(options => options.UseNpgsql(connectionString));
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<EnigmaContext>());
-            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<EnigmaContext>());
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IFolderRepository, FolderRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
