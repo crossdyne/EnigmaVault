@@ -38,6 +38,7 @@
   </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/EnigmaVault.Password.Service.Integration.Tests/EnigmaVault.Password.Service.Integration.Tests.csproj" />
     <Project Path="tests/unit/EnigmaVault.Password.Service.Unit.Tests/EnigmaVault.Password.Service.Unit.Tests.csproj" />
   </Folder>
 
