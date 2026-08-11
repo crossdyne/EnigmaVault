@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using MediatR;
+using Unit = Crossdyne.Toolkit.Primitives.Unit;
 
 namespace EnigmaVault.Password.Service.Application.Features.Tags.Commands.Delete
 {
@@ -16,15 +17,13 @@ namespace EnigmaVault.Password.Service.Application.Features.Tags.Commands.Delete
         {
             var maybeTag = await _tagRepository.GetAsync(request.Id, request.UserId, token: cancellationToken);
 
-            if (maybeTag.HasValue)
-            {
-                _tagRepository.Remove(maybeTag.Value);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (maybeTag.IsNone)
+                return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден.");
 
-                return Unit.Value;
-            }
+            _tagRepository.Remove(maybeTag.Value);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new Error(ErrorCode.NotFound, $"Тэг {request.Id} не был найден.");
+            return Unit.Value;
         }
     }
 }
