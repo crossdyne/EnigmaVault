@@ -7,7 +7,7 @@
     <!-- WPF -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
     <PackageVersion Include="SharpVectors.Wpf" Version="1.8.5"/>
-    <PackageVersion Include="Crossdyne.Security.Windows" Version="0.5.0-beta.2"/>
+    <PackageVersion Include="Crossdyne.Security.Windows" Version="1.0.0"/>
     <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142"/>
 
     <!-- Asp Net && Backend -->
@@ -40,9 +40,9 @@
     <PackageVersion Include="StackExchange.Redis" Version="2.10.1" />
     
     <!-- Universal -->
-	  <PackageVersion Include="Crossdyne.Security.Configuration" Version="0.5.0-beta.2"/>
-	  <PackageVersion Include="Crossdyne.Security.Srp.Client" Version="0.5.0-beta.2"/>
-    <PackageVersion Include="Crossdyne.Security.Cryptography" Version="0.5.0-beta.2"/>
+	  <PackageVersion Include="Crossdyne.Security.Configuration" Version="1.0.0"/>
+	  <PackageVersion Include="Crossdyne.Security.Srp.Client" Version="1.0.0"/>
+    <PackageVersion Include="Crossdyne.Security.Cryptography" Version="1.0.0"/>
     <PackageVersion Include="Crossdyne.Toolkit" Version="1.1.0"/>
     <PackageVersion Include="AutoMapper" Version="16.1.1" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
@@ -61,7 +61,7 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.13.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
     <PackageVersion Include="FluentAssertions" Version="8.10.0" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
