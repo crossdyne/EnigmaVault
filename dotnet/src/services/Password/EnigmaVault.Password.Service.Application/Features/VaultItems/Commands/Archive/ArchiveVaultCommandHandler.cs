@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using MediatR;
+using Unit = Crossdyne.Toolkit.Primitives.Unit;
 
 namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Archive
 {

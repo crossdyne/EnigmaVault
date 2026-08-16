@@ -9,7 +9,6 @@
     <Project Path="src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.FileService.Client/EnigmaVault.FileService.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.PasswordService.Client/EnigmaVault.PasswordService.Client.csproj" />
-    <Project Path="src/clients/EnigmaVault.UserManagement.Client/EnigmaVault.UserManagement.Client.csproj" />
   </Folder>
   <Folder Name="/src/services/" />
   <Folder Name="/src/services/Password/">
@@ -36,5 +35,11 @@
   <Folder Name="/src/shared/web/">
     <Project Path="src/shared/web/Shared.Web/Shared.Web.csproj" />
   </Folder>
-
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/integration/">
+    <Project Path="tests/integration/EnigmaVault.Password.Service.Integration.Tests/EnigmaVault.Password.Service.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/EnigmaVault.Password.Service.Unit.Tests/EnigmaVault.Password.Service.Unit.Tests.csproj" />
+  </Folder>
 </Solution>

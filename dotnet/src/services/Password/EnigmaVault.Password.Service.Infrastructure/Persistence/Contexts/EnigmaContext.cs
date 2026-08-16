@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Contexts
 {
-    public sealed class EnigmaContext(DbContextOptions<EnigmaContext> options) : DbContext(options), IApplicationDbContext, IUnitOfWork
+    public class EnigmaContext(DbContextOptions<EnigmaContext> options) : DbContext(options), IApplicationDbContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,51 +1,55 @@
 import { inject, Injectable } from "@angular/core";
-import { CryptoService } from "@crossdyne/security";
 import { OverviewPayload } from "../models/domain/overview-payload";
-import { CryptoStateService } from "../../../core/services/crypto-state.service";
 import { CreditCard } from "../models/domain/credit-card";
 import { StandardPassword } from "../models/domain/standard-password";
 import { Server } from "../models/domain/server";
 import { ApiKey } from "../models/domain/api-key";
 import { VaultTypeEnum } from "../models/domain/vault-type.enum";
 import { CryptoConstants } from "../../../core/constants/security.constants";
+import { CryptoWorkerService } from "../../../core/services/crypto-worker.service";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class VaultCryptoService {
-    private state = inject(CryptoStateService);
-    private crypto = new CryptoService();
-    
+    private worker = inject(CryptoWorkerService);
+
     async decryptOverview(encrypted: string): Promise<OverviewPayload | null> {
-        return await this.crypto.decryptData<OverviewPayload>(encrypted, this.state.dek!);
+        if (!encrypted) 
+            return null;
+        
+        return this.worker.decrypt<OverviewPayload>(encrypted);
     }
 
-    async decryptDetails(type: VaultTypeEnum, encrypted: string) : Promise<StandardPassword | CreditCard | Server | ApiKey | null> {
+    async decryptDetails(type: VaultTypeEnum, encrypted: string): Promise<StandardPassword | CreditCard | Server | ApiKey | null> {
+        if (!encrypted) 
+            return null;
+
         switch (type as number) {
             case VaultTypeEnum.Password:
-                return await this.crypto.decryptData<StandardPassword>(encrypted, this.state.dek!);
+                return await this.worker.decrypt<StandardPassword>(encrypted);
             case VaultTypeEnum.CreditCard:
-                return await this.crypto.decryptData<CreditCard>(encrypted, this.state.dek!);
+                return await this.worker.decrypt<CreditCard>(encrypted);
             case VaultTypeEnum.Server:
-                return await this.crypto.decryptData<Server>(encrypted, this.state.dek!);
+                return await this.worker.decrypt<Server>(encrypted);
             case VaultTypeEnum.ApiKey:
-                return await this.crypto.decryptData<ApiKey>(encrypted, this.state.dek!);
+                return await this.worker.decrypt<ApiKey>(encrypted);
             default:
                 throw new Error(`Неизвестный тип: ${type}`);
         }
     }
     
     async encryptOverview(payload: OverviewPayload): Promise<{ encryptedOverView: string, cryptoVersion: number }> {
+        const result = await this.worker.encrypt(payload, CryptoConstants.ACTUAL_CRYPTO_VERSION);
         return {
-            encryptedOverView: await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION),
-            cryptoVersion: CryptoConstants.ACTUAL_CRYPTO_VERSION
+            encryptedOverView: result.encryptedData,
+            cryptoVersion: result.cryptoVersion
         };
     }
 
     async encryptDetails(payload: any): Promise<{ encryptedDetails: string, cryptoVersion: number }> {
+        const result = await this.worker.encrypt(payload, CryptoConstants.ACTUAL_CRYPTO_VERSION);
         return {
-            encryptedDetails: await this.crypto.encryptData(payload, this.state.dek!, CryptoConstants.ACTUAL_CRYPTO_VERSION),
-            cryptoVersion: CryptoConstants.ACTUAL_CRYPTO_VERSION
+            encryptedDetails: result.encryptedData,
+            cryptoVersion: result.cryptoVersion
         };
     }
 }

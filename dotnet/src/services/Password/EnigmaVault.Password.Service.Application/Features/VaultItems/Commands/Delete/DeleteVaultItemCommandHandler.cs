@@ -2,6 +2,7 @@
 using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Application.Common.Repositories;
 using MediatR;
+using Unit = Crossdyne.Toolkit.Primitives.Unit;
 
 namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.Delete
 {
@@ -16,15 +17,13 @@ namespace EnigmaVault.Password.Service.Application.Features.VaultItems.Commands.
         {
             var maybeVault = await _vaultItemRepository.GetAsync(request.VaultItemId, request.UserId, cancellationToken);
 
-            if (maybeVault.HasValue)
-            {
-                _vaultItemRepository.Remove(maybeVault.Value);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (maybeVault.IsNone)
+             return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена.");
 
-                return Unit.Value;
-            }
+            _vaultItemRepository.Remove(maybeVault.Value);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new Error(ErrorCode.NotFound, $"Запись {request.VaultItemId} не была найдена.");
+            return Unit.Value;
         }
     }
 }

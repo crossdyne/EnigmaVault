@@ -105,6 +105,8 @@ namespace EnigmaVault.Password.Service.Domain.Models
             if (IsInTrash == isInTrash)
                 return;
 
+            Guard.Against.That(IsArchive, () => new DomainException(new Error(AppErrors.Validation, "Нельзя удалить архивированную запись")));
+
             if (isInTrash)
             {
                 IsInTrash = true;
@@ -133,7 +135,8 @@ namespace EnigmaVault.Password.Service.Domain.Models
         {
             _tags.Clear();
             
-            if (tagIds == null) return;
+            if (tagIds == null) 
+                return;
 
             foreach (var tagId in tagIds.Distinct())
                 _tags.Add(VaultTags.Create(this.Id, tagId));

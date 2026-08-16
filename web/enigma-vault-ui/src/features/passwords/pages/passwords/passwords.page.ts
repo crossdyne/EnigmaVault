@@ -13,7 +13,6 @@ import { VaultService } from "../../services/vault.service";
 import { VaultItemDisplay } from "../../models/domain/vault-item-display";
 import { IconUrl } from "../../models/dto/icon-url";
 import { OverviewPayload } from "../../models/domain/overview-payload";
-import { CryptoStateService } from "../../../../core/services/crypto-state.service";
 import { Router } from "@angular/router";
 import { ConnectedPosition, OverlayModule } from "@angular/cdk/overlay";
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem, CdkMenuTrigger } from "@angular/cdk/menu";
@@ -36,11 +35,8 @@ import { ChangeIconData } from "../../../../shared/ui/icons/modal/change-icon.da
 import { DateHelper } from "../../../../core/helpers/date.helper";
 import { TagsOverflowDirective } from "../../../../shared/directives/tags-overflow.directive";
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
-import { StandardPassword } from "../../models/domain/standard-password";
 import { Clipboard } from "@angular/cdk/clipboard";
-import { Server } from "../../models/domain/server";
-import { CreditCard } from "../../models/domain/credit-card";
-import { ApiKey } from "../../models/domain/api-key";
+import { CryptoWorkerService } from "../../../../core/services/crypto-worker.service";
 
 @Component({
     selector: 'passwords-page',
@@ -66,7 +62,7 @@ export class PasswordsPage {
     private assetService = inject(AssetService);
     private vaultService = inject(VaultService);
     private vaultCryptoService = inject(VaultCryptoService);
-    private cryptoStateService = inject(CryptoStateService);
+    private cryptoWorker = inject(CryptoWorkerService);
 
     constructor() {
         this.initAsync();
@@ -194,8 +190,7 @@ export class PasswordsPage {
 
     // CRUD
     async getVaults() {
-        const dek = this.cryptoStateService.dek;
-        if (!dek) {
+        if (!this.cryptoWorker.initialized) {
             this.router.navigate(['/passwords/access']);
             return;
         }
@@ -293,7 +288,6 @@ export class PasswordsPage {
                 case VaultTypeEnum.Server:
                     iconId = 'ae71a54a-bea0-428c-a526-62ac9df400dc';
                     break;
-            
                 default:
                     iconId = '5e3e7328-12b7-4740-ad90-90889e15b58e';
                     break;

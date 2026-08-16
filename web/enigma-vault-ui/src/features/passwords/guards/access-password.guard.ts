@@ -1,12 +1,12 @@
 import { CanActivateFn, Router, UrlTree } from "@angular/router";
-import { CryptoStateService } from "../../../core/services/crypto-state.service";
 import { inject } from "@angular/core";
+import { CryptoWorkerService } from "../../../core/services/crypto-worker.service";
 
 export const accessPasswordGuard: CanActivateFn = (route, state): boolean | UrlTree => {
-    const stateService = inject(CryptoStateService);
+    const cryptoWorker = inject(CryptoWorkerService);
     const router = inject(Router);
 
-    if (stateService.dek !== null) {
+    if (cryptoWorker.initialized) {
         return router.createUrlTree(['/passwords'], {
             queryParams: { from: state.url }
         });
