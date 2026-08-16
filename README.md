@@ -78,7 +78,6 @@ EnigmaVault — это централизованный менеджер сек�
 | `EnigmaVault.Web.Bff` | Backend for Frontend — единая точка входа для frontend, агрегация API, проксирование |
 | `EnigmaVault.Password.Service` | Управление паролями, заметками и API-ключами (Clean Architecture: Domain, Application, Infrastructure, Api) |
 | `EnigmaVault.Authentication.Client` | Клиент для взаимодействия с сервисом аутентификации Nexus (SRP) |
-| `EnigmaVault.UserManagement.Client` | Клиент для управления данными пользователя из Nexus |
 | `EnigmaVault.FileService.Client` | Клиент для взаимодействия с файловым хранилищем |
 | `EnigmaVault.AssetsService.Client` | Клиент для получения иконок и ассетов из Glyph |
 
@@ -120,8 +119,7 @@ enigma-vault/
 │   │   │   ├── 📁 EnigmaVault.AssetsService.Client/    # Клиент для Glyph
 │   │   │   ├── 📁 EnigmaVault.Authentication.Client/   # Клиент для Nexus Auth
 │   │   │   ├── 📁 EnigmaVault.FileService.Client/      # Клиент для файлового сервиса
-│   │   │   ├── 📁 EnigmaVault.PasswordService.Client/  # Клиент для Password Service
-│   │   │   └── 📁 EnigmaVault.UserManagement.Client/   # Клиент для User Management
+│   │   │   └── 📁 EnigmaVault.PasswordService.Client/  # Клиент для Password Service
 │   │   ├── 📂 services/
 │   │   │   └── 📂 Password/
 │   │   │       ├── 📁 EnigmaVault.Password.Service.Api/            # REST API
