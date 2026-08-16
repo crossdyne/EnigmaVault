@@ -9,7 +9,6 @@
     <Project Path="src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.FileService.Client/EnigmaVault.FileService.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.PasswordService.Client/EnigmaVault.PasswordService.Client.csproj" />
-    <Project Path="src/clients/EnigmaVault.UserManagement.Client/EnigmaVault.UserManagement.Client.csproj" />
   </Folder>
   <Folder Name="/src/services/" />
   <Folder Name="/src/services/Password/">
