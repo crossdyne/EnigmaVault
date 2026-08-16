@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Configuration;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services;
@@ -9,8 +11,8 @@ using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Quantropic.Security.Abstractions;
 using Shared.Contracts.Requests.Authentication;
+using Shared.Contracts.Responses.Authentication;
 using System.Security.Cryptography;
 using System.Windows;
 
@@ -25,20 +27,10 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         ITokenManager tokenManager,
         IKeyManager keyManager,
         ISrpClient srpClient,
+        ISrpKeyDerivationService srpKeyDerivationService,
         IKeyDerivationService keyDerivationService,
-        ICryptoServices cryptoServices) : BaseViewModel
+        ICryptoService cryptoServices) : BaseViewModel
     {
-        private readonly IWindowNavigation _windowNavigation = windowNavigation;
-        private readonly IPageNavigation _pageNavigation = pageNavigation;
-        private readonly IAuthService _authService = authService;
-        private readonly IUserManagementService _userManagementService = userManagementService;
-        private readonly IUserContext _userContext = userContext;
-        private readonly ITokenManager _tokenManager = tokenManager;
-        private readonly IKeyManager _keyManager = keyManager;
-        private readonly ISrpClient _srpClient = srpClient;
-        private readonly IKeyDerivationService _keyDerivationService = keyDerivationService;
-        private readonly ICryptoServices _cryptoServices = cryptoServices;
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
         private string _authLogin = string.Empty;
@@ -50,7 +42,53 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         [RelayCommand(CanExecute = nameof(CanLogin))]
         private async Task Login()
         {
-            var userPublicInfo = await _userManagementService.GetPublicEncryptionInfo(AuthLogin);
+            #region Конфигурация
+
+            CryptoVersion cryptoVersion = CryptoVersion.V1;
+
+            var normalizeLogin = AuthLogin.ToLower();
+
+            #endregion
+
+            var challengeResult = await authService.GetSrpChallenge(new SrpChallengeRequest(normalizeLogin));
+
+            if (challengeResult.IsFailure)
+            {
+                MessageBox.Show($"challengeResult: {challengeResult.StringMessage}");
+                return;
+            }
+
+            SrpChallengeResponse srpChallengeResponse = challengeResult.Value;
+
+            var saltBytes = Convert.FromBase64String(srpChallengeResponse.Salt);
+            var authHashBytes = srpKeyDerivationService.DeriveAuthHashForSrp(AuthLogin, AuthPassword, saltBytes, (SrpGroup)srpChallengeResponse.SrpVersion, cryptoVersion);
+            var (A, M1, S) = srpClient.GenerateSrpProof(normalizeLogin, authHashBytes, srpChallengeResponse.Salt, srpChallengeResponse.B, (SrpGroup)srpChallengeResponse.SrpVersion);
+
+            var verifierResult = await authService.VerifySrpProof(new SrpVerifyRequest(normalizeLogin, A, M1));
+
+            if (verifierResult.IsFailure)
+            {
+                MessageBox.Show($"verifierResult: {verifierResult.StringMessage}");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(verifierResult.Value.M2))
+            {
+                MessageBox.Show("Ошибка аутентификации, возникла проблема на стороне сервера.");
+                return;
+            }
+
+            var isServerValid = srpClient.VerifyServerM2(A, M1, S, verifierResult.Value.M2, (SrpGroup)srpChallengeResponse.SrpVersion);
+
+            if (!isServerValid)
+            {
+                MessageBox.Show("Подлинность сервера не получилось подтвердить");
+                return;
+            }
+
+            #region Дек
+
+            var userPublicInfo = await userManagementService.GetPublicEncryptionInfo(normalizeLogin);
 
             if (userPublicInfo.IsFailure)
             {
@@ -61,62 +99,47 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
             var publicInfo = userPublicInfo.Value;
             byte[] salt = Convert.FromBase64String(publicInfo.ClientSalt);
 
-            var (kek, _) = _keyDerivationService.DeriveKeysFromPassword(AuthLogin, AuthPassword, salt);
+            var (kek, _) = keyDerivationService.DeriveKeysFromPassword(normalizeLogin, AuthPassword, salt, cryptoVersion);
 
             byte[]? dek;
 
             try
             {
-                dek = _cryptoServices.DecryptData<byte[]>(publicInfo.EncryptedDek, kek);
+                dek = cryptoServices.DecryptData<byte[]>(publicInfo.EncryptedDek, kek);
             }
             catch (CryptographicException)
             {
                 MessageBox.Show("Неверный пароль (не удалось расшифровать ключ)!");
                 return;
             }
-
-            var srpChallengeRequest = new SrpChallengeRequest(AuthLogin);
-            var srpChallengeResult = await _authService.GetSrpChallenge(srpChallengeRequest);
-
-            if (srpChallengeResult.IsFailure)
+            catch (Exception ex)
             {
-                MessageBox.Show(srpChallengeResult.StringMessage);
+                MessageBox.Show(ex.ToString());
                 return;
             }
 
-            var (A, M1, S) = _srpClient.GenerateSrpProof(AuthLogin, AuthPassword, srpChallengeResult.Value.Salt, srpChallengeResult.Value.B);
+            #endregion
 
-            var srpVerifierRequest = new SrpVerifyRequest(AuthLogin, A, M1);
-            var srpVerifierResult = await _authService.VerifySrpProof(srpVerifierRequest);
+            tokenManager.SaveTokens(new AccessData(verifierResult.Value!.AccessToken, verifierResult.Value!.RefreshToken));
+            keyManager.SaveKey(dek!);
 
-            if (srpChallengeResult.IsFailure)
+            var userInfoResult = await userManagementService.Me(verifierResult.Value.AccessToken);
+
+            if (userInfoResult.IsFailure)
             {
-                MessageBox.Show(srpChallengeResult.StringMessage);
+                MessageBox.Show(userInfoResult.StringMessage);
                 return;
             }
 
-            var isValidServer = _srpClient.VerifyServerM2(A, M1, S, srpVerifierResult.Value.M2!);
-
-            if (!isValidServer)
-            {
-                MessageBox.Show("Подлинность сервера не получилось подтвердить");
-                return;
-            }
-
-            _tokenManager.SaveTokens(new AccessData(srpVerifierResult.Value!.AccessToken, srpVerifierResult.Value!.RefreshToken));
-            _keyManager.SaveKey(dek!);
-
-            var userInfo = await _userManagementService.Me(srpVerifierResult.Value.AccessToken);
-
-            _userContext.UpdateUserInfo(new UserInfo(userInfo.Value!.Id, userInfo.Value.Login));
-            _userContext.UpdateTokens(new AccessData(srpVerifierResult.Value.AccessToken, srpVerifierResult.Value.RefreshToken));
-            _userContext.UpdateDek(dek!);
+            userContext.UpdateUserInfo(new UserInfo(userInfoResult.Value!.Id, userInfoResult.Value.Login));
+            userContext.UpdateTokens(new AccessData(verifierResult.Value.AccessToken, verifierResult.Value.RefreshToken));
+            userContext.UpdateDek(dek!);
 
             Array.Clear(kek, 0, kek.Length);
 
-            _windowNavigation.Open(WindowsName.MainWindow);
-            _windowNavigation.Close(WindowsName.AuthenticationWindow);
-            _pageNavigation.Navigate(PagesName.Password, FramesName.MainFrame);
+            windowNavigation.Open(WindowsName.MainWindow);
+            windowNavigation.Close(WindowsName.AuthenticationWindow);
+            pageNavigation.Navigate(PagesName.Password, FramesName.MainFrame);
         }
 
         private bool CanLogin() => !string.IsNullOrWhiteSpace(AuthLogin) && !string.IsNullOrWhiteSpace(AuthPassword);
@@ -124,8 +147,8 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Authentication
         [RelayCommand]
         private void LoginWithoutAuth()
         {
-            _windowNavigation.Open(WindowsName.MainWindow);
-            _windowNavigation.Close(WindowsName.AuthenticationWindow);
+            windowNavigation.Open(WindowsName.MainWindow);
+            windowNavigation.Close(WindowsName.AuthenticationWindow);
         }
     }
 }

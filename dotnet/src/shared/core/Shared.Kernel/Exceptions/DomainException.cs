@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 
 namespace Shared.Kernel.Exceptions
 {

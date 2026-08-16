@@ -1,7 +1,14 @@
-﻿using Common.Core.Results;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Configuration;
+using Crossdyne.Toolkit.Primitives;
+using Crossdyne.Toolkit.Results;
+using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.Enums;
+using EnigmaVault.Desktop.Helpers;
+using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
@@ -10,17 +17,15 @@ using EnigmaVault.Desktop.ViewModels.Common.Controls;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Items;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using EnigmaVault.PasswordService.ApiClient.Clients;
-using Quantropic.Security.Abstractions;
-using Shared.Contracts.Enums;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.FileService.Client.Models;
+using EnigmaVault.PasswordService.Client.Clients;
+using Microsoft.Extensions.Options;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
-using SharpVectors.Converters;
-using SharpVectors.Renderers.Wpf;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Text;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -32,31 +37,38 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
     {
         private readonly IVaultService _vaultService;
         private readonly ITagService _tagService;
-        private readonly IIconCategoryService _iconCategoryService;
-        private readonly IIconService _iconService;
+        private readonly IAssetClient _assetClient;
+        private readonly IAssetCategoryClient _iconCategoryService;
+        private readonly IFileServiceClient _fileService;
         private readonly IUserContext _userContext;
-        private readonly ICryptoServices _cryptoServices;
+        private readonly ICryptoService _cryptoServices;
 
         // ====================================================================================
         //                                      ИНИЦИАЛИЗАЦИЯ                                        
         // ====================================================================================
 
         public PasswordPageViewModel(
+            IOptions<Urls> urlsOptions,
             IVaultService vaultService,
             ITagService tagService,
-            IIconCategoryService iconCategoryService,
-            IIconService iconService,
+            IAssetClient assetClient,
+            IAssetCategoryClient iconCategoryService,
+            IFileServiceClient fileService,
             IUserContext userContext,
-            ICryptoServices cryptoServices)
+            ICryptoService cryptoServices)
         {
+            WebSiteUrls = urlsOptions.Value;
+
             _vaultService = vaultService;
             _tagService = tagService;
+            _assetClient = assetClient;
             _iconCategoryService = iconCategoryService;
-            _iconService = iconService;
+            _fileService = fileService;
             _userContext = userContext;
             _cryptoServices = cryptoServices;
 
             SelectedPasswordType = PasswordTypes.FirstOrDefault();
+            SelectedSorting = SortingView.Ascending;
             CurrentDisplayUserControlLeftSideMenu = UserControlsName.Tags;
             CurrentActionRightSideMenu = ActionOnData.Create;
 
@@ -104,7 +116,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 await GetIconCategories();
                 await GetIcons();
 
-                await GetEncreptedOverview();
+                await GetEncryptedOverview();
 
                 UpdateGroupingPassword();
 
@@ -135,7 +147,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         public ObservableCollection<IconViewModel> Icons { get; init; } = [];
         public ICollectionView IconView { get; private set; } = null!;
 
-        public ObservableCollection<IconCategoryViewModel> IconCategories { get; init; } = [];
+        public ObservableCollection<IconCategoryResponse> IconCategories { get; init; } = [];
         public ICollectionView IconCategoryView { get; private init; } = null!;
 
         public ObservableCollection<KeyValuePair<VaultType, string>> PasswordTypes { get; private set; } =
@@ -144,13 +156,6 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             new KeyValuePair<VaultType, string>(VaultType.Server, "Данные сервера"),
             new KeyValuePair<VaultType, string>(VaultType.CreditCard, "Банковские карты"),
             new KeyValuePair<VaultType, string>(VaultType.ApiKey, "Апи Ключи"),
-        ];
-
-        // TODO: Реализовать в будущем.
-        public ObservableCollection<KeyValuePair<SortingView, string>> Sorting { get; private set; } =
-        [
-            new KeyValuePair<SortingView, string>(SortingView.Ascending, "По возрастанию (от А до Я, от 0 до 9)"),
-            new KeyValuePair<SortingView, string>(SortingView.Descending, "По убыванию (от Я до А, от 9 до 0)"),
         ];
 
         // ====================================================================================
@@ -164,8 +169,6 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public PopupController PasswordMenuPopup { get; } = new(); 
         public PopupController AttachTagsPopup { get; } 
-        public PopupController AddIconPopup { get; } = new(); 
-        public PopupController AddIconCategoryPopup { get; } = new();
         public PopupController ArchivesPopup { get; }
         public PopupController TrashPopup { get; }
 
@@ -187,7 +190,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             CurrentActionRightSideMenu = ActionOnData.View;
             SetReadOnly(CurrentActionRightSideMenu);
             SelectedCredentialItemBaseViewModel?.Decrypt(value.EncryptedOverview, value.EncryptedDetails, _cryptoServices, _userContext);
-            SelectedCredentialItemBaseViewModel?.SetIcon(ConvertSvgInString(value.SvgCode!));
+            SelectedCredentialItemBaseViewModel?.SetIcon(Icons.FirstOrDefault(i => i.Id == value.IconId)?.Icon);
 
             foreach (var tag in Tags)
             {
@@ -196,20 +199,20 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 if (value.Tags.Contains(tag))
                     tag.AttachedTag();
                 else
-                    tag.DetatchedTag();
+                    tag.DetachedTag();
             }
         }
 
         #endregion
 
-        #region Свойсто: [SelectedArchivedEncryptedOverview] - Выбор зашифрованного элемента в архиве
+        #region Свойств: [SelectedArchivedEncryptedOverview] - Выбор зашифрованного элемента в архиве
 
         [ObservableProperty]
         private CredentialsVaultViewModel? _selectedArchivedEncryptedOverview;
 
         #endregion
 
-        #region Свойсто: [SelectedTrashEncryptedOverview] - Выбор зашифрованного элемента в корзине
+        #region Свойство: [SelectedTrashEncryptedOverview] - Выбор зашифрованного элемента в корзине
 
         [ObservableProperty]
         private CredentialsVaultViewModel? _selectedTrashEncryptedOverview;
@@ -229,7 +232,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Свойсто: [SelectedPasswordViewModel]
+        #region Свойство: [SelectedPasswordViewModel]
 
         [ObservableProperty]
         private CredentialItemBaseViewModel? _selectedCredentialItemBaseViewModel;
@@ -241,7 +244,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Свойство: [SelectedGrouping] - Выбор группровки списка паролей
+        #region Свойство: [SelectedGrouping] - Выбор группировки списка паролей
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SetGroupingPasswordsCommand))]
@@ -257,7 +260,20 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Свойство: [SelectedSorting] - Выбор сортировки списка паролей
 
         [ObservableProperty]
-        private KeyValuePair<SortingView, string> _selectedSorting;
+        [NotifyCanExecuteChangedFor(nameof(SetSortPasswordsCommand))]
+        private SortingView _selectedSorting;
+
+        partial void OnSelectedSortingChanged(SortingView value)
+        {
+            UpdateGroupingPassword();
+        }
+
+        #endregion
+
+        #region Свойство: [Urls] - список URL по которым можно перейти
+
+        [ObservableProperty]
+        public Urls _webSiteUrls;
 
         #endregion
 
@@ -355,9 +371,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 if (SelectedCredentialItemBaseViewModel is null)
                     return;
 
-                string? code = SelectedIcon?.SvgCode;
-                SelectedCredentialItemBaseViewModel.SvgCode = code;
-                SelectedCredentialItemBaseViewModel?.SetIcon(ConvertSvgInString(code!));
+                SelectedCredentialItemBaseViewModel.SvgCode = value.Key;
+                SelectedCredentialItemBaseViewModel.IconId = value.Id;
+                SelectedCredentialItemBaseViewModel.SetIcon(value.Icon);
             }
         }
 
@@ -366,80 +382,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Свойства: SVG
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(SaveIconCommand))]
-        private string? _svgCode;
-
-        partial void OnSvgCodeChanged(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                SvgConvertError = string.Empty;
-                Svg = null;
-                return;
-            }
-
-            try
-            {
-                Svg = ConvertSvgInString(value);
-            }
-            catch (Exception ex)
-            {
-                SvgConvertError = ex.Message;
-            }
-
-        }
-
-        [ObservableProperty]
-        private DrawingImage? _svg;
-
-        [ObservableProperty]
-        private string? _svgConvertError;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(SaveIconCommand))]
-        private IconCategoryViewModel? _selectedIconCategory;
-
-        #endregion
-
-        #region Свойства: IconName
-
-        [ObservableProperty]
-        private string _iconName;
-
-        #endregion
-
-        // ============IconCategory==================
-
-        #region Свойства: IconCategories, Методы: [OnSelectedEditableCategoryChanging, OnSelectedEditableCategoryChanged, OnCategoryPropertyChanged]
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(SaveIconCategoryCommand))]
-        private string? _iconCategoryName;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(UpdateIconCategortyCommand))]
-        private IconCategoryViewModel? _selectedEditableCategory;
-
-        partial void OnSelectedEditableCategoryChanging(IconCategoryViewModel? value)
-        {
-            if (SelectedEditableCategory is not null)
-                SelectedEditableCategory.PropertyChanged -= OnCategoryPropertyChanged;
-        }
-
-        partial void OnSelectedEditableCategoryChanged(IconCategoryViewModel? value)
-        {
-            if (value is not null)
-                value.PropertyChanged += OnCategoryPropertyChanged;
-
-            UpdateIconCategortyCommand.NotifyCanExecuteChanged();
-        }
-
-        private void OnCategoryPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(IconCategoryViewModel.HasChanges))
-                UpdateIconCategortyCommand.NotifyCanExecuteChanged();
-        }
-
+        private IconCategoryResponse? _selectedIconCategory;
 
         #endregion
 
@@ -460,14 +403,14 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             SetReadOnly(value);
 
             if (value == ActionOnData.Create || value == ActionOnData.Update)
-                SelectedIcon = Icons.FirstOrDefault(i => i.SvgCode == SelectedEncryptedOverview?.SvgCode);
+                SelectedIcon = Icons.FirstOrDefault(i => i.Id == SelectedEncryptedOverview?.IconId);
             else
                 SelectedIcon = null;
         }
 
         #endregion
 
-        #region Свойство: [CurrentTemplateTypePasswords] - Текущий отображаемый темплей у списка с паролями.
+        #region Свойство: [CurrentTemplateTypePasswords] - Текущий отображаемый темплейт у списка с паролями.
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SetTemplatePasswordsCommand))]
@@ -488,9 +431,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand]
         public async Task CreateVault()
         {
-            (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
+            (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest(_userContext.Id, SelectedPasswordType.Key.ToString(), EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.CreateAsync(new CreateVaultItemRequest((int)SelectedPasswordType.Key, SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails, (int)CryptoVersion));
 
             if (result.IsFailure)
             {
@@ -508,28 +451,29 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                         IsFavorite: false,
                         IsArchive: false,
                         IsInTrash: false,
-                        Convert.FromBase64String(EncryptedOverView),
-                        Convert.FromBase64String(EncryptedDetails),
-                        []),
+                        EncryptedOverView,
+                        EncryptedDetails,
+                        [],
+                        SelectedIcon!.Id!),
                     _cryptoServices, 
                     _userContext.Dek,
                     Tags);
 
-            encryptedVm.Icon = ConvertSvgInString(encryptedVm.SvgCode);
+            encryptedVm.Icon = Icons.FirstOrDefault(i => i.Id == encryptedVm.IconId)?.Icon;
 
             Passwords.Add(encryptedVm);
         }
 
         #endregion
 
-        #region Команда [UpdateVault]: Обноволение записи
+        #region Команда [UpdateVault]: Обновление записи
 
         [RelayCommand(CanExecute = nameof(CanUpdateVault))]
         private async Task UpdateVault()
         {
-            (string EncryptedOverView, string EncryptedDetails) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
+            (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) = SelectedCredentialItemBaseViewModel!.Encrypt(_cryptoServices, _userContext);
 
-            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(_userContext.Id, SelectedEncryptedOverview!.Id, EncryptedOverView, EncryptedDetails));
+            var result = await _vaultService.UpdateAsync(new UpdateVaultItemRequest(SelectedEncryptedOverview!.Id, SelectedIcon!.Id!, EncryptedOverView, EncryptedDetails, (int)CryptoVersion));
 
             if (result.IsFailure)
             {
@@ -548,7 +492,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         /*--Action--*/
 
-        #region Команда [SetFavorite]: Измнение статуса избранного
+        #region Команда [SetFavorite]: Изменение статуса избранного
 
         [RelayCommand(CanExecute = nameof(CanSetFavorite))]
         private async Task SetFavorite(CredentialsVaultViewModel model)
@@ -566,12 +510,12 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
             if (model.IsFavorite)
             {
-                var result = await _vaultService.RemoveFromFavoritesAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.RemoveFromFavoritesAsync(model.Id);
                 SetValue(result, false);
             }
             else
             {
-                var result = await _vaultService.AddToFavoritesAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.AddToFavoritesAsync(model.Id);
                 SetValue(result, true);
             }
         }
@@ -580,7 +524,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [SetArchive]: Измнение статуса архивации
+        #region Команда [SetArchive]: Изменение статуса архивации
 
         [RelayCommand(CanExecute = nameof(CanSetArchive))]
         private async Task SetArchive(CredentialsVaultViewModel model)
@@ -611,7 +555,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
             if (model.IsArchive)
             {
-                var result = await _vaultService.UnArchiveAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.UnArchiveAsync(model.Id);
                 SetValue(result, false);
 
                 if (ArchivedPasswords.Count <= 0)
@@ -619,7 +563,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             }
             else
             {
-                var result = await _vaultService.ArchiveAsync(_userContext.Id, model.Id);
+                var result = await _vaultService.ArchiveAsync(model.Id);
                 SetValue(result, true);
             }
         }
@@ -636,7 +580,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (SelectedEncryptedOverview is null)
                 return;
 
-            var result = await _vaultService.AddTagAsync(_userContext.Id, SelectedEncryptedOverview.Id, tag.Id);
+            var result = await _vaultService.AddTagAsync(SelectedEncryptedOverview.Id, tag.Id);
 
             if (result.IsFailure)
             {
@@ -647,7 +591,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             SelectedEncryptedOverview.AddTag(tag.Id);
 
             if (tag.IsAttached)
-                tag.DetatchedTag();
+                tag.DetachedTag();
             else
                 tag.AttachedTag();
         }
@@ -658,7 +602,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (SelectedEncryptedOverview is null)
                 return;
 
-            var result = await _vaultService.RemoveTagAsync(_userContext.Id, SelectedEncryptedOverview.Id, tag.Id);
+            var result = await _vaultService.RemoveTagAsync(SelectedEncryptedOverview.Id, tag.Id);
 
             if (result.IsFailure)
             {
@@ -667,19 +611,19 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             }
 
             SelectedEncryptedOverview.RemoveTag(tag.Id);
-            tag.DetatchedTag();
+            tag.DetachedTag();
         }
 
         #endregion
 
         /*--Trash--*/
 
-        #region Команда [MoveToTrashCommand]: Переносит запись в карзину (Мягкое удаление)
+        #region Команда [MoveToTrashCommand]: Переносит запись в корзину (Мягкое удаление)
 
         [RelayCommand(CanExecute = nameof(CanMoveToTrash))]
         private async Task MoveToTrash(CredentialsVaultViewModel model)
         {
-            var result = await _vaultService.MoveToTrashAsync(_userContext.Id, model.Id);
+            var result = await _vaultService.MoveToTrashAsync(model.Id);
 
             if (result.IsFailure)
             {
@@ -703,7 +647,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanRestoreTrash))]
         private async Task RestoreTrash(CredentialsVaultViewModel model)
         {
-            var result = await _vaultService.RestoreFromTrashAsync(_userContext.Id, model.Id);
+            var result = await _vaultService.RestoreFromTrashAsync(model.Id);
 
             if (result.IsFailure)
             {
@@ -724,7 +668,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [RestoreAllTrashCommand] : Востановить все записи из корзины
+        #region Команда [RestoreAllTrashCommand] : Восстановить все записи из корзины
 
         [RelayCommand(CanExecute = nameof(CanRestoreAllTrash))]
         private async Task RestoreAllTrash()
@@ -732,7 +676,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (MessageBox.Show($"Вы точно хотите востановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
-            var result = await _vaultService.RestoreAllFromTrashAsync(_userContext.Id);
+            var result = await _vaultService.RestoreAllFromTrashAsync();
 
             if (result.IsFailure)
             {
@@ -762,7 +706,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             if (MessageBox.Show($"Вы точно хотите удалить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
-            var result = await _vaultService.EmptyTrashAsync(_userContext.Id);
+            var result = await _vaultService.EmptyTrashAsync();
 
             if (result.IsFailure)
             {
@@ -799,7 +743,16 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        /*--PopupMenagement--*/
+        #region Команда [SetGroupingPasswordsCommand]: Выбор текущей группировки у списка с паролями
+
+        [RelayCommand(CanExecute = nameof(CanSetSortPasswords))]
+        private void SetSortPasswords(SortingView type) => SelectedSorting = type;
+
+        private bool CanSetSortPasswords(SortingView type) => type != SelectedSorting;
+
+        #endregion
+
+        /*--PopupManagement--*/
 
         #region Команда [SelectAndShowPasswordMenuPopup]: Отвечает за выбор элемента списка паролей при открытие контекстного меню 
 
@@ -828,6 +781,140 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
+        /*--Ссылки--*/
+
+        #region Команда [NavigateToAssetsWeb]: Производит навигацию в браузер, на сайт с настройками ассетов
+
+        [RelayCommand()]
+        private void NavigateToAssetsWeb()
+        {
+            if (string.IsNullOrWhiteSpace(WebSiteUrls.Assets))
+                return;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = WebSiteUrls.Assets,
+                UseShellExecute = true,
+            };
+
+            Process.Start(psi);
+        }
+
+        #endregion
+
+        #region Команда [CopyFieldCommand]: Копирует выбранное свойсво
+
+        [RelayCommand]
+        private void CopyField(FieldToCopy field)
+        {
+            if (SelectedEncryptedOverview == null)
+                return;
+
+            Action action = SelectedEncryptedOverview.Type switch
+            {
+                VaultType.Password => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var standardPassword = SelectedCredentialItemBaseViewModel as StandardPasswordViewModel;
+
+                    if (standardPassword is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.StandartPasswordLogin:
+                            Clipboard.SetText(standardPassword.Login!);
+                            break;
+                        case FieldToCopy.StandartPassword:
+                            Clipboard.SetText(standardPassword.Password!);
+                            break;
+                        case FieldToCopy.StandartPasswordEmail:
+                            Clipboard.SetText(standardPassword.Email!);
+                            break;
+                        case FieldToCopy.StandartPasswordPhoneNumber:
+                            Clipboard.SetText(standardPassword.Phone!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.Server => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var server = SelectedCredentialItemBaseViewModel as ServerPasswordViewModel;
+
+                    if (server is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.ServerAddres:
+                            Clipboard.SetText(server.IpAddress!);
+                            break;
+                        case FieldToCopy.ServerPort:
+                            Clipboard.SetText(server.Port?.ToString()!);
+                            break;
+                        case FieldToCopy.ServerLogin:
+                            Clipboard.SetText(server.Login!);
+                            break;
+                        case FieldToCopy.ServerPassword:
+                            Clipboard.SetText(server.RootPassword!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.CreditCard => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var creditCard = SelectedCredentialItemBaseViewModel as CreditCardViewModel;
+
+                    if (creditCard is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.CreditCardNumber:
+                            Clipboard.SetText(creditCard.CardNumber!);
+                            break;
+                        case FieldToCopy.CreditCardOwner:
+                            Clipboard.SetText(creditCard.CardHolder!);
+                            break;
+                        case FieldToCopy.CreditCardCVV:
+                            Clipboard.SetText(creditCard.CvvCode!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
+                VaultType.ApiKey => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var apiKey = SelectedCredentialItemBaseViewModel as ApiKeyViewModel;
+
+                    if (apiKey is null)
+                        return;
+
+                    Clipboard.SetText(apiKey.ApiKey!);
+                }
+                ,
+                _ => () => throw new Exception("Выбранный формат не поддерживается")
+            };
+
+            action?.Invoke();
+
+            PasswordMenuPopup.HideCommand.Execute(null);
+        }
+
+        #endregion
+
         // =================Tag======================
 
         #region Команда [CreateTagCommand]: Создает тэг
@@ -835,7 +922,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanCreateTag))]
         private async Task CreateTag()
         {
-            var result = await _tagService.CreateAsync(new CreateTagRequest(_userContext.Id, NameTag!, Helpers.ColorConverter.RgbToHex(int.Parse(Red), int.Parse(Green), int.Parse(Blue))));
+            var result = await _tagService.CreateAsync(new CreateTagRequest(NameTag!, Helpers.ColorConverter.RgbToHex(int.Parse(Red), int.Parse(Green), int.Parse(Blue))));
 
             if (result.IsFailure)
             {
@@ -889,127 +976,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        // ================Icon======================
-
-        #region Команда [SaveIconCommand]: Отвечает за сохранение Svg иконки
-
-        [RelayCommand(CanExecute = nameof(CanSaveIcon))]
-        private async Task SaveIcon()
-        {
-            var result = await _iconService.CreatePersonalAsync(new CreateIconPersonalRequest(_userContext.Id, SvgCode!, "Тестовое название", SelectedIconCategory!.Id));
-
-            if (result.IsFailure)
-            {
-                MessageBox.Show(result.StringMessage);
-                return;
-            }
-            var iconVm = new IconViewModel(new IconResponse(result.Value, _userContext.Id, SvgCode!, "", SelectedIconCategory.Id));
-            iconVm.SetIcon(ConvertSvgInString(iconVm.SvgCode!));
-            var ict = IconCategories.FirstOrDefault(ic => ic.Id == SelectedIconCategory.Id);
-            iconVm.SetCategory(ict);
-
-            Icons.Add(iconVm);
-           
-            Svg = null;
-            SvgCode = string.Empty;
-            SelectedIconCategory = null;
-        }
-
-        private bool CanSaveIcon() => !string.IsNullOrWhiteSpace(SvgCode) && SelectedIconCategory != null;
-
-        #endregion
-
-        // ============IconCategory==================
-
-        #region Команда [SaveIconCategoryCommand]: Отвечает за сохранение категории иконки
-
-        [RelayCommand(CanExecute = nameof(CanSaveIconCategory))]
-        private async Task SaveIconCategory()
-        {
-            var result = await _iconCategoryService.CreatePersonalAsync(new CreateIconCategoryPersonalRequest(IconCategoryName!, Guid.Parse(_userContext.Id)));
-
-            if (result.IsFailure)
-            {
-                MessageBox.Show(result.StringMessage);
-                return;
-            }
-
-            IconCategories.Add(new IconCategoryViewModel(new IconCategoryResponse(result.Value, _userContext.Id, IconCategoryName!)));
-
-            IconCategoryName = string.Empty;
-
-            UpdateIconCategoriesView();
-        }
-
-        private bool CanSaveIconCategory() => !string.IsNullOrWhiteSpace(IconCategoryName);
-
-        #endregion
-
-        #region Команда [UpdateIconCategoryCommand]: Отвечает за обновление категории
-
-        [RelayCommand(CanExecute = nameof(CanUpdateIconCategorty))]
-        private async Task UpdateIconCategorty(IconCategoryViewModel value)
-        {
-            var result = await _iconCategoryService.UpdatePersonalAsync(new UpdatePersonalIconCategoryRequest(Guid.Parse(value.Id), Guid.Parse(_userContext.Id), value.Name));
-
-            if (result.IsFailure)
-            {
-                MessageBox.Show(result.StringMessage);
-                return;
-            }
-
-            value.Comit();
-            UpdateIconCategortyCommand.NotifyCanExecuteChanged();
-
-            foreach (var icon in Icons)
-            {
-                if (icon.IconCategoryId == value.Id)
-                    icon.SetCategory(value);
-            }
-
-            UpdateIconsView();
-        }
-
-        private bool CanUpdateIconCategorty()
-        {
-            if (SelectedEditableCategory is null)
-                return false;
-
-            return SelectedEditableCategory.HasChanges;
-        }
-
-        #endregion
-
-        #region Команда [DeleteIconCategoryCommand] : Отвечает за удаление категории
-
-        [RelayCommand]
-        private async Task DeleteIconCategory(IconCategoryViewModel value)
-        {
-            var result = await _iconCategoryService.DeletePersonalAsync(_userContext.Id, value.Id);
-
-            if (result.IsFailure)
-            {
-                MessageBox.Show(result.StringMessage);
-                return;
-            }
-
-            var valueToRemove = IconCategories.FirstOrDefault(ic => ic.Id == value.Id);
-
-            if (valueToRemove is null)
-            {
-                MessageBox.Show("Элемент уже удален. Если категория не исчезла - то перезапустите приложение.");
-                return;
-            }
-
-            IconCategories.Remove(valueToRemove);
-        }
-
-
-        #endregion
-
         // ==============SideMenu====================
 
-        #region Команда [SetLeftSideMenuControlCommand]: Отвечает за выбор текущего оборажаемого контрола на левой боковой понели
+        #region Команда [SetLeftSideMenuControlCommand]: Отвечает за выбор текущего отображаемого контрола на левой боковой панели
 
         [RelayCommand(CanExecute = nameof(CanSetLeftSideMenuControl))]
         private void SetLeftSideMenuControl(UserControlsName controlName) => CurrentDisplayUserControlLeftSideMenu = controlName;
@@ -1018,12 +987,29 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [SetRightSideMenuActionCommand]: Отвечает за выбор текущего действия на правой боковой понели
+        #region Команда [SetRightSideMenuActionCommand]: Отвечает за выбор текущего действия на правой боковой панели
 
         [RelayCommand(CanExecute = nameof(CanSetRightSideMenuAction))]
         private void SetRightSideMenuAction(ActionOnData action) => CurrentActionRightSideMenu = action;
 
         private bool CanSetRightSideMenuAction(ActionOnData action) => CurrentActionRightSideMenu != action;
+
+        #endregion
+
+        // ==============TopMenu====================
+
+        #region Команда [ReloadVaultsCommand]: Отвечает за повторную загрузку списка с паролями
+
+        [RelayCommand]
+        private async Task ReloadVaults()
+        {
+            Passwords.Clear();
+            await GetEncryptedOverview();
+            SelectedEncryptedOverview = null;
+            SetRightSideMenuAction(ActionOnData.Create);
+            SelectedPasswordType = PasswordTypes.FirstOrDefault(pt => pt.Key == VaultType.Password);
+            CreateViewModelForType(VaultType.Password, null!);
+        } 
 
         #endregion
 
@@ -1033,9 +1019,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #region Получение данных (API)
 
-        public async Task GetEncreptedOverview()
+        public async Task GetEncryptedOverview()
         {
-            var result = await _vaultService.GetAllAsync(_userContext.Id);
+            var result = await _vaultService.GetAllAsync();
 
             if (result.IsFailure)
             {
@@ -1045,8 +1031,10 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
             foreach (var encrypted in result.Value)
             {
-                var encryptedVm = new CredentialsVaultViewModel(encrypted, _cryptoServices, _userContext.Dek, Tags);
-                encryptedVm.Icon = ConvertSvgInString(encryptedVm.SvgCode!);
+                var encryptedVm = new CredentialsVaultViewModel(encrypted, _cryptoServices, _userContext.Dek, Tags)
+                {
+                    Icon = Icons.FirstOrDefault(i => i.Id == encrypted.IconId)?.Icon
+                };
 
                 if (encrypted.IsArchive)
                 {
@@ -1066,7 +1054,10 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetTags()
         {
-            var result = await _tagService.GetAll(_userContext.Id); 
+            var result = await _tagService.GetAll(); 
+
+            if (result.IsFailure)
+                return;
 
             foreach (var item in result.Value)
             {
@@ -1076,20 +1067,32 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetIcons()
         {
-            var result = await _iconService.GetAll(_userContext.Id);
+            Result<List<IconMetadataResponse>> iconMetaDataResult = await _assetClient.GetFilesMetadata();
 
-            if (result.IsFailure)
+            if (iconMetaDataResult.IsFailure)
             {
-                MessageBox.Show(result.StringMessage);
+                MessageBox.Show(iconMetaDataResult.StringMessage);
                 return;
             }
 
-            foreach (var item in result.Value)
+            List<IconMetadataResponse> iconMetadatas = iconMetaDataResult.Value;
+            List<FileRequest> fileRequests = [];
+
+            foreach (var metadata in iconMetadatas)
+                fileRequests.Add(new FileRequest("crossdyne-assets", metadata.S3Key.FolderPath, metadata.S3Key.Name));
+
+            Result<BatchUrlResponse> urlsResult = await _fileService.GetUrls(new BatchUrlRequest(fileRequests, null));
+
+            foreach (var url in urlsResult.Value.Urls)
             {
-                var iconVm = new IconViewModel(item);
-                iconVm.SetIcon(ConvertSvgInString(iconVm.SvgCode!));
-                var ict = IconCategories.FirstOrDefault(ic => ic.Id == item.IconCategoryId);
-                iconVm.SetCategory(ict);
+                var metaData = iconMetadatas.FirstOrDefault(im => im.S3Key.Name == url.Key);
+
+                if (metaData == null)
+                    continue;
+
+                var iconCategory = IconCategories.FirstOrDefault(ic => ic.CategoryId == metaData.CategoryId);
+
+                var iconVm = new IconViewModel(await ImageHelper.LoadSvgFromUrlAsync(url.Url), metaData.S3Key.Key, metaData.AssetId, metaData.AssetName, iconCategory);
                 Icons.Add(iconVm);
             }
 
@@ -1098,55 +1101,14 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         public async Task GetIconCategories()
         {
-            var result = await _iconCategoryService.GetAllAsync(_userContext.Id);
+            var result = await _iconCategoryService.GetIconCategories();
+            
+            if (result.IsFailure)
+                return;
 
             foreach (var item in result.Value)
-            {
-                var iconCategoryVM = new IconCategoryViewModel(item);
-                IconCategories.Add(iconCategoryVM);
-            }    
+                IconCategories.Add(item);
         }
-
-        #endregion
-
-        #region Svg
-
-        private DrawingImage? ConvertSvgInString(string svgCode)
-        {
-            if (string.IsNullOrWhiteSpace(svgCode)) return null;
-
-            var settings = new WpfDrawingSettings
-            {
-                IncludeRuntime = true,
-                TextAsGeometry = true
-            };
-
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(svgCode));
-            FileSvgReader? reader = null;
-
-            try
-            {
-                reader = new FileSvgReader(settings);
-                DrawingGroup drawingGroup = reader!.Read(stream);
-
-                if (drawingGroup != null)
-                {
-                    var drawingImage = new DrawingImage(drawingGroup);
-                    drawingImage.Freeze();
-                    return drawingImage;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                SvgConvertError = ex.Message;
-            }
-
-            return null;
-        }
-
-        private static string? ReplaceDoubleQuotesWithSingle(string inputString) => inputString?.Replace("\"", "'");
 
         #endregion
 
@@ -1156,7 +1118,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             var encrypted = encryptedVm;
 
-            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, [], [], []), _cryptoServices, _userContext.Dek, Tags);
+            encrypted ??= new(new EncryptedVaultResponse(string.Empty, SelectedPasswordType.Key.ToString(), DateTime.UtcNow, null, null, false, false, false, string.Empty, string.Empty, [], ""), _cryptoServices, _userContext.Dek, Tags);
 
             SelectedCredentialItemBaseViewModel = type switch
             {
@@ -1213,54 +1175,76 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         {
             IconCategoryView.SortDescriptions.Clear();
 
-            IconCategoryView.SortDescriptions.Add(new SortDescription(nameof(IconCategoryViewModel.Name), ListSortDirection.Ascending));
+            IconCategoryView.SortDescriptions.Add(new SortDescription(nameof(IconCategoryResponse.Name), ListSortDirection.Ascending));
         }
 
         #endregion
 
-        #region Взоимодейсвтие с ICollectionView
-
-        private void UpdatePasswordsView() => PasswordsView.Refresh();
+        #region Взаимодействие с ICollectionView
 
         private void UpdateGroupingPassword()
         {
+            if (PasswordsView == null)
+                return;
+
             PasswordsView.GroupDescriptions.Clear();
             PasswordsView.SortDescriptions.Clear();
 
-            var sorting = ListSortDirection.Descending;
+            var sorting = SelectedSorting == SortingView.None
+                ? (ListSortDirection?)null
+                : SelectedSorting == SortingView.Descending ? ListSortDirection.Descending : ListSortDirection.Ascending;
 
             Action action = SelectedGrouping switch
             {
-                GroupingView.Name => () => 
+                GroupingView.Name => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.ServiceNameFirstLetter), sorting.Value));
                 }
                 ,
-                GroupingView.Add => () => 
+                GroupingView.Add => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyAdd), sorting.Value));
                 }
                 ,
                 GroupingView.Update => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateOnlyUpdate), sorting.Value));
                 }
                 ,
                 GroupingView.VaultType => () =>
                 {
                     PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.VaultTypeString)));
-                    PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.VaultTypeString), sorting));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.VaultTypeString), sorting.Value));
                 }
                 ,
-                GroupingView.None or _ => () => PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateAdded), sorting)),
+                GroupingView.Tag => () =>
+                {
+                    PasswordsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CredentialsVaultViewModel.FirstTagName)));
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.FirstTagName), sorting.Value));
+                }
+                ,
+                GroupingView.None or _ => () =>
+                {
+                    if (sorting.HasValue)
+                        PasswordsView.SortDescriptions.Add(new SortDescription(nameof(CredentialsVaultViewModel.DateAdded), sorting.Value));
+                }
+                ,
             };
 
             action?.Invoke();
 
-            UpdatePasswordsView();
+            PasswordsView.Refresh();
+
+            if (PasswordsView.CurrentItem != null)
+                PasswordsView.MoveCurrentToFirst();
         }
 
         #endregion

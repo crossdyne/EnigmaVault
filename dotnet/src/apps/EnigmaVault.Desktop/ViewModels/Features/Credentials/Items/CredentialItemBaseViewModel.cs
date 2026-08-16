@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Configuration;
+using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using Quantropic.Security.Abstractions;
-using Shared.Contracts.Enums;
 using System.Windows.Media;
 
 namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
@@ -52,11 +53,14 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
         private DrawingImage? _icon;
 
         [ObservableProperty]
+        private string? _iconId;
+
+        [ObservableProperty]
         private string? _svgCode;
 
-        public abstract void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoServices secureData, IUserContext context);
+        public abstract void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoService secureData, IUserContext context);
 
-        public abstract (string EncryptedOverView, string EncryptedDetails) Encrypt(ICryptoServices secureData, IUserContext context);
+        public abstract (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) Encrypt(ICryptoService secureData, IUserContext context);
 
         public abstract void Clear();
 

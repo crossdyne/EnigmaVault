@@ -1,0 +1,232 @@
+<div class="modal-overlay">
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>{{ typeRu() }} - {{ overview()?.ServiceName }}</h2>
+      <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="display-field">
+          <label>Название</label>
+          <div class="display-value">
+            <span class="display-text">{{ overview()?.ServiceName }}</span>
+            <copy-button [value]="overview()?.ServiceName" />
+          </div>
+        </div>
+        <div class="display-field">
+          <label>Ссылка на ресурс</label>
+          <div class="display-value">
+            <span class="display-text">{{ overview()?.Url }}</span>
+            <copy-button [value]="overview()?.Url" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        @switch (type()) {
+          @case (VaultTypeEnum.Password) {
+            <div class="display-field">
+                <label>Логин</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.Login }}</span>
+                    <copy-button [value]="passwordDetails()?.Login" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Пароль</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.Password }}</span>
+                    <copy-button [value]="passwordDetails()?.Password" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Почта</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.Email }}</span>
+                    <copy-button [value]="passwordDetails()?.Email" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Номер телефона</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.Phone }}</span>
+                    <copy-button [value]="passwordDetails()?.Phone" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Секретное слово</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.SecretWord }}</span>
+                    <copy-button [value]="passwordDetails()?.SecretWord" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Ключ восстановления</label>
+                <div class="display-value">
+                    <span class="display-text">{{ passwordDetails()?.RecoveryKey }}</span>
+                    <copy-button [value]="passwordDetails()?.RecoveryKey" />
+                </div>
+            </div>
+          }
+          @case (VaultTypeEnum.CreditCard) {
+            <div class="display-field">
+                <label>Номер</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.CardNumber }}</span>
+                    <copy-button [value]="creditCardDetails()?.CardNumber" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Владелец</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.CardHolder }}</span>
+                    <copy-button [value]="creditCardDetails()?.CardHolder" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Дата окончания</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.ExpireDate }}</span>
+                    <copy-button [value]="creditCardDetails()?.ExpireDate" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>CVV</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.CvvCode }}</span>
+                    <copy-button [value]="creditCardDetails()?.CvvCode" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>PIN</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.PinCode }}</span>
+                    <copy-button [value]="creditCardDetails()?.PinCode" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Банк</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.BankName }}</span>
+                    <copy-button [value]="creditCardDetails()?.BankName" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Платежная система</label>
+                <div class="display-value">
+                    <span class="display-text">{{ creditCardDetails()?.PaymentSystem }}</span>
+                    <copy-button [value]="creditCardDetails()?.PaymentSystem" />
+                </div>
+            </div>
+          }
+          @case (VaultTypeEnum.Server) {
+            <div class="display-field">
+                <label>Адрес</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.IpAddress }}</span>
+                    <copy-button [value]="serverDetails()?.IpAddress" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Порт</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.Port }}</span>
+                    <copy-button [value]="serverDetails()?.Port" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Домен</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.Domain }}</span>
+                    <copy-button [value]="serverDetails()?.Domain" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Логин</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.Login }}</span>
+                    <copy-button [value]="serverDetails()?.Login" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Root пароль</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.RootPassword }}</span>
+                    <copy-button [value]="serverDetails()?.RootPassword" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>SSH ключ</label>
+                <div class="display-value">
+                    <span class="display-text">{{ serverDetails()?.SshKey }}</span>
+                    <copy-button [value]="serverDetails()?.SshKey" />
+                </div>
+            </div>
+          }
+          @case (VaultTypeEnum.ApiKey) {
+            <div class="display-field">
+                <label>Ключ</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.Key }}</span>
+                    <copy-button [value]="apiKeyDetails()?.Key" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Сайт</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.BaseUrl }}</span>
+                    <copy-button [value]="apiKeyDetails()?.BaseUrl" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Идентификатор клиента</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.ClientId }}</span>
+                    <copy-button [value]="apiKeyDetails()?.ClientId" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Секрет клиента</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.ClientSecret }}</span>
+                    <copy-button [value]="apiKeyDetails()?.ClientSecret" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Дата окончания</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.ExpirationDate }}</span>
+                    <copy-button [value]="apiKeyDetails()?.ExpirationDate" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Окружение</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.Environment }}</span>
+                    <copy-button [value]="apiKeyDetails()?.Environment" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Область</label>
+                <div class="display-value">
+                    <span class="display-text">{{ apiKeyDetails()?.Scope }}</span>
+                    <copy-button [value]="apiKeyDetails()?.Scope" />
+                </div>
+            </div>
+          }
+          @default {
+            <div>Выберите категорию</div>
+          }
+        }
+      </div>
+
+      <div class="form-group">
+        <div class="display-field">
+          <label>Описание</label>
+          <div class="display-value display-value--multiline">{{ overview()?.Note }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

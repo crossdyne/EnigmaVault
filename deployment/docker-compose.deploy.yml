@@ -1,0 +1,58 @@
+services:
+  enigma-vault-bff:
+    image: enigma-vault/bff:1.0.0
+    container_name: enigma-vault-bff
+    ports:
+      - "7007:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=80
+      - Redis__ConnectionString=
+      - Redis__DataEncryptionKey=Base64 32+ bit key, generate this command - openssl rand -base64 32
+      - Urls__AuthService=http://nexus-auth-api:80
+      - Urls__UserManagementService=http://nexus-user-management-api:80
+      - Urls__PasswordService=http://enigma-vault-password-api:80
+      - Urls__AssetsService=http://glyph-assets-api:80
+      - Urls__FileService=http://flex-io:4000
+    restart: unless-stopped
+    volumes:
+      - ./logs/bff:/logs
+    networks:
+      - enigma-vault-network
+
+  enigma-vault-api:
+    image: enigma-vault/password-api:1.0.0
+    container_name: enigma-vault-password-api
+    ports:
+      - "7008:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=80
+      - ConnectionStrings__DefaultConnection= <<Postgres_Sql>>
+      - JwtSettings__Secret=
+      - JwtSettings__Issuer=
+      - JwtSettings__Audience=
+      - Kafka__Consumer__BootstrapServers=
+      - Kafka__Consumer__GroupId=enigma-vault-password-service-consumer-group
+      - Kafka__Consumer__AutoOffsetReset=Latest
+      - Kafka__Consumer__EnableAutoCommit=false
+      - Kafka__Consumer__EnablePartitionEof=false
+      - AutoMapper__AutoMapperKey=
+    restart: unless-stopped
+    volumes:
+      - ./logs/password:/logs
+    networks:
+      - enigma-vault-network
+
+  enigma-vault-ui:
+    image: enigma-vault/ui:1.0.0
+    container_name: enigma-vault-ui
+    ports:
+      - "7009:80"
+    restart: unless-stopped
+    networks:
+      - enigma-vault-network
+
+networks:
+  enigma-vault-network:
+    driver: bridge

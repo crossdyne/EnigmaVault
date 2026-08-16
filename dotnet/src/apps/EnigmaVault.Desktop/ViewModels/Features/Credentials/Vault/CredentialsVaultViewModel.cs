@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Crossdyne.Security.Abstractions;
+using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models.Vaults;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
-using Quantropic.Security.Abstractions;
-using Shared.Contracts.Enums;
 using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
@@ -13,10 +13,10 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
     public sealed partial class CredentialsVaultViewModel : BaseViewModel
     {
         private readonly EncryptedVaultResponse _model;
-        private readonly ICryptoServices _crypto;
+        private readonly ICryptoService _crypto;
         private readonly byte[] _key;
 
-        public CredentialsVaultViewModel(EncryptedVaultResponse model, ICryptoServices crypto, byte[] key, IReadOnlyCollection<TagViewModel> tags)
+        public CredentialsVaultViewModel(EncryptedVaultResponse model, ICryptoService crypto, byte[] key, IReadOnlyCollection<TagViewModel> tags)
         {
             _model = model;
             _crypto = crypto;
@@ -27,9 +27,10 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
             IsFavorite = model.IsFavorite;
             IsArchive = model.IsArchive;
             IsInTrash = model.IsInTrash;
-            EncryptedOverview = Convert.ToBase64String(model.EncryptedOverview);
-            EncryptedDetails = Convert.ToBase64String(model.EncryptedDetails);
+            EncryptedOverview = model.EncryptedOverview;
+            EncryptedDetails = model.EncryptedDetails;
             DateAdded = model.DateAdded.ToLocalTime();
+            IconId = model.IconId;
 
             if (model.DateUpdate is not null)
                 DateUpdate = model.DateUpdate.Value.ToLocalTime();
@@ -73,9 +74,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
         private string? _url;
 
         [ObservableProperty]
-        private string _svgCode = null!;
-
-        [ObservableProperty]
         private DrawingImage? _icon;
 
         [ObservableProperty]
@@ -86,6 +84,11 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
 
         [ObservableProperty]
         private DateTime? _deletedAt;
+
+        [ObservableProperty]
+        private string? _iconId;
+
+        public string? FirstTagName => Tags.FirstOrDefault()?.TagName ?? "Без тега";
 
         public string ServiceNameFirstLetter
         {
@@ -165,7 +168,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
                 {
                     ServiceName = overview.ServiceName;
                     Url = overview.Url;
-                    SvgCode = overview.SvgIcon!;
                 }
             }
             catch

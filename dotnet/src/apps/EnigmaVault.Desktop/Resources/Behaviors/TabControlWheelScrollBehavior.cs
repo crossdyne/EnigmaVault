@@ -31,7 +31,7 @@ namespace EnigmaVault.Desktop.Resources.Behaviors
                 return;
 
             var sourceElement = e.OriginalSource as DependencyObject;
-            if (!IsDescendantOf(sourceElement, scrollViewer))
+            if (!IsDescendantOf(sourceElement!, scrollViewer))
                 return;
 
             scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
@@ -57,7 +57,7 @@ namespace EnigmaVault.Desktop.Resources.Behaviors
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             if (parent == null)
-                return null;
+                return null!;
 
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
@@ -72,7 +72,7 @@ namespace EnigmaVault.Desktop.Resources.Behaviors
                     return result;
             }
 
-            return null;
+            return null!;
         }
     }
 }

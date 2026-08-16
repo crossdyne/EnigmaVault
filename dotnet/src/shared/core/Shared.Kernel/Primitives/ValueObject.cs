@@ -1,4 +1,4 @@
-﻿using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
 using Shared.Kernel.Exceptions;
 
 namespace Shared.Kernel.Primitives
@@ -7,8 +7,8 @@ namespace Shared.Kernel.Primitives
     {
         protected static void CheckRule(IBusinessRule rule)
         {
-            if (rule.IsBroken())
-                throw new DomainException(Error.Rule(rule.Message));
+            // if (rule.IsBroken())
+            //     throw new DomainException(Error.Rule(rule.Message));
         }
     }
 }

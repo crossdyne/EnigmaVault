@@ -17,7 +17,7 @@ namespace EnigmaVault.Desktop.Views.UserControls
     {
         public TagsControl() => InitializeComponent();
 
-        public event Action? OnIsPopupOpen;
+        // public event Action? OnIsPopupOpen;
 
         public ToolTipController TopToolTipController { get; } = new(ToolTipPlacement.CenterTop);
         public ToolTipController RightToolTipListViewItemController { get; } = new(ToolTipPlacement.CenterRight, horizontalOffset: 10);

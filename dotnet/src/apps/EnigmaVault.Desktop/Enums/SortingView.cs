@@ -2,6 +2,7 @@
 {
     public enum SortingView
     {
+        None,
         Ascending,
         Descending
     }

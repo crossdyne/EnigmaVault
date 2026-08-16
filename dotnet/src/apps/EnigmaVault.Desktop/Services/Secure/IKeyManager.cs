@@ -1,4 +1,5 @@
-﻿using Common.Core.Primitives;
+﻿
+using Crossdyne.Toolkit.Primitives;
 
 namespace EnigmaVault.Desktop.Services.Secure
 {

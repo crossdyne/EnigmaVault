@@ -1,7 +1,8 @@
-﻿using Common.Core.Guard;
-using Common.Core.Results;
+﻿using Crossdyne.Toolkit.Results;
+using Crossdyne.Toolkit.Validation;
 using FluentValidation;
 using MediatR;
+using Shared.Kernel.Errors;
 using System.Reflection;
 
 namespace Shared.Application.Behaviors
@@ -27,7 +28,7 @@ namespace Shared.Application.Behaviors
 
             if (validationFailures.Any())
             {
-                var errors = validationFailures.Select(f => new Error(ErrorCode.Validation, f.ErrorMessage)).ToList();
+                var errors = validationFailures.Select(f => new Error(AppErrors.Validation, f.ErrorMessage)).ToList();
 
                 var resultType = typeof(TResponse);
 

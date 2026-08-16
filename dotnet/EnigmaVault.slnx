@@ -1,0 +1,45 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/apps/">
+    <Project Path="src/apps/EnigmaVault.Desktop/EnigmaVault.Desktop.csproj" />
+    <Project Path="src/apps/EnigmaVault.Web.Bff/EnigmaVault.Web.Bff.csproj" />
+  </Folder>
+  <Folder Name="/src/clients/">
+    <Project Path="src/clients/EnigmaVault.AssetsService.Client/EnigmaVault.AssetsService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.FileService.Client/EnigmaVault.FileService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.PasswordService.Client/EnigmaVault.PasswordService.Client.csproj" />
+  </Folder>
+  <Folder Name="/src/services/" />
+  <Folder Name="/src/services/Password/">
+    <Project Path="src/services/Password/EnigmaVault.Password.Service.Api/EnigmaVault.Password.Service.Api.csproj" />
+    <Project Path="src/services/Password/EnigmaVault.Password.Service.Application/EnigmaVault.Password.Service.Application.csproj" />
+    <Project Path="src/services/Password/EnigmaVault.Password.Service.Domain/EnigmaVault.Password.Service.Domain.csproj" />
+    <Project Path="src/services/Password/EnigmaVault.Password.Service.Infrastructure/EnigmaVault.Password.Service.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/" />
+  <Folder Name="/src/shared/contracts/">
+    <Project Path="src/shared/contracts/Shared.Contracts/Shared.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/core/">
+    <Project Path="src/shared/core/Shared.Application/Shared.Application.csproj" />
+    <Project Path="src/shared/core/Shared.Kernel/Shared.Kernel.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/infrastructure/">
+    <Project Path="src/shared/infrastructure/Shared.Messaging/Shared.Messaging.csproj" />
+    <Project Path="src/shared/infrastructure/Shared.Redis/Shared.Redis.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/observability/">
+    <Project Path="src/shared/observability/Shared.Logging/Shared.Logging.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/web/">
+    <Project Path="src/shared/web/Shared.Web/Shared.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/integration/">
+    <Project Path="tests/integration/EnigmaVault.Password.Service.Integration.Tests/EnigmaVault.Password.Service.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/EnigmaVault.Password.Service.Unit.Tests/EnigmaVault.Password.Service.Unit.Tests.csproj" />
+  </Folder>
+</Solution>

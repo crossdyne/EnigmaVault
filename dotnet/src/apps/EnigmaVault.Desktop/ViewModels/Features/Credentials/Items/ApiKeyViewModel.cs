@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Configuration;
+using EnigmaVault.Desktop.Constants;
+using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models.Vaults;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using Quantropic.Security.Abstractions;
-using Shared.Contracts.Enums;
 
 namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
 {
@@ -34,10 +36,20 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
 
         #endregion
 
-        public override void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoServices secureData, IUserContext context)
+        public override void Decrypt(string encryptedOverView, string encryptedDetails, ICryptoService secureData, IUserContext context)
         {
-            var overview = secureData.DecryptData<OverviewPayload>(encryptedOverView, context.Dek);
-            var details = secureData.DecryptData<ApiKey>(encryptedDetails, context.Dek);
+            OverviewPayload overview;
+            ApiKey details;
+
+            try
+            {
+                overview = secureData.DecryptData<OverviewPayload>(encryptedOverView, context.Dek)!;
+                details = secureData.DecryptData<ApiKey>(encryptedDetails, context.Dek)!;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             if (details is null)
                 return;
@@ -46,7 +58,6 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
             Url = overview?.Url;
             Note = overview?.Note;
             SvgCode = overview?.SvgIcon;
-
 
             ApiKey = details.Key;
             BaseUrl = details.BaseUrl;
@@ -59,15 +70,16 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Items
                 ExpirationDate = DateTime.Parse(details.ExpirationDate!);
         }
 
-        public override (string EncryptedOverView, string EncryptedDetails) Encrypt(ICryptoServices secureData, IUserContext context)
+        public override (string EncryptedOverView, string EncryptedDetails, CryptoVersion CryptoVersion) Encrypt(ICryptoService secureData, IUserContext context)
         {
+
             var overView = new OverviewPayload(ServiceName, Url!, Note, SvgCode);
             var details = new ApiKey(ApiKey, BaseUrl, ClientId, ClientSecret, ExpirationDate?.ToString("o"), Environment, Scope);
 
-            var encryptedDetails = secureData.EncryptedData(details, context.Dek);
-            var overviewEncrypted = secureData.EncryptedData(overView, context.Dek);
+            var encryptedDetails = secureData.EncryptData(details, context.Dek, CryptoConstants.CurrentCryptoVersion);
+            var overviewEncrypted = secureData.EncryptData(overView, context.Dek);
 
-            return (overviewEncrypted, encryptedDetails);
+            return (overviewEncrypted, encryptedDetails, CryptoConstants.CurrentCryptoVersion);
         }
 
         public override void Clear()

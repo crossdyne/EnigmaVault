@@ -1,5 +1,8 @@
-﻿using EnigmaVault.Authentication.ApiClient.HttpClients;
-using EnigmaVault.PasswordService.ApiClient.Clients;
+﻿using EnigmaVault.AssetsService.Client.Clients;
+using EnigmaVault.Authentication.Client.HttpClients;
+using EnigmaVault.Desktop.Handlers;
+using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +12,8 @@ namespace EnigmaVault.Desktop.Ioc
     {
         public static IServiceCollection AddHttpServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<RefreshTokenHandler>();
+
             string? authServiceApiUrl = configuration.GetValue<string>("BaseAuthServiceUrl");
             const string authServiceApiClientName = "AuthApiClient";
             services.AddHttpClient(authServiceApiClientName, client => client.BaseAddress = new Uri(authServiceApiUrl!));
@@ -21,11 +26,18 @@ namespace EnigmaVault.Desktop.Ioc
 
             string? passwordServiceApiUrl = configuration.GetValue<string>("BasePasswordServiceUrl");
             const string passwordServiceApiClientName = "PasswordApiClient";
-            services.AddHttpClient(passwordServiceApiClientName, client => client.BaseAddress = new Uri(passwordServiceApiUrl!));
+            services.AddHttpClient(passwordServiceApiClientName, client => client.BaseAddress = new Uri(passwordServiceApiUrl!)).AddHttpMessageHandler<RefreshTokenHandler>();
             services.AddHttpClient<ITagService, TagService>(passwordServiceApiClientName);
-            services.AddHttpClient<IIconCategoryService, IconCategoryService>(passwordServiceApiClientName);
-            services.AddHttpClient<IIconService, IconService>(passwordServiceApiClientName);
             services.AddHttpClient<IVaultService, VaultService>(passwordServiceApiClientName);
+
+            string? assetsServiceApiUrl = configuration.GetValue<string>("BaseAssetsServiceUrl");
+            const string assetsServiceApiClientName = "AssetsApiClient";
+            services.AddHttpClient(assetsServiceApiClientName, client => client.BaseAddress = new Uri(assetsServiceApiUrl!)).AddHttpMessageHandler<RefreshTokenHandler>();
+            services.AddHttpClient<IAssetClient, AssetClient>(assetsServiceApiClientName);
+            services.AddHttpClient<IAssetCategoryClient, AssetCategoryClient>(assetsServiceApiClientName);
+
+            string? fileServiceApiUrl = configuration.GetValue<string>("BaseFileServiceUrl");
+            services.AddHttpClient<IFileServiceClient, FileStorageClient>(client => client.BaseAddress = new Uri(fileServiceApiUrl!));
 
             return services;
         }

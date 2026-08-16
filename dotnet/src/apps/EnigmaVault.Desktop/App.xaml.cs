@@ -1,5 +1,9 @@
-﻿using EnigmaVault.Desktop.Ioc;
+﻿using EnigmaVault.Desktop.Enums;
+using EnigmaVault.Desktop.Ioc;
+using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services.Initializers;
+using EnigmaVault.Desktop.Services.Secure;
+using EnigmaVault.Desktop.Services.WindowNavigation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -14,11 +18,17 @@ namespace EnigmaVault.Desktop
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("apiconfig.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("apiconfig.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("urls.json", optional: false, reloadOnChange: true);
 
             IConfigurationRoot configuration = configurationBuilder.Build();
 
             var services = new ServiceCollection();
+
+            services.Configure<Urls>(options =>
+            {
+                options.Assets = configuration["AssetsWebSite"]!;
+            });
 
             services.AddWindows();
             services.AddPages();
@@ -26,6 +36,8 @@ namespace EnigmaVault.Desktop
             services.AddHttpServices(configuration);
 
             ServiceProvider = services.BuildServiceProvider();
+
+            SetupGlobalAuthenticationHandler();
 
             var appInitializer = ServiceProvider.GetService<IApplicationInitializer>();
 
@@ -40,6 +52,21 @@ namespace EnigmaVault.Desktop
             }
 
             base.OnStartup(e);
+        }
+
+        private void SetupGlobalAuthenticationHandler()
+        {
+            var authStateService = ServiceProvider.GetRequiredService<IAuthenticationStateService>();
+            var windowsNavigationService = ServiceProvider.GetRequiredService<IWindowNavigation>();
+
+            authStateService.AuthenticationRequired += () =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    windowsNavigationService.Close(WindowsName.MainWindow);
+                    windowsNavigationService.Open(WindowsName.AuthenticationWindow);
+                });
+            };
         }
     }
 }

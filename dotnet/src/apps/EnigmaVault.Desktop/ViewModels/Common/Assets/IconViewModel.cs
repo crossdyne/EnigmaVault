@@ -1,33 +1,50 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Shared.Contracts.Responses.PasswordService;
 using System.Windows.Media;
 
 namespace EnigmaVault.Desktop.ViewModels.Common.Assets
 {
-    internal sealed partial class IconViewModel(IconResponse model) : BaseViewModel
+    internal sealed partial class IconViewModel : BaseViewModel
     {
-        private readonly IconResponse _model = model;
+        public IconViewModel(DrawingImage? icon, string s3Key, string? id, string iconName, IconCategoryResponse? category)
+        {
+            Id = id;
+            Key = s3Key;
+            Category = category;
+            Name = iconName;
+            Icon = icon;
 
-        public string? Id => _model.Id;
-        public string? SvgCode => _model.SvgCode;
-        public string? IconCategoryId => _model.IconCategoryId;
-        public string? IconCategoryName => Category != null ? Category.Name : "Без категории";
+            IconCategoryId = category?.CategoryId;
+            IconCategoryName = Category != null ? Category.Name : "Без категории";  
+        }
 
         [ObservableProperty]
-        private string? _name = model.IconName;
+        private string? _id;
+
+         [ObservableProperty]
+        private string? _key;
+
+         [ObservableProperty]
+        private string? _iconCategoryId;
+
+        [ObservableProperty]
+        private string? _iconCategoryName;
+
+        [ObservableProperty]
+        private string? _name;
 
         [ObservableProperty]
         private DrawingImage? _icon;
 
         [ObservableProperty]
-        private IconCategoryViewModel? _category;
+        private IconCategoryResponse? _category;
 
         //[ObservableProperty]
         //private string? _iconCategoryName;
 
         public void SetIcon(DrawingImage? icon) => Icon = icon;
 
-        public void SetCategory(IconCategoryViewModel? category) => Category = category;
+        public void SetCategory(IconCategoryResponse? category) => Category = category;
     }
 }

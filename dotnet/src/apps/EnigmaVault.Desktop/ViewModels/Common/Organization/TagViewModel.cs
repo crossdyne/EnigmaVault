@@ -66,7 +66,7 @@ namespace EnigmaVault.Desktop.ViewModels.Common.Organization
             IsAttached = true;
         }
 
-        public void DetatchedTag()
+        public void DetachedTag()
         {
             IsAttached = false;
         }

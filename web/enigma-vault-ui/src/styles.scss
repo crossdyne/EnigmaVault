@@ -1,0 +1,48 @@
+@use './variables' as *;
+@use './styles/tooltip' as *;
+@use './styles/scrollbar' as *;
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    @include custom-scrollbar;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+    background: $color-bg;
+    color: $text-primary;
+    line-height: 1.7;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+app-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+app-main-layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.cdk-overlay-pane.vault-popup-panel {
+    pointer-events: none;
+}
+
+.cdk-overlay-pane.vault-popup-panel .vault-popup-menu {
+    pointer-events: auto;
+}

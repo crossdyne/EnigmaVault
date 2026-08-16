@@ -1,13 +1,14 @@
-﻿using EnigmaVault.Desktop.Services;
+﻿using Crossdyne.Security.Abstractions;
+using Crossdyne.Security.Cryptography;
+using Crossdyne.Security.Srp.Client;
+using Crossdyne.Security.Windows;
+using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.Initializers;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using Microsoft.Extensions.DependencyInjection;
-using Quantropic.Security.Abstractions;
-using Quantropic.Security.Cryptography;
-using Quantropic.Security.Srp.Client;
 
 namespace EnigmaVault.Desktop.Ioc
 {
@@ -21,9 +22,10 @@ namespace EnigmaVault.Desktop.Ioc
             services.AddSingleton<IKeyManager, KeyManager>();
             services.AddSingleton<IApplicationInitializer, ApplicationInitializer>();
             services.AddSingleton<IUserContext, UserContext>();
-            services.AddSingleton<ISrpClient, SrpClientService>();
-            services.AddSingleton<IKeyDerivationService, KeyDerivationService>();
-            services.AddSingleton<ICryptoServices, CryptoService>();
+            services.AddSingleton<IAuthenticationStateService, AuthenticationStateService>();
+            services.AddCrossdyneCryptography();
+            services.AddCrossdyneSrpClient();
+            services.AddCrossdyneWindowSecurity();
 
             return services;
         }

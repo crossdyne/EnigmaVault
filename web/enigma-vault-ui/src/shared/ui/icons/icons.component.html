@@ -1,0 +1,38 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Выбор иконки для записи «{{ serviceName() }}»</h2>
+      <button class="close-btn" (click)="onCancel()">×</button>
+    </div>
+    
+    <div class="modal-body">
+        <div class="assets-container">
+            @for (group of groupedIcons(); track group.title) {
+                <div class="icon-group">
+                    <h3 class="group-title">{{ group.title }}</h3>
+                    
+                    <div class="group-items">
+                        @for (icon of group.icons; track icon.assetId) {
+                            <div 
+                                class="svg-card-container"
+                                [appTooltip]="icon.assetName"
+                                (click)="selectedIcon.set(icon)">
+                                <img [src]="icon.url" [alt]="icon.assetName">
+                            </div>
+                        }
+                    </div>
+                </div>
+            } @empty {
+                <div class="empty-state">Нет доступных иконок</div>
+            }
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <button class="modal-button add-icon" (click)="navigateToCreateAssets()">Добавить</button>
+        <button class="modal-button" (click)="onCancel()">Отмена</button>
+    </div>
+    
+  </div>
+</div>

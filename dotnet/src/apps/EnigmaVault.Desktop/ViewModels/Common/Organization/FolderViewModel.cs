@@ -6,7 +6,8 @@ using System.Windows.Media;
 
 namespace EnigmaVault.Desktop.ViewModels.Common.Organization
 {
-    public sealed partial class FolderViewModel(FolderResponse model, Action<FolderViewModel> onSelected) : BaseViewModel
+    // , Action<FolderViewModel> onSelected
+    public sealed partial class FolderViewModel(FolderResponse model) : BaseViewModel
     {
         private FolderResponse _model = model;
 

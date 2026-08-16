@@ -1,5 +1,5 @@
-﻿using Common.Core.Primitives;
-using EnigmaVault.Authentication.ApiClient.HttpClients;
+﻿using Crossdyne.Toolkit.Primitives;
+using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services.Managers;
@@ -34,7 +34,7 @@ namespace EnigmaVault.Desktop.Services.Initializers
             tokenMaybe.Match(
                 onSome: async token =>
                 {
-                    var authResult = await _authService!.LoginByToken(new LoginByTokenRequest(token.RefreshToken));
+                    var authResult = await _authService!.RefreshTokens(new LoginByTokenRequest(token.RefreshToken));
 
                     authResult.Switch(
                         onSuccess: async () =>

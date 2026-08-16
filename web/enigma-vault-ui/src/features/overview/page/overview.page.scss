@@ -1,0 +1,662 @@
+@use '../../../variables' as *;
+
+$accent-green: #00C30B;
+$accent-blue: #0090FF;
+$accent-purple: #A855F7;
+$accent-amber: #F59E0B;
+$bg-card: rgba(10, 13, 22, 0.7);
+$border-card: rgba(23, 28, 39, 0.8);
+$text-primary: #f0f2f5;
+$text-secondary: #8b9bb4;
+$text-muted: #5d718b;
+$radius-lg: 20px;
+$radius-md: 14px;
+$radius-sm: 10px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+}
+
+.overview-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 40px;
+
+    > * {
+        flex-shrink: 0;
+    }
+}
+
+.hero {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px 50px;
+    overflow: hidden;
+
+    .hero-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 600px;
+        height: 600px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(0, 195, 11, 0.08) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 100%;
+    }
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .logo-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(0, 195, 11, 0.15), rgba(0, 144, 255, 0.1));
+        border: 1px solid rgba(0, 195, 11, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 40px rgba(0, 195, 11, 0.1);
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            color: $accent-green;
+        }
+    }
+
+    .brand-title {
+        font-size: 52px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin: 0;
+        line-height: 1.1;
+
+        .enigma { color: $accent-green; }
+        .vault { color: $accent-blue; }
+    }
+
+    .brand-subtitle {
+        font-size: 16px;
+        color: $text-secondary;
+        max-width: 420px;
+        line-height: 1.5;
+        margin: 0;
+    }
+}
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 36px;
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        color: $accent-blue;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(10px);
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover:not(:disabled) {
+            background: rgba(0, 144, 255, 0.12);
+            border-color: rgba(0, 144, 255, 0.3);
+            color: #4db8ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 144, 255, 0.15);
+        }
+
+        &.primary {
+            background: linear-gradient(135deg, rgba(0, 195, 11, 0.15), rgba(0, 144, 255, 0.1));
+            border-color: rgba(0, 195, 11, 0.25);
+            color: $accent-green;
+
+            &:hover {
+                background: linear-gradient(135deg, rgba(0, 195, 11, 0.25), rgba(0, 144, 255, 0.18));
+                border-color: rgba(0, 195, 11, 0.4);
+                color: #33e03d;
+                box-shadow: 0 8px 24px rgba(0, 195, 11, 0.2);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+            pointer-events: none;
+        }
+    }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 0 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px;
+        background: $bg-card;
+        border: 1px solid $border-card;
+        border-radius: $radius-md;
+        backdrop-filter: blur(12px);
+        transition: all 0.25s ease;
+        cursor: default;
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .stat-body {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: $text-primary;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: $text-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+.dashboard {
+    margin-top: 32px;
+    padding: 0 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+
+    .history {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background: $bg-card;
+    border: 1px solid $border-card;
+    border-radius: $radius-lg;
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &:hover:not(.disabled) {
+        border-color: rgba(0, 195, 11, 0.2);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 195, 11, 0.08);
+    }
+
+    &.disabled {
+        opacity: 0.6;
+        filter: grayscale(0.5);
+        pointer-events: none;
+
+        .card-icon, .card-title, .card-link {
+            color: $text-muted !important;
+        }
+
+        .record-avatar {
+            opacity: 0.5;
+        }
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: $radius-sm;
+            background: rgba(0, 132, 255, 0.08);
+            color: $accent-blue;
+
+            svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: $text-primary;
+            margin: 0;
+        }
+
+        .card-link {
+            font-size: 12px;
+            color: $text-muted;
+            font-style: italic;
+            cursor: pointer;
+            transition: color 0.2s;
+
+            &:hover {
+                color: $accent-blue;
+            }
+        }
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+    }
+
+    .record {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        border-radius: $radius-sm;
+        transition: background 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .record-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: $radius-sm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .record-meta {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .record-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: $text-primary;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .record-detail {
+                font-size: 12px;
+                color: $text-muted;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .record-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+
+            .icon-btn {
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                background: transparent;
+                border: none;
+                color: $text-muted;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: rgba(0, 195, 11, 0.1);
+                    color: $accent-green;
+                }
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .dots {
+                font-size: 14px;
+                color: $text-muted;
+                letter-spacing: 3px;
+                user-select: none;
+                font-family: monospace;
+            }
+        }
+    }
+}
+
+@media (max-width: 1050px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 24px;
+    }
+
+    .dashboard {
+        padding: 0 24px;
+
+        .history {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .card {
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 40px 16px 36px;
+
+        .brand {
+            .logo-ring {
+                width: 68px;
+                height: 68px;
+                border-radius: 18px;
+
+                .logo-icon {
+                    width: 32px;
+                    height: 32px;
+                }
+            }
+
+            .brand-title {
+                font-size: 36px;
+            }
+
+            .brand-subtitle {
+                font-size: 14px;
+                padding: 0 10px;
+            }
+        }
+
+        .quick-actions {
+            margin-top: 28px;
+            gap: 10px;
+
+            .action-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+                border-radius: 10px;
+
+                svg {
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+        }
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 0 16px;
+
+        .stat-card {
+            padding: 16px;
+
+            .stat-icon svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+    }
+
+    .dashboard {
+        margin-top: 24px;
+        padding: 0 16px;
+
+        .history {
+            gap: 16px;
+        }
+    }
+
+    .card {
+        border-radius: $radius-md;
+
+        .card-header {
+            padding: 14px 16px;
+
+            .card-icon {
+                width: 32px;
+                height: 32px;
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .card-title {
+                font-size: 14px;
+            }
+        }
+
+        .record {
+            padding: 10px;
+            gap: 12px;
+
+            .record-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .record-meta {
+                .record-name {
+                    font-size: 13px;
+                }
+
+                .record-detail {
+                    font-size: 11px;
+                }
+            }
+
+            .record-actions {
+                display: none !important;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 32px 12px 28px;
+
+        .brand {
+            .logo-ring {
+                width: 56px;
+                height: 56px;
+                border-radius: 16px;
+
+                .logo-icon {
+                    width: 26px;
+                    height: 26px;
+                }
+            }
+
+            .brand-title {
+                font-size: 28px;
+            }
+
+            .brand-subtitle {
+                font-size: 13px;
+            }
+        }
+
+        .quick-actions {
+            margin-top: 22px;
+            gap: 8px;
+
+            .action-btn {
+                padding: 7px 14px;
+                font-size: 12px;
+
+                svg {
+                    width: 13px;
+                    height: 13px;
+                }
+            }
+        }
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 0 12px;
+
+        .stat-card {
+            flex-direction: row;
+            align-items: center;
+            padding: 14px 16px;
+
+            .stat-body {
+                flex-direction: row;
+                align-items: baseline;
+                gap: 8px;
+                flex: 1;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                text-transform: none;
+                letter-spacing: 0;
+            }
+        }
+    }
+
+    .dashboard {
+        padding: 0 12px;
+        margin-top: 20px;
+    }
+
+    .card {
+        border-radius: 14px;
+
+        .card-header {
+            padding: 12px 14px;
+        }
+
+        .record {
+            padding: 8px;
+
+            .record-avatar {
+                width: 32px;
+                height: 32px;
+
+                svg {
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+
+            .record-meta {
+                .record-name {
+                    font-size: 12px;
+                }
+
+                .record-detail {
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+}

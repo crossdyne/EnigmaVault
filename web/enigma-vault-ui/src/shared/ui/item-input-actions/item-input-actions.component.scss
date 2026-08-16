@@ -1,0 +1,42 @@
+@use '../../../styles/button' as *;
+
+$border-background-color: #191a1b;
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 4px 8px;
+
+    input {
+        width: 100%; 
+        padding: 0.625rem 0.875rem;
+        background: #111827;
+        border: 1px solid $border-background-color; 
+        border-radius: 8px;
+        font-size: 0.875rem; 
+        box-sizing: border-box;
+        color: #e2e8f0;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        margin: 7.5px 0px 7.5px 0px;
+
+        &::placeholder {
+            color: #475569;
+        }
+
+        &:focus {
+            outline: none; 
+            border-color: #0095F6; 
+            box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
+        }
+    }
+
+    .button-add, .button-save, .button-cancel {
+        // margin-right: 5px;
+
+        &:hover {
+            svg {
+                color:  black;
+            }
+        }
+    }
+}

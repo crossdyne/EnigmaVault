@@ -1,4 +1,4 @@
-﻿using Common.Core.Primitives;
+﻿using Crossdyne.Toolkit.Primitives;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
