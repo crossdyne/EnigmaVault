@@ -7,8 +7,8 @@ namespace EnigmaVault.Authentication.Client.HttpClients
 {
     public interface IUserManagementService
     {
-        Task<Result<UserResponse?>> Me(string accesToken);
-        Task<Result<UserPublicInfo>> GetPublicEncryptionInfo(string confirmationToken);
-        Task<Result<DekResponse>> GetDek();
+        Task<Result<UserResponse>> Me(string accessToken, CancellationToken cancellationToken = default);
+        Task<Result<UserPublicInfo>> GetPublicEncryptionInfo(string confirmationToken, CancellationToken cancellationToken = default);
+        Task<Result<DekResponse>> GetDek(CancellationToken cancellationToken = default);
     }
 }

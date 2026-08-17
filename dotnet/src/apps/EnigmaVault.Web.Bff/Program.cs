@@ -18,6 +18,7 @@ builder.Services
     .AddAuthorization()
     .AddHttpContextAccessor()
     //Custom
+    .AddCustomOptions()
     .AddServices(configuration)
     .AddHttpClients(configuration)
     .AddDelegationsHandlers()

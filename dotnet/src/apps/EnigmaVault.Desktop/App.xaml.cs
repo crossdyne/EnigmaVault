@@ -6,6 +6,7 @@ using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using System.Windows;
 
 namespace EnigmaVault.Desktop
@@ -28,6 +29,11 @@ namespace EnigmaVault.Desktop
             services.Configure<Urls>(options =>
             {
                 options.Assets = configuration["AssetsWebSite"]!;
+            });
+
+            services.Configure<JsonSerializerOptions>(options => 
+            {
+                options.PropertyNameCaseInsensitive = true;
             });
 
             services.AddWindows();

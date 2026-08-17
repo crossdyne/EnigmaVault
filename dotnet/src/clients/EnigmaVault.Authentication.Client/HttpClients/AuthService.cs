@@ -1,101 +1,23 @@
 ﻿using Crossdyne.Toolkit.Results;
+using Microsoft.Extensions.Options;
 using Shared.Contracts.Requests;
 using Shared.Contracts.Requests.Authentication;
 using Shared.Contracts.Responses.Authentication;
-using Shared.Kernel.Errors;
+using Shared.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace EnigmaVault.Authentication.Client.HttpClients
 {
-    public sealed class AuthService(HttpClient httpClient) : IAuthService
+    public sealed class AuthService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IAuthService
     {
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-        {
-            PropertyNameCaseInsensitive = true,
-        };
+        public async Task<Result<SrpChallengeResponse>> GetSrpChallenge(SrpChallengeRequest request, CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<SrpChallengeResponse>(async ct => await _http.PostAsJsonAsync("api/auth/srp/challenge", request, _jsonOptions, ct), cancellationToken);
 
-        public async Task<Result<SrpChallengeResponse>> GetSrpChallenge(SrpChallengeRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/srp/challenge", request, _jsonSerializerOptions);
-                response.EnsureSuccessStatusCode();
+        public async Task<Result<AuthResponse>> VerifySrpProof(SrpVerifyRequest request, CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<AuthResponse>(async ct => await _http.PostAsJsonAsync("api/auth/srp/verify", request, _jsonOptions, ct),  cancellationToken);
 
-                var resultData = await response.Content.ReadFromJsonAsync<SrpChallengeResponse>();
-
-                return resultData!;
-            }
-            catch (HttpRequestException ex)
-            {
-                return new Error(AppErrors.ApiError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return new Error(AppErrors.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
-            }
-        }
-
-        public async Task<Result<AuthResponse>> VerifySrpProof(SrpVerifyRequest request)
-        {
-            HttpResponseMessage? response = null!;
-            try
-            {
-
-                response = await _httpClient.PostAsJsonAsync("api/auth/srp/verify", request, _jsonSerializerOptions); ;
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    return new Error(AppErrors.ApiError,
-                        $"HTTP {response.StatusCode}: {errorContent}");
-                }
-
-                var resultData = await response.Content.ReadFromJsonAsync<AuthResponse>();
-
-                if (resultData is null)
-                {
-                    return new Error(AppErrors.ApiError, "Пустой или некорректный JSON-ответ от сервера");
-                }
-
-                return resultData!;
-            }
-            catch (JsonException ex) when (ex.Message.Contains("could not be converted"))
-            {
-                var rawContent = await response.Content.ReadAsStringAsync();
-                return new Error(AppErrors.ApiError, $"Ошибка десериализации AuthResponse. Ответ сервера: {rawContent}\nОшибка: {ex.Message}");
-            }
-            catch (HttpRequestException ex)
-            {
-                return new Error(AppErrors.ApiError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return new Error(AppErrors.ApiError, $"Произошла критическая ошибка при отправке запроса: {ex.Message}");
-            }
-
-        }
-
-        public async Task<Result<AuthResponse?>> RefreshTokens(LoginByTokenRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/refresh", request, _jsonSerializerOptions);
-                response.EnsureSuccessStatusCode();
-
-                var responseData = await response.Content.ReadFromJsonAsync<AuthResponse>();
-
-                return responseData;
-            }
-            catch (HttpRequestException ex)
-            {
-                return new Error(AppErrors.ApiError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return new Error(AppErrors.ApiError, $"Произошла критическая ошибки при отправки запроса: {ex.Message}");
-            }
-        }
+        public async Task<Result<AuthResponse>> RefreshTokens(LoginByTokenRequest request, CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<AuthResponse>(async ct => await _http.PostAsJsonAsync("api/auth/refresh", request, _jsonOptions, ct), cancellationToken);
     }
 }

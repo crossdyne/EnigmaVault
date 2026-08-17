@@ -5,6 +5,6 @@ namespace EnigmaVault.AssetsService.Client.Clients
 {
     public interface IAssetCategoryClient
     {
-        Task<Result<List<IconCategoryResponse>>> GetIconCategories();
+        Task<Result<List<IconCategoryResponse>>> GetIconCategories(CancellationToken cancellationToken = default);
     }
 }

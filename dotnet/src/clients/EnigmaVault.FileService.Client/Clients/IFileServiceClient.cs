@@ -5,6 +5,6 @@ namespace EnigmaVault.FileService.Client.Clients
 {
     public interface IFileServiceClient
     {
-        Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request);
+        Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request, CancellationToken cancellationToken = default);
     }
 }

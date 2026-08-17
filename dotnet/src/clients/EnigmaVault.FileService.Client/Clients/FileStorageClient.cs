@@ -1,22 +1,15 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Crossdyne.Toolkit.Results;
 using EnigmaVault.FileService.Client.Models;
-using Shared.Kernel.Errors;
+using Microsoft.Extensions.Options;
+using Shared.Http;
 
 namespace EnigmaVault.FileService.Client.Clients
 {
-    public sealed class FileStorageClient(HttpClient http) : IFileServiceClient
+    public sealed class FileStorageClient(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IFileServiceClient
     {
-        public async Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request)
-        {
-            var response = await http.PostAsJsonAsync("api/files/urls", request);
-            
-            if (!response.IsSuccessStatusCode)
-                return Result<BatchUrlResponse>.Failure(new Error(AppErrors.ApiError, await response.Content.ReadAsStringAsync()));
-
-            var result = await response.Content.ReadFromJsonAsync<BatchUrlResponse>();
-
-            return Result<BatchUrlResponse>.Success(result!);
-        }
+        public async Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request, CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<BatchUrlResponse>(async ct => await _http.PostAsJsonAsync("api/files/urls", request, ct), cancellationToken);
     }
 }

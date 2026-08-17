@@ -7,8 +7,8 @@ namespace EnigmaVault.Authentication.Client.HttpClients
 {
     public interface IAuthService
     {
-        Task<Result<SrpChallengeResponse>> GetSrpChallenge(SrpChallengeRequest request);
-        Task<Result<AuthResponse>> VerifySrpProof(SrpVerifyRequest request);
-        Task<Result<AuthResponse?>> RefreshTokens(LoginByTokenRequest request);
+        Task<Result<SrpChallengeResponse>> GetSrpChallenge(SrpChallengeRequest request, CancellationToken cancellationToken = default);
+        Task<Result<AuthResponse>> VerifySrpProof(SrpVerifyRequest request, CancellationToken cancellationToken = default);
+        Task<Result<AuthResponse>> RefreshTokens(LoginByTokenRequest request, CancellationToken cancellationToken = default);
     }
 }

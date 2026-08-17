@@ -5,6 +5,6 @@ namespace EnigmaVault.AssetsService.Client.Clients
 {
     public interface IAssetClient
     {
-        Task<Result<List<IconMetadataResponse>>> GetFilesMetadata();
+        Task<Result<List<IconMetadataResponse>>> GetFilesMetadata(CancellationToken cancellationToken = default);
     }
 }

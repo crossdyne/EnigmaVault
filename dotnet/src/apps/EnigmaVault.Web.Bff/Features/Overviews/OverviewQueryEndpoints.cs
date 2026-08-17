@@ -2,6 +2,7 @@ using Crossdyne.Toolkit.Results;
 using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Contracts.Responses;
+using Shared.Contracts.Responses.PasswordService;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Overviews
@@ -12,12 +13,12 @@ namespace EnigmaVault.Web.Bff.Features.Overviews
         {
             builder.MapGet("api/v1/overview/records/count", async ([FromServices] IVaultService vaultService) =>
             {
-                Result<int> passwordsCountResult = await vaultService.CountRecordsAsync();
+                Result<PasswordsCountRecordsResponse> passwordsCountResult = await vaultService.CountRecordsAsync();
 
                 if (passwordsCountResult.IsFailure)
                     return passwordsCountResult.Errors.MapToMinimalApiResult();
 
-                return Results.Ok(new CountRecordsResponse(passwordsCountResult.Value));
+                return Results.Ok(new CountRecordsResponse(passwordsCountResult.Value.Count));
             }).RequireAuthorization();
         }
     }

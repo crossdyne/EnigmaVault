@@ -631,7 +631,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 return;
             }
 
-            model.DeletedAt = result.Value;
+            model.DeletedAt = result.Value.ToLocalTime();
 
             Passwords.Remove(model);
             TrashPasswords.Add(model);

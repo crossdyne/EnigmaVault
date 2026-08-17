@@ -1,79 +1,28 @@
-﻿using Crossdyne.Toolkit.Results;
+﻿using Crossdyne.Toolkit.Primitives;
+using Crossdyne.Toolkit.Results;
+using Microsoft.Extensions.Options;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
-using Shared.Kernel.Errors;
+using Shared.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace EnigmaVault.PasswordService.Client.Clients
 {
-    public sealed class TagService(HttpClient httpClient) : ITagService
+    public sealed class TagService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), ITagService
     {
-        private readonly HttpClient _httpClient = httpClient;
         private string _url = "api/tags";
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-        {
-            PropertyNameCaseInsensitive = true,
-        };
 
-        public async Task<Result<List<TagResponse>>> GetAll()
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"{_url}");
-                response.EnsureSuccessStatusCode();
+        public async Task<Result<List<TagResponse>>> GetAll(CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<List<TagResponse>>(async ct => await _http.GetAsync($"{_url}", ct), cancellationToken);
 
-                return await response.Content.ReadFromJsonAsync<List<TagResponse>>() ?? [];
-            }
-            catch (Exception ex)
-            {
-                return new Error(AppErrors.ApiError, ex.Message);
-            }
-        }
+        public async Task<Result<string>> CreateAsync(CreateTagRequest request, CancellationToken cancellationToken = default)
+            => await CatchResponseAsync<string>(async ct => await _http.PostAsJsonAsync(_url, request, _jsonOptions, ct), cancellationToken);
 
-        public async Task<Result<string>> CreateAsync(CreateTagRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(_url, request, _jsonSerializerOptions); 
-                response.EnsureSuccessStatusCode();
+        public async Task<Result<Unit>> DeleteAsync(string id, CancellationToken cancellationToken = default)
+            => await CatchAsync(async ct => await _http.DeleteAsync($"{_url}/{id}", ct), cancellationToken);
 
-                return await response.Content.ReadFromJsonAsync<string>(_jsonSerializerOptions) ?? "";
-            }
-            catch (Exception ex)
-            {
-                return new Error(AppErrors.ApiError, ex.Message);
-            }
-        }
-
-        public async Task<Result> DeleteAsync(string id)
-        {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"{_url}/{id}");
-                response.EnsureSuccessStatusCode();
-
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure(new Error(AppErrors.ApiError, ex.Message));
-            }
-        }
-
-        public async Task<Result> UpdateAsync(UpdateTagRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PatchAsJsonAsync(_url, request, _jsonSerializerOptions);
-                response.EnsureSuccessStatusCode();
-
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure(new Error(AppErrors.ApiError, ex.Message));
-            }
-        }
+        public async Task<Result<Unit>> UpdateAsync(UpdateTagRequest request, CancellationToken cancellationToken = default)
+            => await CatchAsync(async ct => await _http.PatchAsJsonAsync(_url, request, _jsonOptions), cancellationToken);
     }
 }
