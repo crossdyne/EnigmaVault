@@ -1,7 +1,8 @@
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.FileService.Client.Models;
+using Shared.Contracts.Requests.FileService;
+using Shared.Contracts.Responses.FileService;
 
-namespace EnigmaVault.FileService.Client.Clients
+namespace Shared.Contracts.Clients.FileService
 {
     public interface IFileServiceClient
     {

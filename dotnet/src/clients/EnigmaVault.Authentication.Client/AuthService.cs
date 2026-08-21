@@ -1,5 +1,6 @@
 ﻿using Crossdyne.Toolkit.Results;
 using Microsoft.Extensions.Options;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Contracts.Requests;
 using Shared.Contracts.Requests.Authentication;
 using Shared.Contracts.Responses.Authentication;
@@ -7,7 +8,7 @@ using Shared.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace EnigmaVault.Authentication.Client.HttpClients
+namespace EnigmaVault.Authentication.Client
 {
     public sealed class AuthService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IAuthService
     {

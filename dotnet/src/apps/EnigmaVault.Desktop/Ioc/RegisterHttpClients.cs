@@ -1,10 +1,14 @@
-﻿using EnigmaVault.AssetsService.Client.Clients;
-using EnigmaVault.Authentication.Client.HttpClients;
+﻿using EnigmaVault.AssetsService.Client;
+using EnigmaVault.Authentication.Client;
 using EnigmaVault.Desktop.Handlers;
-using EnigmaVault.FileService.Client.Clients;
+using EnigmaVault.FileService.Client;
 using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Contracts.Clients.AssetsService;
+using Shared.Contracts.Clients.FileService;
+using Shared.Contracts.Clients.PasswordsService;
+using Shared.Contracts.Clients.SsoService;
 
 namespace EnigmaVault.Desktop.Ioc
 {

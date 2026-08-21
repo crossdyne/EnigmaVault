@@ -1,5 +1,4 @@
 ﻿using Crossdyne.Security.Abstractions;
-using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Services;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;
@@ -7,6 +6,7 @@ using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Features.Authentication;
+using Shared.Contracts.Clients.SsoService;
 
 namespace EnigmaVault.Desktop.ViewModels.Windows
 {

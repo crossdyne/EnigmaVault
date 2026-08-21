@@ -1,5 +1,4 @@
 using Crossdyne.Security.Abstractions;
-using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Web.Bff.Constants;
 using EnigmaVault.Web.Bff.Extensions;
 using EnigmaVault.Web.Bff.Services;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
 using Shared.Contracts.Cache.Abstractions;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Contracts.Common;
 using Shared.Contracts.Requests;
 using StackExchange.Redis;

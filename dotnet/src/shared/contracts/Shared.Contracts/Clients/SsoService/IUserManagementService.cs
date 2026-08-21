@@ -1,9 +1,9 @@
 ﻿using Crossdyne.Toolkit.Results;
-using EnigmaVault.Authentication.Client.Model.Responses;
 using Shared.Contracts.Responses;
+using Shared.Contracts.Responses.Authentication;
 using Shared.Contracts.Responses.UserManagement;
 
-namespace EnigmaVault.Authentication.Client.HttpClients
+namespace Shared.Contracts.Clients.SsoService
 {
     public interface IUserManagementService
     {

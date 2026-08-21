@@ -3,7 +3,7 @@ using Crossdyne.Toolkit.Results;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
 
-namespace EnigmaVault.PasswordService.Client.Clients
+namespace Shared.Contracts.Clients.PasswordsService
 {
     public interface IVaultService
     {

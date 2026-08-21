@@ -1,5 +1,5 @@
-using EnigmaVault.Authentication.Client.HttpClients;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Users

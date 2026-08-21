@@ -1,7 +1,7 @@
-﻿using EnigmaVault.Authentication.Client.HttpClients;
-using EnigmaVault.Desktop.Models;
+﻿using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.Secure;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Contracts.Requests;
 using System.Net;
 using System.Net.Http;

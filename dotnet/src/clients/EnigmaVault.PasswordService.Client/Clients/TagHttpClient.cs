@@ -1,6 +1,7 @@
 ﻿using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
 using Microsoft.Extensions.Options;
+using Shared.Contracts.Clients.PasswordsService;
 using Shared.Contracts.Requests.PasswordService;
 using Shared.Contracts.Responses.PasswordService;
 using Shared.Http;

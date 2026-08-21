@@ -1,11 +1,11 @@
 ﻿using Crossdyne.Toolkit.Primitives;
-using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services.Managers;
 using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Contracts.Requests;
 
 namespace EnigmaVault.Desktop.Services.Initializers

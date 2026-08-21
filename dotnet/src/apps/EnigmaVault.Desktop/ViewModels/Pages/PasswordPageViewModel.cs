@@ -4,8 +4,6 @@ using Crossdyne.Security.Abstractions;
 using Crossdyne.Security.Configuration;
 using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.Client.Clients;
-using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Helpers;
 using EnigmaVault.Desktop.Models;
@@ -17,11 +15,14 @@ using EnigmaVault.Desktop.ViewModels.Common.Controls;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Items;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using EnigmaVault.FileService.Client.Clients;
-using EnigmaVault.FileService.Client.Models;
-using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Options;
+using Shared.Contracts.Clients.AssetsService;
+using Shared.Contracts.Clients.FileService;
+using Shared.Contracts.Clients.PasswordsService;
+using Shared.Contracts.Requests.FileService;
 using Shared.Contracts.Requests.PasswordService;
+using Shared.Contracts.Responses.Assets;
+using Shared.Contracts.Responses.FileService;
 using Shared.Contracts.Responses.PasswordService;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -174,7 +175,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         // ================Vault=====================
 
-        #region Свойсто: [SelectedEncryptedOverview] - Выбор зашифрованного элемента
+        #region Свойство: [SelectedEncryptedOverview] - Выбор зашифрованного элемента
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateVaultCommand))]
@@ -673,7 +674,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanRestoreAllTrash))]
         private async Task RestoreAllTrash()
         {
-            if (MessageBox.Show($"Вы точно хотите востановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            if (MessageBox.Show($"Вы точно хотите восстановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
             var result = await _vaultService.RestoreAllFromTrashAsync();
@@ -771,12 +772,12 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Команда [OpenAttachTagPopupCommand]
 
         [RelayCommand]
-        private void OpenAttachTagPopupCommand(UIElement? tagret)
+        private void OpenAttachTagPopupCommand(UIElement? target)
         {
             if (PasswordMenuPopup.IsOpen)
                 PasswordMenuPopup.HideCommand.Execute(null);
 
-            AttachTagsPopup.ShowCommand.Execute(tagret);
+            AttachTagsPopup.ShowCommand.Execute(target);
         }
 
         #endregion
@@ -802,7 +803,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [CopyFieldCommand]: Копирует выбранное свойсво
+        #region Команда [CopyFieldCommand]: Копирует выбранное свойство
 
         [RelayCommand]
         private void CopyField(FieldToCopy field)
@@ -823,16 +824,16 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
                     switch (field)
                     {
-                        case FieldToCopy.StandartPasswordLogin:
+                        case FieldToCopy.StandardPasswordLogin:
                             Clipboard.SetText(standardPassword.Login!);
                             break;
-                        case FieldToCopy.StandartPassword:
+                        case FieldToCopy.StandardPassword:
                             Clipboard.SetText(standardPassword.Password!);
                             break;
-                        case FieldToCopy.StandartPasswordEmail:
+                        case FieldToCopy.StandardPasswordEmail:
                             Clipboard.SetText(standardPassword.Email!);
                             break;
-                        case FieldToCopy.StandartPasswordPhoneNumber:
+                        case FieldToCopy.StandardPasswordPhoneNumber:
                             Clipboard.SetText(standardPassword.Phone!);
                             break;
                         default:
@@ -851,7 +852,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
                     switch (field)
                     {
-                        case FieldToCopy.ServerAddres:
+                        case FieldToCopy.ServerAddress:
                             Clipboard.SetText(server.IpAddress!);
                             break;
                         case FieldToCopy.ServerPort:

@@ -1,13 +1,14 @@
 ﻿using Crossdyne.Toolkit.Results;
-using EnigmaVault.Authentication.Client.Model.Responses;
 using Microsoft.Extensions.Options;
+using Shared.Contracts.Clients.SsoService;
 using Shared.Contracts.Responses;
+using Shared.Contracts.Responses.Authentication;
 using Shared.Contracts.Responses.UserManagement;
 using Shared.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace EnigmaVault.Authentication.Client.HttpClients
+namespace EnigmaVault.Authentication.Client
 {
     public sealed class UserManagementService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IUserManagementService
     {

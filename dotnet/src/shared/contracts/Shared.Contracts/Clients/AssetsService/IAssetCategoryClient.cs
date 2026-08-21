@@ -1,7 +1,7 @@
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.Client.Models;
+using Shared.Contracts.Responses.Assets;
 
-namespace EnigmaVault.AssetsService.Client.Clients
+namespace Shared.Contracts.Clients.AssetsService
 {
     public interface IAssetCategoryClient
     {

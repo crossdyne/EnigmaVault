@@ -3,7 +3,7 @@ using Shared.Contracts.Requests;
 using Shared.Contracts.Requests.Authentication;
 using Shared.Contracts.Responses.Authentication;
 
-namespace EnigmaVault.Authentication.Client.HttpClients
+namespace Shared.Contracts.Clients.SsoService
 {
     public interface IAuthService
     {

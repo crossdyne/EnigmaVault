@@ -1,4 +1,4 @@
-namespace EnigmaVault.AssetsService.Client.Constants
+namespace Shared.Contracts.Constants
 {
     public static class ProjectConstants
     {
