@@ -16,7 +16,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
     {
         /*--Favorite----------------------------------------------------------------------------------------*/
 
-        [HttpPatch("add-favorites/{vaultId}")]
+        [HttpPatch("favorite/{vaultId}")]
         public async Task<IActionResult> AddToFavorites([FromRoute] Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -34,7 +34,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("remove-favorites/{vaultId}")]
+        [HttpPatch("unfavorite/{vaultId}")]
         public async Task<IActionResult> RemoveFromFavorites([FromRoute] Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -72,7 +72,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("un-archive/{vaultId}")]
+        [HttpPatch("unarchive/{vaultId}")]
         public async Task<IActionResult> UnArchive([FromRoute] Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -90,7 +90,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("un-archive/all")]
+        [HttpPatch("unarchive/all")]
         public async Task<IActionResult> UnArchiveAll([FromRoute] Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -110,7 +110,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
 
         /*--Trash----------------------------------------------------------------------------------------*/
 
-        [HttpPatch("empty-trash")]
+        [HttpPatch("trash/empty")]
         public async Task<IActionResult> EmptyTrash()
         {
             var extractResult = ExtractCredentials();
@@ -128,7 +128,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("move-to-trash/{vaultId}")]
+        [HttpPatch("trash/{vaultId}")]
         public async Task<IActionResult> MoveToTrash(Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -146,7 +146,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok(result.Value);
         }
 
-        [HttpPatch("restore-from-trash/{vaultId}")]
+        [HttpPatch("restore/{vaultId}")]
         public async Task<IActionResult> RestoreFromTrash(Guid vaultId)
         {
             var extractResult = ExtractCredentials();
@@ -164,7 +164,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("restore-all-from-trash")]
+        [HttpPatch("restore/all")]
         public async Task<IActionResult> RestoreAllFromTrash()
         {
             var extractResult = ExtractCredentials();

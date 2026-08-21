@@ -49,7 +49,7 @@ export class VaultService extends HttpService {
     }
 
     async emptyTrashAsync(): Promise<Result> {
-        return await this.patchAsync('empty/trash', null);
+        return await this.patchAsync('trash/empty', null);
     }
 
     async zipAsync(id: string): Promise<Result> {
@@ -69,14 +69,14 @@ export class VaultService extends HttpService {
     }
 
     async updateTagsAsync(id: string, request: UpdateTagsRequest): Promise<Result<DateUpdateResponse>> {
-        return await this.patchAsync(`${id}/tags`, request)
+        return await this.patchAsync(`tags/${id}`, request)
     }
 
     async favorite(id: string): Promise<Result> {
-        return await this.patchAsync(`${id}/favorite`, null);
+        return await this.patchAsync(`favorite/${id}`, null);
     }
 
     async unFavorite(id: string): Promise<Result> {
-        return await this.patchAsync(`${id}/unfavorite`, null);
+        return await this.patchAsync(`unfavorite/${id}`, null);
     }
 }

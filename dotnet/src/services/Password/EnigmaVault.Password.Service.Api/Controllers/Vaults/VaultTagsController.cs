@@ -10,7 +10,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
 {
     public class VaultTagsController(IMediator mediator) : VaultControllerBase
     {
-        [HttpPatch("add-tag/{vaultId}/{tagId}")]
+        [HttpPatch("attach/{tagId}/tag/{vaultId}/")]
         public async Task<IActionResult> AddTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
             var extractResult = ExtractCredentials();
@@ -28,7 +28,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("remove-tag/{vaultId}/{tagId}")]
+        [HttpPatch("remove/{tagId}/tag/{vaultId}")]
         public async Task<IActionResult> RemoveTag([FromRoute] Guid vaultId, [FromRoute] Guid tagId)
         {
             var extractResult = ExtractCredentials();
@@ -46,7 +46,7 @@ namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
             return Ok();
         }
 
-        [HttpPatch("{vaultId}/tags")]
+        [HttpPatch("tags/{vaultId}")]
         public async Task<IActionResult> AttachTags([FromRoute] Guid vaultId, [FromBody] UpdateTagsRequest request)
         {
             var extractResult = ExtractCredentials();
