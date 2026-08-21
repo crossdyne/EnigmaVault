@@ -7,6 +7,7 @@ COPY ["dotnet/src/apps/EnigmaVault.Web.Bff/EnigmaVault.Web.Bff.csproj", "dotnet/
 
 COPY ["dotnet/src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj", "dotnet/src/clients/EnigmaVault.Authentication.Client/"]
 COPY ["dotnet/src/shared/contracts/Shared.Contracts/Shared.Contracts.csproj", "dotnet/src/shared/contracts/Shared.Contracts/"]
+COPY ["dotnet/src/shared/infrastructure/Shared.Http/Shared.Http.csproj", "dotnet/src/shared/infrastructure/Shared.Http/"]
 COPY ["dotnet/src/shared/infrastructure/Shared.Redis/Shared.Redis.csproj", "dotnet/src/shared/infrastructure/Shared.Redis/"]
 COPY ["dotnet/src/shared/observability/Shared.Logging/Shared.Logging.csproj", "dotnet/src/shared/observability/Shared.Logging/"]
 
