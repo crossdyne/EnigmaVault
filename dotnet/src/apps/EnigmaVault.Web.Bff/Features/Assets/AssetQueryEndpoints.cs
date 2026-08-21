@@ -1,11 +1,10 @@
 using Crossdyne.Toolkit.Results;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Clients.AssetsService;
-using Shared.Contracts.Clients.FileService;
-using Shared.Contracts.Requests.FileService;
-using Shared.Contracts.Responses;
-using Shared.Contracts.Responses.Assets;
-using Shared.Contracts.Responses.FileService;
+using Shared.Contracts.AssetsService.Clients;
+using Shared.Contracts.AssetsService.Responses;
+using Shared.Contracts.FileService.Clients;
+using Shared.Contracts.FileService.Requests;
+using Shared.Contracts.FileService.Responses;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Assets

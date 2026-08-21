@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using EnigmaVault.Password.Service.Domain.Models;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.PasswordService.Responses;
 
 namespace EnigmaVault.Password.Service.Application.Mappers.Profiles
 {

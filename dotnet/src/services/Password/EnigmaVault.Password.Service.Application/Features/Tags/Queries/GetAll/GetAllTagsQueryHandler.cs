@@ -4,7 +4,7 @@ using EnigmaVault.Password.Service.Application.Common;
 using EnigmaVault.Password.Service.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.PasswordService.Responses;
 
 namespace EnigmaVault.Password.Service.Application.Features.Tags.Queries.GetAll
 {

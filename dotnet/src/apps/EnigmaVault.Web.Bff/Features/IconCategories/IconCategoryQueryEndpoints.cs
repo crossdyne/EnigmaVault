@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Clients.AssetsService;
+using Shared.Contracts.AssetsService.Clients;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.IconCategories

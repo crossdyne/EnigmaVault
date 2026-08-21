@@ -6,7 +6,8 @@ using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Features.Authentication;
-using Shared.Contracts.Clients.SsoService;
+using Shared.Contracts.AuthenticationService.Clients;
+using Shared.Contracts.UserManagementService.Clients;
 
 namespace EnigmaVault.Desktop.ViewModels.Windows
 {

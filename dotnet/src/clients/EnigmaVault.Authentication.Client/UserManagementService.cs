@@ -1,9 +1,8 @@
 ﻿using Crossdyne.Toolkit.Results;
 using Microsoft.Extensions.Options;
-using Shared.Contracts.Clients.SsoService;
-using Shared.Contracts.Responses;
-using Shared.Contracts.Responses.Authentication;
-using Shared.Contracts.Responses.UserManagement;
+using Shared.Contracts.AuthenticationService.Responses;
+using Shared.Contracts.UserManagementService.Clients;
+using Shared.Contracts.UserManagementService.Responses;
 using Shared.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;

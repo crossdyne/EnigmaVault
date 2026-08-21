@@ -10,9 +10,10 @@ using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Shared.Contracts.Clients.SsoService;
-using Shared.Contracts.Requests.Authentication;
-using Shared.Contracts.Responses.Authentication;
+using Shared.Contracts.AuthenticationService.Clients;
+using Shared.Contracts.AuthenticationService.Requests;
+using Shared.Contracts.AuthenticationService.Responses;
+using Shared.Contracts.UserManagementService.Clients;
 using System.Security.Cryptography;
 using System.Windows;
 

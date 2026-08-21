@@ -5,10 +5,11 @@ using EnigmaVault.FileService.Client;
 using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Contracts.Clients.AssetsService;
-using Shared.Contracts.Clients.FileService;
-using Shared.Contracts.Clients.PasswordsService;
-using Shared.Contracts.Clients.SsoService;
+using Shared.Contracts.AssetsService.Clients;
+using Shared.Contracts.AuthenticationService.Clients;
+using Shared.Contracts.FileService.Clients;
+using Shared.Contracts.PasswordService.Clients;
+using Shared.Contracts.UserManagementService.Clients;
 
 namespace EnigmaVault.Desktop.Ioc
 {

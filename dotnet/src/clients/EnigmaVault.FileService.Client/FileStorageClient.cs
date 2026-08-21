@@ -2,9 +2,9 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Crossdyne.Toolkit.Results;
 using Microsoft.Extensions.Options;
-using Shared.Contracts.Clients.FileService;
-using Shared.Contracts.Requests.FileService;
-using Shared.Contracts.Responses.FileService;
+using Shared.Contracts.FileService.Clients;
+using Shared.Contracts.FileService.Requests;
+using Shared.Contracts.FileService.Responses;
 using Shared.Http;
 
 namespace EnigmaVault.FileService.Client

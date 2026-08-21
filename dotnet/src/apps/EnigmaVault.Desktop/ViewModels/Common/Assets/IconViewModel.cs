@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Shared.Contracts.Responses.Assets;
+using Shared.Contracts.AssetsService.Responses;
 using System.Windows.Media;
 
 namespace EnigmaVault.Desktop.ViewModels.Common.Assets

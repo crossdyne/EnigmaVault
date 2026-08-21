@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.PasswordService.Responses;
 
 namespace EnigmaVault.Password.Service.Application.Features.Tags.Queries.GetAll
 {

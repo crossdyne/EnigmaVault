@@ -8,8 +8,8 @@ using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetBy
 using EnigmaVault.Password.Service.Application.Features.VaultItems.Queries.GetCountRecords;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Requests.PasswordService;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.PasswordService.Requests;
+using Shared.Contracts.PasswordService.Responses;
 
 namespace EnigmaVault.Password.Service.Api.Controllers.Vaults
 {
