@@ -4,7 +4,7 @@ using Shared.Contracts.FileService.Responses;
 
 namespace Shared.Contracts.FileService.Clients
 {
-    public interface IFileServiceClient
+    public interface IFileService
     {
         Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request, CancellationToken cancellationToken = default);
     }

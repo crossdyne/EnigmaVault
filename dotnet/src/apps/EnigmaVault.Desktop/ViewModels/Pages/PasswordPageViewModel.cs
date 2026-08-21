@@ -38,9 +38,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
     {
         private readonly IVaultService _vaultService;
         private readonly ITagService _tagService;
-        private readonly IAssetClient _assetClient;
-        private readonly IAssetCategoryClient _iconCategoryService;
-        private readonly IFileServiceClient _fileService;
+        private readonly IAssetService _assetClient;
+        private readonly IAssetCategoryService _iconCategoryService;
+        private readonly IFileService _fileService;
         private readonly IUserContext _userContext;
         private readonly ICryptoService _cryptoServices;
 
@@ -52,9 +52,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             IOptions<Urls> urlsOptions,
             IVaultService vaultService,
             ITagService tagService,
-            IAssetClient assetClient,
-            IAssetCategoryClient iconCategoryService,
-            IFileServiceClient fileService,
+            IAssetService assetClient,
+            IAssetCategoryService iconCategoryService,
+            IFileService fileService,
             IUserContext userContext,
             ICryptoService cryptoServices)
         {

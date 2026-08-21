@@ -3,7 +3,7 @@ using Shared.Contracts.AssetsService.Responses;
 
 namespace Shared.Contracts.AssetsService.Clients
 {
-    public interface IAssetCategoryClient
+    public interface IAssetCategoryService
     {
         Task<Result<List<IconCategoryResponse>>> GetIconCategories(CancellationToken cancellationToken = default);
     }

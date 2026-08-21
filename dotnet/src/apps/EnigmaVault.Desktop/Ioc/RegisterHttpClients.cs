@@ -38,11 +38,11 @@ namespace EnigmaVault.Desktop.Ioc
             string? assetsServiceApiUrl = configuration.GetValue<string>("BaseAssetsServiceUrl");
             const string assetsServiceApiClientName = "AssetsApiClient";
             services.AddHttpClient(assetsServiceApiClientName, client => client.BaseAddress = new Uri(assetsServiceApiUrl!)).AddHttpMessageHandler<RefreshTokenHandler>();
-            services.AddHttpClient<IAssetClient, AssetClient>(assetsServiceApiClientName);
-            services.AddHttpClient<IAssetCategoryClient, AssetCategoryClient>(assetsServiceApiClientName);
+            services.AddHttpClient<IAssetService, AssetService>(assetsServiceApiClientName);
+            services.AddHttpClient<IAssetCategoryService, AssetCategoryService>(assetsServiceApiClientName);
 
             string? fileServiceApiUrl = configuration.GetValue<string>("BaseFileServiceUrl");
-            services.AddHttpClient<IFileServiceClient, FileStorageClient>(client => client.BaseAddress = new Uri(fileServiceApiUrl!));
+            services.AddHttpClient<IFileService, FileStorageService>(client => client.BaseAddress = new Uri(fileServiceApiUrl!));
 
             return services;
         }

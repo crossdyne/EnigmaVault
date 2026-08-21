@@ -38,10 +38,10 @@ namespace EnigmaVault.Web.Bff.Extensions
                 .AddHttpMessageHandler<AccessTokenHandler>()
                 .AddCustomResilienceHandler();
 
-            services.AddHttpClient<IAssetCategoryClient, AssetCategoryClient>(assetsService);
-            services.AddHttpClient<IAssetClient, AssetClient>(assetsService);
+            services.AddHttpClient<IAssetCategoryService, AssetCategoryService>(assetsService);
+            services.AddHttpClient<IAssetService, AssetService>(assetsService);
 
-            services.AddHttpClient<IFileServiceClient, FileStorageClient>(client => client.BaseAddress = new Uri(configuration["Urls:FileService"]!))
+            services.AddHttpClient<IFileService, FileStorageService>(client => client.BaseAddress = new Uri(configuration["Urls:FileService"]!))
                 .AddResilienceHandler("file-retry", b =>
                 {
                     b.AddRetry(new HttpRetryStrategyOptions

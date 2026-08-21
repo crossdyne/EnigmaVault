@@ -14,8 +14,8 @@ namespace EnigmaVault.Web.Bff.Features.Assets
         public static void MapAssetQueryEndpoints(this IEndpointRouteBuilder builder)
         {
             builder.MapGet("api/v1/asset", async (
-                [FromServices] IAssetClient assetClient, 
-                [FromServices] IFileServiceClient fileClient) =>
+                [FromServices] IAssetService assetClient, 
+                [FromServices] IFileService fileClient) =>
             {
                 Result<List<IconMetadataResponse>> assetsMetadataResponse = await assetClient.GetFilesMetadata();
 

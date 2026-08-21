@@ -9,7 +9,7 @@ using Shared.Http;
 
 namespace EnigmaVault.FileService.Client
 {
-    public sealed class FileStorageClient(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IFileServiceClient
+    public sealed class FileStorageService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IFileService
     {
         public async Task<Result<BatchUrlResponse>> GetUrls(BatchUrlRequest request, CancellationToken cancellationToken = default)
             => await CatchResponseAsync<BatchUrlResponse>(async ct => await _http.PostAsJsonAsync("api/files/urls", request, ct), cancellationToken);
