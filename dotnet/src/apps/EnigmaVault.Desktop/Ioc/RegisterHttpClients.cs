@@ -2,7 +2,7 @@
 using EnigmaVault.Authentication.Client;
 using EnigmaVault.Desktop.Handlers;
 using EnigmaVault.FileService.Client;
-using EnigmaVault.PasswordService.Client.Clients;
+using EnigmaVault.PasswordService.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Contracts.AssetsService.Clients;

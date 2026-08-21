@@ -8,7 +8,7 @@ using Shared.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace EnigmaVault.PasswordService.Client.Clients
+namespace EnigmaVault.PasswordService.Client
 {
     public sealed class VaultService(HttpClient http, IOptions<JsonSerializerOptions> options) : HttpService(http, options.Value), IVaultService
     {

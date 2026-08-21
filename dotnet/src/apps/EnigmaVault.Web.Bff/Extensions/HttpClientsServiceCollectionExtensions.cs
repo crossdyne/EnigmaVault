@@ -2,7 +2,7 @@ using System.Net;
 using EnigmaVault.AssetsService.Client;
 using EnigmaVault.Authentication.Client;
 using EnigmaVault.FileService.Client;
-using EnigmaVault.PasswordService.Client.Clients;
+using EnigmaVault.PasswordService.Client;
 using EnigmaVault.Web.Bff.Handlers;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
