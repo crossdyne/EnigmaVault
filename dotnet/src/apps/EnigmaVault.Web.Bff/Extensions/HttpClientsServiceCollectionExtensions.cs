@@ -2,14 +2,14 @@ using System.Net;
 using EnigmaVault.AssetsService.Client;
 using EnigmaVault.Authentication.Client;
 using EnigmaVault.FileService.Client;
-using EnigmaVault.PasswordService.Client;
+using EnigmaVault.SecretService.Client;
 using EnigmaVault.Web.Bff.Handlers;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 using Shared.Contracts.AssetsService.Clients;
 using Shared.Contracts.AuthenticationService.Clients;
 using Shared.Contracts.FileService.Clients;
-using Shared.Contracts.PasswordService.Clients;
+using Shared.Contracts.SecretService.Clients;
 using Shared.Contracts.UserManagementService.Clients;
 
 namespace EnigmaVault.Web.Bff.Extensions

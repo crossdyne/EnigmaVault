@@ -1,7 +1,7 @@
 using EnigmaVault.Web.Bff.Constants;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.PasswordService.Clients;
-using Shared.Contracts.PasswordService.Requests;
+using Shared.Contracts.SecretService.Clients;
+using Shared.Contracts.SecretService.Requests;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Tags
