@@ -27,7 +27,7 @@ jobs:
 
       - name: Test backend
         id: test
-        run: dotnet test tests/ --configuration Release --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
         working-directory: dotnet
 
       - name: Publish Test Results
