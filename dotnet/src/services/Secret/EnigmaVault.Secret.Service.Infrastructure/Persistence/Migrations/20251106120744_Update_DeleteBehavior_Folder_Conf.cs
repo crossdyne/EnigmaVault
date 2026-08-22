@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Update_DeleteBehavior_Folder_Conf : Migration

@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EnigmaContext))]
     [Migration("20251105124711_Add_UserId_To_IconCategory_And_Remove_IsCommon")]
@@ -25,7 +25,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Icon", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Icon", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -57,7 +57,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("Icons", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.IconCategory", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.IconCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -79,9 +79,9 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("IconCategories", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Icon", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Icon", b =>
                 {
-                    b.HasOne("EnigmaVault.Password.Service.Domain.Models.IconCategory", null)
+                    b.HasOne("EnigmaVault.Secret.Service.Domain.Models.IconCategory", null)
                         .WithMany()
                         .HasForeignKey("IconCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)

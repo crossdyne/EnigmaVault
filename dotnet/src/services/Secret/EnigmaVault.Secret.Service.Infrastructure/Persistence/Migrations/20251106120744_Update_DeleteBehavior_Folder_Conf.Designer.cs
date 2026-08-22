@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EnigmaContext))]
     [Migration("20251106120744_Update_DeleteBehavior_Folder_Conf")]
@@ -25,7 +25,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Folder", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Folder", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -57,7 +57,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("Folders", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Icon", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Icon", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -89,7 +89,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("Icons", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.IconCategory", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.IconCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -111,17 +111,17 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("IconCategories", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Folder", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Folder", b =>
                 {
-                    b.HasOne("EnigmaVault.Password.Service.Domain.Models.Folder", null)
+                    b.HasOne("EnigmaVault.Secret.Service.Domain.Models.Folder", null)
                         .WithMany()
                         .HasForeignKey("ParentFolderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Icon", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Icon", b =>
                 {
-                    b.HasOne("EnigmaVault.Password.Service.Domain.Models.IconCategory", null)
+                    b.HasOne("EnigmaVault.Secret.Service.Domain.Models.IconCategory", null)
                         .WithMany()
                         .HasForeignKey("IconCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)

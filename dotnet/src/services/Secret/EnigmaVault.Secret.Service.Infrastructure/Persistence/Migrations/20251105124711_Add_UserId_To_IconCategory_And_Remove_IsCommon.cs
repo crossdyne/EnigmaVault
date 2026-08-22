@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Add_UserId_To_IconCategory_And_Remove_IsCommon : Migration

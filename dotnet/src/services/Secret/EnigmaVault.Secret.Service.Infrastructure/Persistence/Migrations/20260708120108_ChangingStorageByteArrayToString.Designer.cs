@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EnigmaContext))]
     [Migration("20260708120108_ChangingStorageByteArrayToString")]
@@ -25,7 +25,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Folder", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Folder", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -57,7 +57,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("Folders", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Tag", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -83,7 +83,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("Tags", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.VaultItem", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.VaultItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -127,11 +127,11 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("IsInTrash");
 
-                    b.Property<string>("PasswordType")
+                    b.Property<string>("SecretType")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
-                        .HasColumnName("PasswordType");
+                        .HasColumnName("SecretType");
 
                     b.Property<Guid[]>("Tags")
                         .IsRequired()
@@ -147,9 +147,9 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                     b.ToTable("VaultItems", (string)null);
                 });
 
-            modelBuilder.Entity("EnigmaVault.Password.Service.Domain.Models.Folder", b =>
+            modelBuilder.Entity("EnigmaVault.Secret.Service.Domain.Models.Folder", b =>
                 {
-                    b.HasOne("EnigmaVault.Password.Service.Domain.Models.Folder", null)
+                    b.HasOne("EnigmaVault.Secret.Service.Domain.Models.Folder", null)
                         .WithMany()
                         .HasForeignKey("ParentFolderId")
                         .OnDelete(DeleteBehavior.Cascade);

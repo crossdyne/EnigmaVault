@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
+namespace EnigmaVault.Secret.Service.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddVersioningAlghoritm : Migration
@@ -11,7 +11,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PasswordType",
+                name: "SecretType",
                 table: "VaultItems");
 
             migrationBuilder.AddColumn<int>(
@@ -41,7 +41,7 @@ namespace EnigmaVault.Password.Service.Infrastructure.Persistence.Migrations
                 table: "VaultItems");
 
             migrationBuilder.AddColumn<string>(
-                name: "PasswordType",
+                name: "SecretType",
                 table: "VaultItems",
                 type: "character varying(100)",
                 maxLength: 100,
