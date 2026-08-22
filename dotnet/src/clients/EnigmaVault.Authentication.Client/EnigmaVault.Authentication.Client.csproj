@@ -8,12 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="Crossdyne.Toolkit" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\contracts\Shared.Contracts\Shared.Contracts.csproj" />
     <ProjectReference Include="..\..\shared\core\Shared.Kernel\Shared.Kernel.csproj" />
+    <ProjectReference Include="..\..\shared\infrastructure\Shared.Http\Shared.Http.csproj" />
   </ItemGroup>
 
   <ItemGroup>

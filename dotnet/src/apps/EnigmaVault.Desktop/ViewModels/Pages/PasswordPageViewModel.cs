@@ -4,8 +4,6 @@ using Crossdyne.Security.Abstractions;
 using Crossdyne.Security.Configuration;
 using Crossdyne.Toolkit.Primitives;
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.Client.Clients;
-using EnigmaVault.AssetsService.Client.Models;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Helpers;
 using EnigmaVault.Desktop.Models;
@@ -17,12 +15,15 @@ using EnigmaVault.Desktop.ViewModels.Common.Controls;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Items;
 using EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault;
-using EnigmaVault.FileService.Client.Clients;
-using EnigmaVault.FileService.Client.Models;
-using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.Extensions.Options;
-using Shared.Contracts.Requests.PasswordService;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.AssetsService.Clients;
+using Shared.Contracts.AssetsService.Responses;
+using Shared.Contracts.FileService.Clients;
+using Shared.Contracts.FileService.Requests;
+using Shared.Contracts.FileService.Responses;
+using Shared.Contracts.PasswordService.Clients;
+using Shared.Contracts.PasswordService.Requests;
+using Shared.Contracts.PasswordService.Responses;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -37,9 +38,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
     {
         private readonly IVaultService _vaultService;
         private readonly ITagService _tagService;
-        private readonly IAssetClient _assetClient;
-        private readonly IAssetCategoryClient _iconCategoryService;
-        private readonly IFileServiceClient _fileService;
+        private readonly IAssetService _assetClient;
+        private readonly IAssetCategoryService _iconCategoryService;
+        private readonly IFileService _fileService;
         private readonly IUserContext _userContext;
         private readonly ICryptoService _cryptoServices;
 
@@ -51,9 +52,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             IOptions<Urls> urlsOptions,
             IVaultService vaultService,
             ITagService tagService,
-            IAssetClient assetClient,
-            IAssetCategoryClient iconCategoryService,
-            IFileServiceClient fileService,
+            IAssetService assetClient,
+            IAssetCategoryService iconCategoryService,
+            IFileService fileService,
             IUserContext userContext,
             ICryptoService cryptoServices)
         {
@@ -174,7 +175,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         // ================Vault=====================
 
-        #region Свойсто: [SelectedEncryptedOverview] - Выбор зашифрованного элемента
+        #region Свойство: [SelectedEncryptedOverview] - Выбор зашифрованного элемента
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateVaultCommand))]
@@ -631,7 +632,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 return;
             }
 
-            model.DeletedAt = result.Value;
+            model.DeletedAt = result.Value.ToLocalTime();
 
             Passwords.Remove(model);
             TrashPasswords.Add(model);
@@ -673,7 +674,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         [RelayCommand(CanExecute = nameof(CanRestoreAllTrash))]
         private async Task RestoreAllTrash()
         {
-            if (MessageBox.Show($"Вы точно хотите востановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            if (MessageBox.Show($"Вы точно хотите восстановить все записи в кол-ве {TrashPasswords.Count}?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.No)
                 return;
 
             var result = await _vaultService.RestoreAllFromTrashAsync();
@@ -771,12 +772,12 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
         #region Команда [OpenAttachTagPopupCommand]
 
         [RelayCommand]
-        private void OpenAttachTagPopupCommand(UIElement? tagret)
+        private void OpenAttachTagPopupCommand(UIElement? target)
         {
             if (PasswordMenuPopup.IsOpen)
                 PasswordMenuPopup.HideCommand.Execute(null);
 
-            AttachTagsPopup.ShowCommand.Execute(tagret);
+            AttachTagsPopup.ShowCommand.Execute(target);
         }
 
         #endregion
@@ -802,7 +803,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
         #endregion
 
-        #region Команда [CopyFieldCommand]: Копирует выбранное свойсво
+        #region Команда [CopyFieldCommand]: Копирует выбранное свойство
 
         [RelayCommand]
         private void CopyField(FieldToCopy field)
@@ -823,16 +824,16 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
                     switch (field)
                     {
-                        case FieldToCopy.StandartPasswordLogin:
+                        case FieldToCopy.StandardPasswordLogin:
                             Clipboard.SetText(standardPassword.Login!);
                             break;
-                        case FieldToCopy.StandartPassword:
+                        case FieldToCopy.StandardPassword:
                             Clipboard.SetText(standardPassword.Password!);
                             break;
-                        case FieldToCopy.StandartPasswordEmail:
+                        case FieldToCopy.StandardPasswordEmail:
                             Clipboard.SetText(standardPassword.Email!);
                             break;
-                        case FieldToCopy.StandartPasswordPhoneNumber:
+                        case FieldToCopy.StandardPasswordPhoneNumber:
                             Clipboard.SetText(standardPassword.Phone!);
                             break;
                         default:
@@ -851,7 +852,7 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
 
                     switch (field)
                     {
-                        case FieldToCopy.ServerAddres:
+                        case FieldToCopy.ServerAddress:
                             Clipboard.SetText(server.IpAddress!);
                             break;
                         case FieldToCopy.ServerPort:

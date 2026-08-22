@@ -1,10 +1,10 @@
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.AssetsService.Client.Clients;
-using EnigmaVault.AssetsService.Client.Models;
-using EnigmaVault.FileService.Client.Clients;
-using EnigmaVault.FileService.Client.Models;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Responses;
+using Shared.Contracts.AssetsService.Clients;
+using Shared.Contracts.AssetsService.Responses;
+using Shared.Contracts.FileService.Clients;
+using Shared.Contracts.FileService.Requests;
+using Shared.Contracts.FileService.Responses;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Assets
@@ -14,8 +14,8 @@ namespace EnigmaVault.Web.Bff.Features.Assets
         public static void MapAssetQueryEndpoints(this IEndpointRouteBuilder builder)
         {
             builder.MapGet("api/v1/asset", async (
-                [FromServices] IAssetClient assetClient, 
-                [FromServices] IFileServiceClient fileClient) =>
+                [FromServices] IAssetService assetClient, 
+                [FromServices] IFileService fileClient) =>
             {
                 Result<List<IconMetadataResponse>> assetsMetadataResponse = await assetClient.GetFilesMetadata();
 

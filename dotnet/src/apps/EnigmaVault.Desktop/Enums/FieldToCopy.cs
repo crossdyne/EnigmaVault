@@ -2,12 +2,12 @@
 {
     public enum FieldToCopy
     {
-        StandartPasswordLogin,
-        StandartPassword,
-        StandartPasswordEmail,
-        StandartPasswordPhoneNumber,
+        StandardPasswordLogin,
+        StandardPassword,
+        StandardPasswordEmail,
+        StandardPasswordPhoneNumber,
         
-        ServerAddres,
+        ServerAddress,
         ServerPort,
         ServerLogin,
         ServerPassword,

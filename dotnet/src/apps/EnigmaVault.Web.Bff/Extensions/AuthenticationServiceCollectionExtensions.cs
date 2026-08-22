@@ -1,7 +1,7 @@
 using Crossdyne.Security.Abstractions;
-using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Web.Bff.Constants;
 using EnigmaVault.Web.Bff.Extensions;
+using EnigmaVault.Web.Bff.Models;
 using EnigmaVault.Web.Bff.Services;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
-using Shared.Contracts.Cache.Abstractions;
-using Shared.Contracts.Common;
-using Shared.Contracts.Requests;
+using Shared.Contracts.AuthenticationService.Clients;
+using Shared.Contracts.AuthenticationService.Requests;
+using Shared.Contracts.Common.Cache.Abstractions;
 using StackExchange.Redis;
 
 namespace EnigmaVault.Web.Bff.Extensions

@@ -1,5 +1,5 @@
-using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.PasswordService.Clients;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Vaults

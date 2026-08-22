@@ -6,7 +6,7 @@ using EnigmaVault.Password.Service.Application.Features.Tags.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Requests.PasswordService;
+using Shared.Contracts.PasswordService.Requests;
 
 namespace EnigmaVault.Password.Service.Api.Controllers
 {

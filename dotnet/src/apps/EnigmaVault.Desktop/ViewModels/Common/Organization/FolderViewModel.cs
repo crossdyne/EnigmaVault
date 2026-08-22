@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Shared.Contracts.Responses.PasswordService;
+using Shared.Contracts.PasswordService.Responses;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 

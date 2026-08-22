@@ -1,6 +1,6 @@
-using EnigmaVault.PasswordService.Client.Clients;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Requests.PasswordService;
+using Shared.Contracts.PasswordService.Clients;
+using Shared.Contracts.PasswordService.Requests;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Vaults
@@ -24,7 +24,7 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
             builder.MapDelete("api/v1/vault/{id}", async ([FromRoute] string id, [FromServices] IVaultService service) 
                 => await service.DeleteAsync(id).MapErrorOrNoContentAsync()).RequireAuthorization();
 
-            builder.MapPatch("api/v1/vault/empty/trash", async ([FromServices] IVaultService service) 
+            builder.MapPatch("api/v1/vault/trash/empty", async ([FromServices] IVaultService service) 
                 => await service.EmptyTrashAsync().MapErrorOrOkAsync()).RequireAuthorization();
 
             builder.MapPatch("api/v1/vault/restore/all", async ([FromServices] IVaultService service) 
@@ -42,13 +42,13 @@ namespace EnigmaVault.Web.Bff.Features.Vaults
             builder.MapPatch("api/v1/vault/change/{vaultId}/icon/{iconId}", async ([FromRoute] string vaultId, [FromRoute] string iconId, [FromServices] IVaultService service)
                  => await service.ChangeIcon(vaultId, iconId).MapErrorOrOkAsync()).RequireAuthorization();
 
-            builder.MapPatch("api/v1/vault/{vaultId}/tags", async ([FromRoute] string vaultId, [FromBody] UpdateTagsRequest request, [FromServices] IVaultService service) 
+            builder.MapPatch("api/v1/vault/tags/{vaultId}", async ([FromRoute] string vaultId, [FromBody] UpdateTagsRequest request, [FromServices] IVaultService service) 
                 => await service.UpdateTagsAsync(vaultId, request).MapErrorOrOkAsync()).RequireAuthorization();
 
-            builder.MapPatch("api/v1/vault/{vaultId}/favorite", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
+            builder.MapPatch("api/v1/vault/favorite/{vaultId}", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
                 => await service.AddToFavoritesAsync(vaultId).MapErrorOrOkAsync()).RequireAuthorization();
 
-             builder.MapPatch("api/v1/vault/{vaultId}/unfavorite", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
+             builder.MapPatch("api/v1/vault/unfavorite/{vaultId}", async ([FromRoute] string vaultId, [FromServices] IVaultService service) 
                 => await service.RemoveFromFavoritesAsync(vaultId).MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
