@@ -120,10 +120,12 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
             {
                 Func<string> func = Type switch
                 {
-                    VaultType.Password => () => "Стандартный пароль",
-                    VaultType.Server => () => "Сервер",
-                    VaultType.CreditCard => () => "Банковская карта",
+                    VaultType.Password => () => "Стандартныйе пароли",
+                    VaultType.Server => () => "Серверные данные",
+                    VaultType.CreditCard => () => "Банковские карты",
                     VaultType.ApiKey => () => "API",
+                    VaultType.ConnectionString => () => "Строки подключения",
+                    VaultType.AsymmetricKey => () => "Ассеметричные ключи",
                     _ => () => "#"
                 };
 

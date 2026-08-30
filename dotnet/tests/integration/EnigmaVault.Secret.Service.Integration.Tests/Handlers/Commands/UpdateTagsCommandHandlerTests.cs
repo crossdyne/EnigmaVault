@@ -1,5 +1,4 @@
 using Crossdyne.Toolkit.Results;
-using EnigmaVault.Password.Service.Infrastructure.Persistence;
 using EnigmaVault.Secret.Service.Application.Features.VaultItems.Commands.UpdateTags;
 using EnigmaVault.Secret.Service.Domain.Models;
 using EnigmaVault.Secret.Service.Domain.ValueObjects.Common;

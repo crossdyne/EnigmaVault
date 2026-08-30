@@ -128,7 +128,10 @@ export class PasswordsPage {
         'CardNumber': 'Номер карты',
         'CardHolder': 'Владелец карты',
         'CvvCode': 'CVV-код',
-        'Key': 'API-ключ'
+        'Key': 'API-ключ',
+        'Value': 'Строка подключения',
+        'PublicKey': 'Публичный ключ',
+        'PrivateKey': 'Приватный ключ',
     };
 
     private showToast(message: string, type: 'success' | 'error' = 'success') {
@@ -848,6 +851,8 @@ export class PasswordsPage {
                 [VaultTypeEnum.ApiKey]: 'API ключи',
                 [VaultTypeEnum.CreditCard]: 'Банковские карты',
                 [VaultTypeEnum.Server]: 'Серверы',
+                [VaultTypeEnum.ConnectionString]: 'Строки подключения',
+                [VaultTypeEnum.AsymmetricKey]: 'Ассиметричные ключи',
             };
 
             const groups = new Map<string, VaultItemDisplay[]>();

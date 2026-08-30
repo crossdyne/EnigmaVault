@@ -57,7 +57,21 @@ export class VaultItemFormComponent {
         clientSecret: ['', []],
         expirationDate: ['', []],
         environment: ['', []],
-        scope: ['', []]
+        scope: ['', []],
+        // ConnectionString
+        connectionStringValue: ['', []],
+        connectionStringApplication: ['', []],
+        // AsymmetricKey
+        asymmetricPublicKey: ['', []],
+        asymmetricPrivateKey: ['', []],
+        asymmetricKeyApplication: ['', []],
+        algorithm: ['', []],
+        keySize: ['', []],
+        passphrase: ['', []],
+        format: ['', []],
+        fingerprint: ['', []],
+        asymmetricKeyDateCreation: ['', []],
+        asymmetricKeyDateExpire: ['', []],
     });
 
     VaultTypeEnum = VaultTypeEnum;
@@ -66,7 +80,9 @@ export class VaultItemFormComponent {
         1: "Пароля",
         2: "Кредитной карты",
         3: "Доступа к серверу",
-        4: "Апи ключа"
+        4: "Апи ключа",
+        5: "Строки подключения",
+        6: "Ассиметричных ключей",
     } 
 
     activeTab = signal<VaultTypeEnum>(VaultTypeEnum.Password);
@@ -128,6 +144,24 @@ export class VaultItemFormComponent {
                         patch['expirationDate'] = d['ExpirationDate'];
                         patch['environment'] = d['Environment'];
                         patch['scope'] = d['Scope'];
+                        break;
+                        
+                    case VaultTypeEnum.ConnectionString:
+                        patch['connectionStringValue'] = d['Value'];
+                        patch['connectionStringApplication'] = d['Application'];
+                        break;
+
+                    case VaultTypeEnum.AsymmetricKey:
+                        patch['asymmetricPublicKey'] = d['PublicKey'];
+                        patch['asymmetricPrivateKey'] = d['PrivateKey'];
+                        patch['asymmetricKeyApplication'] = d['Application'];
+                        patch['algorithm'] = d['Algorithm'];
+                        patch['keySize'] = d['KeySize'];
+                        patch['passphrase'] = d['Passphrase'];
+                        patch['format'] = d['Format'];
+                        patch['fingerprint'] = d['Fingerprint'];
+                        patch['asymmetricKeyDateCreation'] = d['DateCreation'];
+                        patch['asymmetricKeyDateExpire'] = d['DateExpire'];
                         break;
                 }
 
@@ -215,6 +249,34 @@ export class VaultItemFormComponent {
                         ExpirationDate: value.expirationDate,
                         Environment: value.environment,
                         Scope: value.scope
+                    }
+                }
+                break;
+                case VaultTypeEnum.ConnectionString:
+                result = {
+                    type: VaultTypeEnum.ConnectionString,
+                    common,
+                    details: {
+                        Value: value.connectionStringValue,
+                        Application: value.connectionStringApplication,
+                    }
+                }
+                break;
+                case VaultTypeEnum.AsymmetricKey:
+                result = {
+                    type: VaultTypeEnum.AsymmetricKey,
+                    common,
+                    details: {
+                        PublicKey: value.asymmetricPublicKey,
+                        PrivateKey: value.asymmetricPrivateKey,
+                        Application: value.asymmetricKeyApplication,
+                        Algorithm: value.algorithm,
+                        KeySize: value.keySize,
+                        Passphrase: value.passphrase,
+                        Format: value.format,
+                        Fingerprint: value.fingerprint,
+                        DateCreation: value.asymmetricKeyDateCreation,
+                        DateExpire: value.asymmetricKeyDateExpire,
                     }
                 }
                 break;

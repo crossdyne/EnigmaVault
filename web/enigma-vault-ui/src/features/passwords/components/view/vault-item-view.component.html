@@ -215,6 +215,94 @@
                 </div>
             </div>
           }
+          @case (VaultTypeEnum.ConnectionString) {
+            <div class="display-field">
+                <label>Строка подключения</label>
+                <div class="display-value">
+                    <span class="display-text">{{ connectionStringDetails()?.Value }}</span>
+                    <copy-button [value]="connectionStringDetails()?.Value" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Приложение</label>
+                <div class="display-value">
+                    <span class="display-text">{{ connectionStringDetails()?.Application }}</span>
+                    <copy-button [value]="connectionStringDetails()?.Application" />
+                </div>
+            </div>
+          }
+          @case (VaultTypeEnum.AsymmetricKey) {
+            <div class="display-field">
+                <label>Публичный ключ</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.PublicKey }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.PublicKey" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Приватный ключ</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.PrivateKey }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.PrivateKey" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Используемое приложение</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.Application }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.Application" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Алгоритм</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.Algorithm }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.Algorithm" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Размер ключа</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.KeySize }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.KeySize" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Парольная фраза</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.Passphrase }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.Passphrase" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Формат (прим. OpenSSH, PKCS#8, PPK)</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.Format }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.Format" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Хеш значение</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.Fingerprint }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.Fingerprint" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Дата создания</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.DateCreation }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.DateCreation" />
+                </div>
+            </div>
+            <div class="display-field">
+                <label>Дата окончания</label>
+                <div class="display-value">
+                    <span class="display-text">{{ asymmetricKeyDetails()?.DateExpire }}</span>
+                    <copy-button [value]="asymmetricKeyDetails()?.DateExpire" />
+                </div>
+            </div>
+          }
           @default {
             <div>Выберите категорию</div>
           }
