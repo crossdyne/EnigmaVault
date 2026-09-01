@@ -40,8 +40,8 @@ import { CryptoWorkerService } from "../../../../core/services/crypto-worker.ser
 
 @Component({
     selector: 'passwords-page',
-    templateUrl: './passwords.page.html',
-    styleUrls: ['./passwords.page.scss'],
+    templateUrl: './passwords-page.component.html',
+    styleUrls: ['./passwords-page.component.scss'],
     standalone: true,
     imports: [
         TooltipDirective,

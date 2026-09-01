@@ -7,8 +7,8 @@ import { Router } from "@angular/router";
 
 @Component({
     selector: 'input-password',
-    templateUrl: './input-password.page.html',
-    styleUrls: ['./input-password.page.scss'],
+    templateUrl: './input-password-page.component.html',
+    styleUrls: ['./input-password-page.component.scss'],
     standalone: true
 })
 export class InputPasswordPage {
