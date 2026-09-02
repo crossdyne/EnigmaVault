@@ -1,11 +1,10 @@
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, computed, DestroyRef, inject, signal } from "@angular/core";
 import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
 import { DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { OverviewPayload } from "../../models/domain/overview-payload";
 import { VaultItemView } from "../../models/modal/vault-item-view";
 import { CopyButton } from "../../../../shared/ui/copy-button/copy-button";
 import { PasswordViewComponent } from "./types/password-view/password-view.component";
-import { CreditCardComponent } from "../form/types/credit-card/credit-card.component";
 import { CreditCardViewComponent } from "./types/credit-card-view/credit-card-view.component";
 import { ServerViewComponent } from "./types/server-view/server-view.component";
 import { ApiKeyViewComponent } from "./types/api-key-view/api-key-view.component";
@@ -30,6 +29,7 @@ import { AsymmetricKeyViewComponent } from "./types/asymmetric-key-view/asymmetr
 })
 export class VaultItemViewComponent {
     private dialogRef = inject(DialogRef);
+    private destroyRef = inject(DestroyRef); 
 
     vaultTypeEnToRu: Record<VaultTypeEnum, string> = {
         1: "Пароль",
@@ -52,9 +52,18 @@ export class VaultItemViewComponent {
         this.type.set(this.data.type)
         this.overview.set(this.data.overview);
         this.decryptedDetails.set(this.data.decryptedDetails)
+
+        this.destroyRef.onDestroy(() => {
+            this.wipeDecryptedData();
+        });
+    }
+
+    private wipeDecryptedData() {
+        this.decryptedDetails.set(null);
     }
 
     onCancel(): void {
+        this.wipeDecryptedData();
         this.dialogRef.close();
     }
 }

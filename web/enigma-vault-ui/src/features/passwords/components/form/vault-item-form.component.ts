@@ -1,6 +1,6 @@
 import { DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, model, signal } from "@angular/core";
+import { Component, computed, DestroyRef, inject, model, signal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { VaultItemFormData } from "../../models/modal/vault-item-form.data";
 import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
@@ -39,6 +39,7 @@ import { VaultItemCommon } from "../../models/modal/vault-item-common.modal";
 })
 export class VaultItemFormComponent {
     private dialogRef = inject(DialogRef<FormVaultItemResult>);
+    private destroyRef = inject(DestroyRef); 
     data = inject(DIALOG_DATA) as VaultItemFormData;
 
     constructor() {
@@ -134,6 +135,10 @@ export class VaultItemFormComponent {
                 }
             }
         }
+
+        this.destroyRef.onDestroy(() => {
+            this.wipeAllSensitiveData();
+        });
     }
 
     readonly vault = signal<VaultItemDisplay | null>(null);
@@ -287,31 +292,17 @@ export class VaultItemFormComponent {
         }
 
         this.dialogRef.close(result);
+        this.wipeAllSensitiveData(); 
     }
 
-    clearCurrentTab() {
-        switch (this.activeTab()) {
-            case VaultTypeEnum.Password:
-                this.standardPassword.set({});
-                break;
-            case VaultTypeEnum.Server:
-                this.server.set({});
-                break;
-            case VaultTypeEnum.CreditCard:
-                this.creditCard.set({});
-                break;
-            case VaultTypeEnum.ApiKey:
-                this.apiKey.set({});
-                break;
-            case VaultTypeEnum.ConnectionString:
-                this.connectionString.set({});
-                break;
-            case VaultTypeEnum.AsymmetricKey:
-                this.asymmetricKey.set({});
-                break;
-            default:
-                break;
-        }
+    private wipeAllSensitiveData(): void {
+        this.overview.set({ ServiceName: '', Note: '', Url: '' });
+        this.standardPassword.set({ Login: '', Password: '', Email: '', Phone: '', SecretWord: '', RecoveryKey: '' });
+        this.server.set({ IpAddress: '', Port: '', Domain: '', Login: '', RootPassword: '', SshKey: '' });
+        this.creditCard.set({ CardNumber: '', CardHolder: '', ExpireDate: '', CvvCode: '', PinCode: '', BankName: '', PaymentSystem: '' });
+        this.apiKey.set({ Key: '', BaseUrl: '', ClientId: '', ClientSecret: '', ExpirationDate: '', Environment: '', Scope: '' });
+        this.connectionString.set({ Value: '', Application: '' });
+        this.asymmetricKey.set({ PublicKey: '', PrivateKey: '', Application: '', Algorithm: '', KeySize: '', Passphrase: '', Format: '', Fingerprint: '', DateCreation: '', DateExpire: '' });
     }
 
     //#endregion
@@ -319,6 +310,7 @@ export class VaultItemFormComponent {
     //#region Управление модальным окном
 
     onCancel() {
+        this.wipeAllSensitiveData();
         this.dialogRef.close();
     }
 
