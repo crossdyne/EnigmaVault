@@ -291,6 +291,12 @@ export class PasswordsPage {
                 case VaultTypeEnum.Server:
                     iconId = 'ae71a54a-bea0-428c-a526-62ac9df400dc';
                     break;
+                case VaultTypeEnum.ConnectionString:
+                    iconId = 'b2640987-3656-4534-9d7b-a800c9065b1a';
+                    break;
+                case VaultTypeEnum.AsymmetricKey:
+                    iconId = '3e0ca2eb-20f5-4fc3-afb3-d9bbde617242';
+                    break;
                 default:
                     iconId = '5e3e7328-12b7-4740-ad90-90889e15b58e';
                     break;
