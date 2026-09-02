@@ -1,0 +1,11 @@
+<div class="form-body">
+    <input 
+    [value]="data().Value"
+    (input)="data.update(v => ({ ...v, Value: $any($event.target).value }))" 
+    placeholder="Строка" />
+
+    <input 
+    [value]="data().Application"
+    (input)="data.update(v => ({...v, Application: $any($event.target).value}))" 
+    placeholder="Приложение" />
+</div>

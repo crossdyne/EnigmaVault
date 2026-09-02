@@ -1,0 +1,31 @@
+<div class="form-body">
+    <input 
+    [value]="data().IpAddress"
+    (input)="data.update(v => ({ ...v, IpAddress: $any($event.target).value }))" 
+    placeholder="Ip адрес" />
+
+    <input 
+    [value]="data().Port"
+    (input)="data.update(v => ({...v, Port: $any($event.target).value}))" 
+    placeholder="Порт" />
+    
+    <input 
+    [value]="data().Domain"
+    (input)="data.update(v => ({...v, Domain: $any($event.target).value}))" 
+    placeholder="Домен" />
+    
+    <input 
+    [value]="data().Login"
+    (input)="data.update(v => ({...v, Login: $any($event.target).value}))" 
+    placeholder="Логин" />
+    
+    <input 
+    [value]="data().RootPassword"
+    (input)="data.update(v => ({...v, RootPassword: $any($event.target).value}))" 
+    placeholder="Root пароль" />
+    
+    <input 
+    [value]="data().SshKey"
+    (input)="data.update(v => ({...v, SshKey: $any($event.target).value}))" 
+    placeholder="SSH ключ" />
+</div>

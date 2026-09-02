@@ -3,13 +3,14 @@ import { VaultTypeEnum } from "../../models/domain/vault-type.enum";
 import { DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { OverviewPayload } from "../../models/domain/overview-payload";
 import { VaultItemView } from "../../models/modal/vault-item-view";
-import { StandardPassword } from "../../models/domain/standard-password";
-import { ApiKey } from "../../models/domain/api-key";
-import { Server } from "../../models/domain/server";
-import { CreditCard } from "../../models/domain/credit-card";
 import { CopyButton } from "../../../../shared/ui/copy-button/copy-button";
-import { ConnectionString } from "../../models/domain/connection-string";
-import { AsymmetricKey } from "../../models/domain/asymmetric-key";
+import { PasswordViewComponent } from "./types/password-view/password-view.component";
+import { CreditCardComponent } from "../form/types/credit-card/credit-card.component";
+import { CreditCardViewComponent } from "./types/credit-card-view/credit-card-view.component";
+import { ServerViewComponent } from "./types/server-view/server-view.component";
+import { ApiKeyViewComponent } from "./types/api-key-view/api-key-view.component";
+import { ConnectionStringViewComponent } from "./types/connection-string-view/connection-string-view.component";
+import { AsymmetricKeyViewComponent } from "./types/asymmetric-key-view/asymmetric-key-view.component";
 
 @Component({
     selector: 'vault-item-view',
@@ -17,7 +18,14 @@ import { AsymmetricKey } from "../../models/domain/asymmetric-key";
     styleUrls: ['./vault-item-view.component.scss'],
     standalone: true,
     imports: [
-        CopyButton
+        CopyButton,
+        PasswordViewComponent,
+        CreditCardViewComponent,
+        CreditCardViewComponent,
+        ServerViewComponent,
+        ApiKeyViewComponent,
+        ConnectionStringViewComponent,
+        AsymmetricKeyViewComponent
     ]
 })
 export class VaultItemViewComponent {
@@ -35,17 +43,10 @@ export class VaultItemViewComponent {
     data = inject(DIALOG_DATA) as VaultItemView;
     VaultTypeEnum = VaultTypeEnum;
     
-    type = signal<VaultTypeEnum | undefined>(undefined);
-    typeRu = computed(() => this.vaultTypeEnToRu[this.type()!]);
-    overview = signal<OverviewPayload | null>(null);
-    decryptedDetails = signal<StandardPassword | ApiKey | Server | CreditCard | ConnectionString | AsymmetricKey | null>(null);
-
-    passwordDetails = computed<StandardPassword | null>(() => this.type() === VaultTypeEnum.Password ? (this.decryptedDetails() as StandardPassword) : null);
-    creditCardDetails = computed<CreditCard | null>(() => this.type() === VaultTypeEnum.CreditCard ? (this.decryptedDetails() as CreditCard) : null);
-    serverDetails = computed<Server | null>(() => this.type() === VaultTypeEnum.Server ? (this.decryptedDetails() as Server) : null);
-    apiKeyDetails = computed<ApiKey | null>(() => this.type() === VaultTypeEnum.ApiKey ? (this.decryptedDetails() as ApiKey) : null);
-    connectionStringDetails = computed<ConnectionString | null>(() => this.type() === VaultTypeEnum.ConnectionString ? (this.decryptedDetails() as ConnectionString) : null);
-    asymmetricKeyDetails = computed<AsymmetricKey | null>(() => this.type() === VaultTypeEnum.AsymmetricKey ? (this.decryptedDetails() as AsymmetricKey) : null);
+    type = signal<VaultTypeEnum>(this.data.type);
+    typeRu = computed(() => this.vaultTypeEnToRu[this.type()] || 'Неизвестно');
+    overview = signal<OverviewPayload>(this.data.overview);
+    decryptedDetails = signal<any>(this.data.decryptedDetails);
 
     constructor() {
         this.type.set(this.data.type)
