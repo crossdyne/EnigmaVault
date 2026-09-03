@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../core/layouts/main/main-layout.component';
 import { OverviewPage } from '../features/overview/page/overview.page';
-import { PasswordsPage } from '../features/passwords/pages/passwords/passwords-page.component';
-import { accessPasswordGuard } from '../features/passwords/guards/access-password.guard';
-import { passwordsGuard } from '../features/passwords/guards/passwords.guard';
-import { InputPasswordPage } from '../features/passwords/pages/input-password/input-password-page.component';
+import { PasswordsPage } from '../features/secrets/pages/passwords/passwords-page.component';
+import { accessPasswordGuard } from '../features/secrets/guards/access-password.guard';
+import { passwordsGuard } from '../features/secrets/guards/passwords.guard';
+import { InputPasswordPage } from '../features/secrets/pages/input-password/input-password-page.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/overview', pathMatch: 'full' },
