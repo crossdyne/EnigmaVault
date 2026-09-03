@@ -77,261 +77,60 @@ export class PasswordsPage {
         await this.getVaults();
     }
 
-    VaultType = VaultTypeEnum;
-
-    trigger = viewChild.required<CdkMenuTrigger>('trigger')
-    byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
-
-    activeTab = signal<'tags' | 'icons'>('tags');
-    activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
-    activePopup = signal<'trash' | 'archive' | null>(null);
-
-    // Toast 
-    toastVisibility = signal(false);
-    toastMessage = signal('');
-    toastType = signal<'success' | 'error'>('success');
-
-    private toastTimeout: any;
-    private fieldNames: Record<string, string> = {
-        'Login': 'Логин',
-        'Password': 'Пароль',
-        'Email': 'Электронная почта',
-        'Phone': 'Номер телефона',
-        'IpAddress': 'IP-адрес',
-        'Port': 'Порт',
-        'RootPassword': 'Пароль root',
-        'CardNumber': 'Номер карты',
-        'CardHolder': 'Владелец карты',
-        'CvvCode': 'CVV-код',
-        'Key': 'API-ключ',
-        'Value': 'Строка подключения',
-        'PublicKey': 'Публичный ключ',
-        'PrivateKey': 'Приватный ключ',
-    };
-
-    private showToast(message: string, type: 'success' | 'error' = 'success') {
-        clearTimeout(this.toastTimeout);
-
-        this.toastMessage.set(message);
-        this.toastType.set(type);
-        this.toastVisibility.set(true);
-
-        this.toastTimeout = setTimeout(() => this.toastVisibility.set(false), 2500);
-    }
-
     //#region Vaults
 
     vaults = signal<VaultItemDisplay[]>([]);
+    selectedVault = model<VaultItemDisplay | null>(null);
+    VaultType = VaultTypeEnum;
+
     activeVaults = computed(() => this.vaults().filter(v => !v.isArchive && !v.isInTrash));
     archivedVaults = computed(() => this.vaults().filter(v => v.isArchive && !v.isInTrash));
     trashedVaults = computed(() => this.vaults().filter(v => v.isInTrash));
 
-    selectedVault = model<VaultItemDisplay | null>(null);
+    activeTab = signal<'tags' | 'icons'>('tags');
+    activeTemplate = signal<'detailed' | 'brief' | 'compact'>('detailed');
 
-    // Popups
-    popupArchivePositions: ConnectedPosition[] = [
-        {
-            originX: 'center',
-            originY: 'bottom',
-            overlayX: 'center',
-            overlayY: 'top',
-            offsetY: 16 
-        },
-        {
-            originX: 'center',
-            originY: 'top',
-            overlayX: 'center',
-            overlayY: 'bottom',
-            offsetY: -16
-        }
-    ];
+    // ============================================================================
+    //                           Grouping && Sorting 
+    // ============================================================================
+    groupBy = signal<GroupBy>('none');
+    sortBy = signal<SortBy>('ascending');
+    byName = (a: TagResponse, b: TagResponse) => a.name.localeCompare(b.name);
 
-    popupTrashPositions: ConnectedPosition[] = [
-        {
-            originX: 'center',
-            originY: 'bottom',
-            overlayX: 'center',
-            overlayY: 'top',
-            offsetY: 16 
-        },
-        {
-            originX: 'center',
-            originY: 'top',
-            overlayX: 'center',
-            overlayY: 'bottom',
-            offsetY: -16
-        }
-    ];
+    groupedVaults = computed(() => {
+        const vaults = this.activeVaults();
+        const group = this.groupBy();
+        const sort = this.sortBy();
 
-    archivePositions = this.popupArchivePositions;
-    trashPositions = this.popupTrashPositions;
+        const applySort = (items: VaultItemDisplay[]) => {
+            if (sort === 'none')
+                return items;
 
-    // CRUD
-    async getVaults() {
-        if (!this.cryptoWorker.initialized) {
-            this.router.navigate(['/passwords/access']);
-            return;
-        }
-
-        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
-
-        result.match(
-            async vaults => {
-                const vaultItems: VaultItemDisplay[] = [];
-
-                for (const vault of vaults) {
-                    
-                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id)).sort(this.byName);
-                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
-
-                    let icon: IconUrl | undefined = undefined;
-                    if (iconUrl)
-                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
-
-                    const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
-                
-                    const vaultItem: VaultItemDisplay = {
-                        id: vault.id,
-                        type: Number(vault.type) as VaultTypeEnum,
-                        serviceName: overview?.ServiceName!,
-                        url: overview?.Url!,
-                        dateAdded: vault.dateAdded,
-                        dateUpdate: vault.dateUpdate,
-                        deletedAt: DateHelper.difference(vault.deletedAt),
-                        isFavorite: vault.isFavorite,
-                        isArchive: vault.isArchive,
-                        isInTrash: vault.isInTrash,
-                        encryptedOverview: vault.encryptedOverview,
-                        encryptedDetails: vault.encryptedDetails,
-                        tags: fullTags,
-                        icon: icon,
-                        note: overview?.Note!
-                    }
-
-                    vaultItems.push(vaultItem);
-                }
-                this.vaults.set(vaultItems);
-            },
-            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
-        );
-    }
-
-    async reloadVaults() {
-        this.vaults.set([]);
-        await this.getVaults();
-    }
-
-    openAddVaultItem() {
-        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
-            VaultItemFormComponent, { 
-                width: '500px',
-                disableClose: false,
-                hasBackdrop: true,
-                backdropClass: 'custom-backdrop',
-                data: {
-                    mode: 'create'
-                }
-            }
-        );
-        
-        dialogRef.closed.subscribe(async result => {
-            if (!result) 
-                return;
-
-            const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({ 
-                ServiceName: result.common.name,
-                Url: result.common.url,
-                Note: result.common.description
+            return [...items].sort((a, b) => {
+                const nameA = a.serviceName.toLowerCase();
+                const nameB = b.serviceName.toLowerCase();
+                return sort === 'ascending' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
             });
+        };
 
-            const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
+        const groupStrategy = GroupingFactory.create(group);
 
-            if (overViewCryptoVersion != detailsCryptoVersion)
-                return;
+        const groupedVaults = groupStrategy.group(vaults);
+        const resultGroupedVaults = groupedVaults.map(g => ({ ...g, vaults: applySort(g.vaults) }));
 
-            const cryptoVersion = overViewCryptoVersion;
+        if (group === 'history' || group === 'date')
+            return resultGroupedVaults;
 
-            let iconId: string;
-
-            switch (result.type) {
-                case VaultTypeEnum.Password:
-                    iconId = '1b0e32c3-ba08-423d-bb76-fb6e982c122e';
-                    break;
-                case VaultTypeEnum.RecoveryKeys:
-                    iconId = 'f7a7657e-27cd-410e-9a92-76bbd0debd48';
-                    break;
-                case VaultTypeEnum.ApiKey:
-                    iconId = '41cbdb12-30f0-48d8-8932-704b10519fda';
-                    break;
-                case VaultTypeEnum.CreditCard:
-                    iconId = 'd2af044d-d576-40e7-80c6-cb2bf9176f4d';
-                    break;
-                case VaultTypeEnum.Server:
-                    iconId = 'ae71a54a-bea0-428c-a526-62ac9df400dc';
-                    break;
-                case VaultTypeEnum.ConnectionString:
-                    iconId = 'b2640987-3656-4534-9d7b-a800c9065b1a';
-                    break;
-                case VaultTypeEnum.AsymmetricKey:
-                    iconId = '3e0ca2eb-20f5-4fc3-afb3-d9bbde617242';
-                    break;
-                default:
-                    iconId = '5e3e7328-12b7-4740-ad90-90889e15b58e';
-                    break;
-            }
-
-            const request: CreateVaultItemRequest = {
-                vaultType: result.type as number,
-                iconId: iconId,
-                encryptedOverview: encryptedOverView,
-                encryptedDetails: encryptedDetails,
-                cryptoVersion: cryptoVersion
-            };
-
-            const resultCreated: Result<string> = await this.vaultService.createAsync(request);
-
-            resultCreated.match(
-                async id => {
-                    const newVaultResult = await this.vaultService.getByIdAsync(id);
-
-                    newVaultResult.match(
-                        async vault => {
-                            const decryptedOverView = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
-                            const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
-                            
-                            const iconUrl = this.icons().find(i => i.assetId === iconId);
-                            let icon: IconUrl | undefined = undefined;
-                            if (iconUrl)
-                                icon = { id: iconUrl?.assetId, url: iconUrl?.url }
-                            
-                            const display: VaultItemDisplay = {
-                                id: vault.id,
-                                serviceName: decryptedOverView?.ServiceName!,
-                                url: decryptedOverView?.Url!,
-                                type: Number(vault.type) as VaultTypeEnum,
-                                dateAdded: vault.dateAdded,
-                                dateUpdate: vault.dateUpdate,
-                                deletedAt: DateHelper.difference(vault.deletedAt),
-                                isFavorite: vault.isFavorite,
-                                isArchive: vault.isArchive,
-                                isInTrash: vault.isInTrash,
-                                encryptedOverview: vault.encryptedOverview,
-                                encryptedDetails: vault.encryptedDetails,
-                                tags: fullTags,
-                                icon: icon,
-                                note: decryptedOverView?.Note!
-                            }
-
-                            this.vaults.update(vaults => [...vaults, display]);
-                        },
-                        async errors => console.error(this.mapErrors(errors)) 
-                    ); 
-                },
-                async errors => console.error(this.mapErrors(errors))
-            );
+        return resultGroupedVaults.sort((a, b) => {
+            const titleA = a.title;
+            const titleB = b.title;
+            return sort === 'ascending' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA);
         });
-    }
+    });
 
+    // ============================================================================
+    //                           Action operations
+    // ============================================================================
     async openViewVaultItem(item: VaultItemDisplay) {
         const decryptedDetails = await this.vaultCryptoService.decryptDetails(item.type, item.encryptedDetails);
 
@@ -352,93 +151,6 @@ export class PasswordsPage {
                 }
             }
         );
-    }
-
-    async openEditVaultItem(item: VaultItemDisplay) {
-        const actualItem = this.vaults().find(v => v.id === item.id) ?? item;
-
-        const decryptedDetails = await this.vaultCryptoService.decryptDetails(actualItem.type, actualItem.encryptedDetails);
-
-        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
-            VaultItemFormComponent, { 
-                width: '500px',
-                disableClose: false,
-                hasBackdrop: true,
-                backdropClass: 'custom-backdrop',
-                data: {
-                    mode: 'edit',
-                    item: actualItem,
-                    decryptedDetails: decryptedDetails
-                }
-            }
-        );
-
-        dialogRef.closed.subscribe(async result => {
-            if (!result)
-                return;
-
-            if (result.id) {
-                const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({
-                    ServiceName: result.common.name,
-                    Url: result.common.url,
-                    Note: result.common.description
-                });
-
-                const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
-
-                if (overViewCryptoVersion != detailsCryptoVersion)
-                    return;
-
-                const cryptoVersion = overViewCryptoVersion;
-
-                const request: UpdateVaultItemRequest = {
-                    vaultItemId: actualItem.id,
-                    iconId: actualItem.icon?.id!,
-                    encryptedOverview: encryptedOverView,
-                    encryptedDetails: encryptedDetails,
-                    cryptoVersion: cryptoVersion
-                };
-
-                const resultUpdate = await this.vaultService.updateAsync(request);
-                
-                resultUpdate.match(
-                    id => {
-                        const now = new Date();
-
-                        this.vaults.update(vaults => 
-                            vaults.map(v => v.id === actualItem.id 
-                                ? { 
-                                    ...v, 
-                                    dateUpdate: now,
-                                    serviceName: result.common.name,
-                                    url: result.common.url!,
-                                    note: result.common.description!,
-                                    encryptedOverview: encryptedOverView,
-                                    encryptedDetails: encryptedDetails,
-                                } 
-                                : v
-                            )
-                        );
-                        
-                        const current = this.selectedVault();
-                        if (current?.id === actualItem.id) {
-                            this.selectedVault.set({
-                                ...current,
-                                dateUpdate: now,
-                                serviceName: result.common.name,
-                                url: result.common.url!,
-                                note: result.common.description!,
-                                encryptedOverview: encryptedOverView,
-                                encryptedDetails: encryptedDetails,
-                            });
-                        }
-                        
-                        console.log('Запись успешно обновлена!');
-                    },
-                    errors => console.error(this.mapErrors(errors))
-                );
-            }
-        });
     }
 
     async onUpdateVaultIcon() {
@@ -482,8 +194,6 @@ export class PasswordsPage {
             );
         });
     }
-
-    // Actions
 
     async openTagAttachment(vault: VaultItemDisplay) {
         const actualVault = this.vaults().find(v => v.id === vault.id) || vault;
@@ -726,15 +436,6 @@ export class PasswordsPage {
             errors => console.error(this.mapErrors(errors))
         );
     }
-    
-    async onDelete(vault: VaultItemDisplay) {
-        const result: Result = await this.vaultService.removeAsync(vault.id);
-
-        result.match(
-            () => this.vaults.update(vaults => vaults.filter(v => v.id !== vault.id)),
-            errors => console.error(this.mapErrors(errors))
-        );
-    }
 
     async emptyTrashAsync() {
          const result: Result = await this.vaultService.emptyTrashAsync(); 
@@ -779,70 +480,351 @@ export class PasswordsPage {
         this.showToast(`Скопированное поле: ${fieldLabel}`);
     }
 
-    //Сброс выделение элемента
-
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent) {
-        const target = event.target as HTMLElement;
-
-        if (target.closest('.item-container'))
-            return;
-
-        if (target.closest('.cdk-overlay-container'))
-            return;
-
-        if (target.closest('.top-sorting-menu-container'))
-            return;
-
-        if (target.closest('.modal-overlay'))
-            return;
-
-        if (target.closest('.context-menu'))
-            return;
-
-        this.selectedVault.set(null);
+    async reloadVaults() {
+        this.vaults.set([]);
+        await this.getVaults();
     }
 
-    //#endregion
-  
-    //#region Группировка \ Сортировка Vaults
+    // ============================================================================
+    //                           Crud operations
+    // ============================================================================
+    async getVaults() {
+        if (!this.cryptoWorker.initialized) {
+            this.router.navigate(['/passwords/access']);
+            return;
+        }
 
-    groupBy = signal<GroupBy>('none');
-    sortBy = signal<SortBy>('ascending');
-    
-    groupedVaults = computed(() => {
-        const vaults = this.activeVaults();
-        const group = this.groupBy();
-        const sort = this.sortBy();
+        const result: Result<EncryptedVaultResponse[]> = await this.vaultService.getAllAsync();
 
-        const applySort = (items: VaultItemDisplay[]) => {
-            if (sort === 'none')
-                return items;
+        result.match(
+            async vaults => {
+                const vaultItems: VaultItemDisplay[] = [];
 
-            return [...items].sort((a, b) => {
-                const nameA = a.serviceName.toLowerCase();
-                const nameB = b.serviceName.toLowerCase();
-                return sort === 'ascending' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                for (const vault of vaults) {
+                    
+                    const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id)).sort(this.byName);
+                    const iconUrl = this.icons().find(i => i.assetId === vault.iconId);
+
+                    let icon: IconUrl | undefined = undefined;
+                    if (iconUrl)
+                        icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+
+                    const overview: OverviewPayload | null = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
+                
+                    const vaultItem: VaultItemDisplay = {
+                        id: vault.id,
+                        type: Number(vault.type) as VaultTypeEnum,
+                        serviceName: overview?.ServiceName!,
+                        url: overview?.Url!,
+                        dateAdded: vault.dateAdded,
+                        dateUpdate: vault.dateUpdate,
+                        deletedAt: DateHelper.difference(vault.deletedAt),
+                        isFavorite: vault.isFavorite,
+                        isArchive: vault.isArchive,
+                        isInTrash: vault.isInTrash,
+                        encryptedOverview: vault.encryptedOverview,
+                        encryptedDetails: vault.encryptedDetails,
+                        tags: fullTags,
+                        icon: icon,
+                        note: overview?.Note!
+                    }
+
+                    vaultItems.push(vaultItem);
+                }
+                this.vaults.set(vaultItems);
+            },
+            async errors => console.error('Ошибка получение паролей: ', this.mapErrors(errors))
+        );
+    }
+
+    openAddVaultItem() {
+        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
+            VaultItemFormComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    mode: 'create'
+                }
+            }
+        );
+        
+        dialogRef.closed.subscribe(async result => {
+            if (!result) 
+                return;
+
+            const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({ 
+                ServiceName: result.common.name,
+                Url: result.common.url,
+                Note: result.common.description
             });
-        };
 
-        const groupStrategy = GroupingFactory.create(group);
+            const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
 
-        const groupedVaults = groupStrategy.group(vaults);
-        const resultGroupedVaults = groupedVaults.map(g => ({ ...g, vaults: applySort(g.vaults) }));
+            if (overViewCryptoVersion != detailsCryptoVersion)
+                return;
 
-        if (group === 'history' || group === 'date')
-            return resultGroupedVaults;
+            const cryptoVersion = overViewCryptoVersion;
 
-        return resultGroupedVaults.sort((a, b) => {
-            const titleA = a.title;
-            const titleB = b.title;
-            return sort === 'ascending' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA);
+            let iconId: string;
+
+            switch (result.type) {
+                case VaultTypeEnum.Password:
+                    iconId = '1b0e32c3-ba08-423d-bb76-fb6e982c122e';
+                    break;
+                case VaultTypeEnum.RecoveryKeys:
+                    iconId = 'f7a7657e-27cd-410e-9a92-76bbd0debd48';
+                    break;
+                case VaultTypeEnum.ApiKey:
+                    iconId = '41cbdb12-30f0-48d8-8932-704b10519fda';
+                    break;
+                case VaultTypeEnum.CreditCard:
+                    iconId = 'd2af044d-d576-40e7-80c6-cb2bf9176f4d';
+                    break;
+                case VaultTypeEnum.Server:
+                    iconId = 'ae71a54a-bea0-428c-a526-62ac9df400dc';
+                    break;
+                case VaultTypeEnum.ConnectionString:
+                    iconId = 'b2640987-3656-4534-9d7b-a800c9065b1a';
+                    break;
+                case VaultTypeEnum.AsymmetricKey:
+                    iconId = '3e0ca2eb-20f5-4fc3-afb3-d9bbde617242';
+                    break;
+                default:
+                    iconId = '5e3e7328-12b7-4740-ad90-90889e15b58e';
+                    break;
+            }
+
+            const request: CreateVaultItemRequest = {
+                vaultType: result.type as number,
+                iconId: iconId,
+                encryptedOverview: encryptedOverView,
+                encryptedDetails: encryptedDetails,
+                cryptoVersion: cryptoVersion
+            };
+
+            const resultCreated: Result<string> = await this.vaultService.createAsync(request);
+
+            resultCreated.match(
+                async id => {
+                    const newVaultResult = await this.vaultService.getByIdAsync(id);
+
+                    newVaultResult.match(
+                        async vault => {
+                            const decryptedOverView = await this.vaultCryptoService.decryptOverview(vault.encryptedOverview);
+                            const fullTags: TagResponse[] = this.tags().filter(t => vault.tagsIds.includes(t.id));
+                            
+                            const iconUrl = this.icons().find(i => i.assetId === iconId);
+                            let icon: IconUrl | undefined = undefined;
+                            if (iconUrl)
+                                icon = { id: iconUrl?.assetId, url: iconUrl?.url }
+                            
+                            const display: VaultItemDisplay = {
+                                id: vault.id,
+                                serviceName: decryptedOverView?.ServiceName!,
+                                url: decryptedOverView?.Url!,
+                                type: Number(vault.type) as VaultTypeEnum,
+                                dateAdded: vault.dateAdded,
+                                dateUpdate: vault.dateUpdate,
+                                deletedAt: DateHelper.difference(vault.deletedAt),
+                                isFavorite: vault.isFavorite,
+                                isArchive: vault.isArchive,
+                                isInTrash: vault.isInTrash,
+                                encryptedOverview: vault.encryptedOverview,
+                                encryptedDetails: vault.encryptedDetails,
+                                tags: fullTags,
+                                icon: icon,
+                                note: decryptedOverView?.Note!
+                            }
+
+                            this.vaults.update(vaults => [...vaults, display]);
+                        },
+                        async errors => console.error(this.mapErrors(errors)) 
+                    ); 
+                },
+                async errors => console.error(this.mapErrors(errors))
+            );
         });
-    });
+    }
+
+    async openEditVaultItem(item: VaultItemDisplay) {
+        const actualItem = this.vaults().find(v => v.id === item.id) ?? item;
+
+        const decryptedDetails = await this.vaultCryptoService.decryptDetails(actualItem.type, actualItem.encryptedDetails);
+
+        const dialogRef = this.dialog.open<FormVaultItemResult, VaultItemFormData, VaultItemFormComponent>(
+            VaultItemFormComponent, { 
+                width: '500px',
+                disableClose: false,
+                hasBackdrop: true,
+                backdropClass: 'custom-backdrop',
+                data: {
+                    mode: 'edit',
+                    item: actualItem,
+                    decryptedDetails: decryptedDetails
+                }
+            }
+        );
+
+        dialogRef.closed.subscribe(async result => {
+            if (!result)
+                return;
+
+            if (result.id) {
+                const { encryptedOverView, cryptoVersion: overViewCryptoVersion } = await this.vaultCryptoService.encryptOverview({
+                    ServiceName: result.common.name,
+                    Url: result.common.url,
+                    Note: result.common.description
+                });
+
+                const { encryptedDetails, cryptoVersion: detailsCryptoVersion } = await this.vaultCryptoService.encryptDetails(result.details);
+
+                if (overViewCryptoVersion != detailsCryptoVersion)
+                    return;
+
+                const cryptoVersion = overViewCryptoVersion;
+
+                const request: UpdateVaultItemRequest = {
+                    vaultItemId: actualItem.id,
+                    iconId: actualItem.icon?.id!,
+                    encryptedOverview: encryptedOverView,
+                    encryptedDetails: encryptedDetails,
+                    cryptoVersion: cryptoVersion
+                };
+
+                const resultUpdate = await this.vaultService.updateAsync(request);
+                
+                resultUpdate.match(
+                    id => {
+                        const now = new Date();
+
+                        this.vaults.update(vaults => 
+                            vaults.map(v => v.id === actualItem.id 
+                                ? { 
+                                    ...v, 
+                                    dateUpdate: now,
+                                    serviceName: result.common.name,
+                                    url: result.common.url!,
+                                    note: result.common.description!,
+                                    encryptedOverview: encryptedOverView,
+                                    encryptedDetails: encryptedDetails,
+                                } 
+                                : v
+                            )
+                        );
+                        
+                        const current = this.selectedVault();
+                        if (current?.id === actualItem.id) {
+                            this.selectedVault.set({
+                                ...current,
+                                dateUpdate: now,
+                                serviceName: result.common.name,
+                                url: result.common.url!,
+                                note: result.common.description!,
+                                encryptedOverview: encryptedOverView,
+                                encryptedDetails: encryptedDetails,
+                            });
+                        }
+                        
+                        console.log('Запись успешно обновлена!');
+                    },
+                    errors => console.error(this.mapErrors(errors))
+                );
+            }
+        });
+    }
+
+    async onDelete(vault: VaultItemDisplay) {
+        const result: Result = await this.vaultService.removeAsync(vault.id);
+
+        result.match(
+            () => this.vaults.update(vaults => vaults.filter(v => v.id !== vault.id)),
+            errors => console.error(this.mapErrors(errors))
+        );
+    }
+
+    //#endregion 
+
+    //#region Popups
+
+    activePopup = signal<'trash' | 'archive' | null>(null);
+
+    popupArchivePositions: ConnectedPosition[] = [
+        {
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
+        },
+        {
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
+        }
+    ];
+
+    popupTrashPositions: ConnectedPosition[] = [
+        {
+            originX: 'center',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+            offsetY: 16 
+        },
+        {
+            originX: 'center',
+            originY: 'top',
+            overlayX: 'center',
+            overlayY: 'bottom',
+            offsetY: -16
+        }
+    ];
+
+    archivePositions = this.popupArchivePositions;
+    trashPositions = this.popupTrashPositions;
 
     //#endregion
+    
+    //#region Toast
 
+    toastVisibility = signal(false);
+    toastMessage = signal('');
+    toastType = signal<'success' | 'error'>('success');
+
+    private toastTimeout: any;
+    private fieldNames: Record<string, string> = {
+        'Login': 'Логин',
+        'Password': 'Пароль',
+        'Email': 'Электронная почта',
+        'Phone': 'Номер телефона',
+        'IpAddress': 'IP-адрес',
+        'Port': 'Порт',
+        'RootPassword': 'Пароль root',
+        'CardNumber': 'Номер карты',
+        'CardHolder': 'Владелец карты',
+        'CvvCode': 'CVV-код',
+        'Key': 'API-ключ',
+        'Value': 'Строка подключения',
+        'PublicKey': 'Публичный ключ',
+        'PrivateKey': 'Приватный ключ',
+    };
+
+    private showToast(message: string, type: 'success' | 'error' = 'success') {
+        clearTimeout(this.toastTimeout);
+
+        this.toastMessage.set(message);
+        this.toastType.set(type);
+        this.toastVisibility.set(true);
+
+        this.toastTimeout = setTimeout(() => this.toastVisibility.set(false), 2500);
+    }
+
+    //#endregion 
+  
     //#region Tags
 
     tags = signal<TagResponse[]>([]);
@@ -851,8 +833,6 @@ export class PasswordsPage {
 
     getTagName = (tag: TagResponse) => tag.name;
     setTagName = (tag: TagResponse, name: string) => ({ ...tag, name});
-
-    //Events & Selectors
 
     onSelectedTag(tag: TagResponse) {
         this.selectedTag.set(tag);
@@ -866,7 +846,6 @@ export class PasswordsPage {
         this.editingTag.set(null);
     }
 
-    // CRUD
     async getTagsAsync() {
         const result: Result<TagResponse[]> = await this.tagService.getAllAsync();
 
@@ -883,7 +862,6 @@ export class PasswordsPage {
     icons = signal<AssetUrlResponse[]>([]);
     selectedIcon = model<AssetUrlResponse | null>(null);
 
-    // CRUD
     async getIcons() {
         const result: Result<AssetUrlResponse[]> = await this.assetService.getAllAsync();
 
@@ -900,7 +878,6 @@ export class PasswordsPage {
     iconCategories = signal<IconCategoryResponse[]>([]);
     selectedCategory = model<IconCategoryResponse | null>(null);
 
-    // CRUD
     async getIconCategoriesAsync() {
         const result: Result<IconCategoryResponse[]> = await this.iconCategoryService.getAllAsync();
 
@@ -912,9 +889,9 @@ export class PasswordsPage {
 
     //#endregion
 
-    //#region Хелперы
+    //#region Helpers
 
-    private mapErrors(errors: ErrorList): string{
+    private mapErrors(errors: ErrorList): string {
         return errors.map(e => e.message).join(', ')
     }
 
@@ -937,6 +914,32 @@ export class PasswordsPage {
 
     openUrl(vault: VaultItemDisplay): void {
          window.open(vault.url, '_blank', 'noopener,noreferrer');
+    }
+
+    //#endregion
+
+    //#region HostListener
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+
+        if (target.closest('.item-container'))
+            return;
+
+        if (target.closest('.cdk-overlay-container'))
+            return;
+
+        if (target.closest('.top-sorting-menu-container'))
+            return;
+
+        if (target.closest('.modal-overlay'))
+            return;
+
+        if (target.closest('.context-menu'))
+            return;
+
+        this.selectedVault.set(null);
     }
 
     //#endregion
