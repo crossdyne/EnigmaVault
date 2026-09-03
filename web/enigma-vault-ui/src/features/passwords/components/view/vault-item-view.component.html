@@ -28,6 +28,9 @@
           @case (VaultTypeEnum.Password) {
             <standard-password-view [data]="decryptedDetails()!"></standard-password-view>
           }
+          @case (VaultTypeEnum.RecoveryKeys) {
+            <recovery-keys-view [data]="decryptedDetails()!"></recovery-keys-view>
+          }
           @case (VaultTypeEnum.CreditCard) {
             <credit-card-view [data]="decryptedDetails()!"></credit-card-view>
           }

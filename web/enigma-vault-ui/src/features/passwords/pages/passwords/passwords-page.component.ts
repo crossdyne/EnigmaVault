@@ -37,6 +37,7 @@ import { TagsOverflowDirective } from "../../../../shared/directives/tags-overfl
 import { DateUpdateResponse } from "../../models/dto/date-update.response";
 import { Clipboard } from "@angular/cdk/clipboard";
 import { CryptoWorkerService } from "../../../../core/services/crypto-worker.service";
+import { RecoveryKeys } from "../../models/domain/recovery-keys";
 
 @Component({
     selector: 'passwords-page',
@@ -66,33 +67,6 @@ export class PasswordsPage {
 
     constructor() {
         this.initAsync();
-
-        effect(() => {
-            const cat = this.selectedCategory();
-            
-            if (!cat)
-                return;
-            
-            console.log('Выбранная категория: ', cat.name);
-        });
-        
-        effect(() =>{
-            const icon = this.selectedIcon();
-            
-            if (!icon)
-                return;
-            
-            console.log('Выбрана иконка с именем: ', icon.assetName);
-        });
-
-        effect(() => {
-            const vault = this.selectedVault();
-
-            if (!vault)
-                return;
-
-            console.log('Выбрана запись с именем: ', vault.serviceName);
-        })
     }
     
     private async initAsync() {
@@ -281,6 +255,9 @@ export class PasswordsPage {
             switch (result.type) {
                 case VaultTypeEnum.Password:
                     iconId = '1b0e32c3-ba08-423d-bb76-fb6e982c122e';
+                    break;
+                case VaultTypeEnum.RecoveryKeys:
+                    iconId = 'f7a7657e-27cd-410e-9a92-76bbd0debd48';
                     break;
                 case VaultTypeEnum.ApiKey:
                     iconId = '41cbdb12-30f0-48d8-8932-704b10519fda';
@@ -776,6 +753,20 @@ export class PasswordsPage {
             return;
         }
             
+        if (vault.type === this.VaultType.RecoveryKeys){
+            const recoveryKeys = details as RecoveryKeys;
+
+            if (recoveryKeys.Keys && recoveryKeys.Keys.length > 0){
+                const keysColumn = recoveryKeys.Keys?.map(k => k.Key).join('\n');
+                this.clipboard.copy(keysColumn);
+                this.showToast(`Скопированное поле: ${fieldLabel}`);
+            } else {
+                this.showToast(`Ключи восстановления не найдены`, 'error');
+            }
+
+            return;
+        }
+
         const value = (details as Record<string, string | undefined>)[field];
         
         if (!value || value.trim().length === 0) {
@@ -859,6 +850,7 @@ export class PasswordsPage {
                 [VaultTypeEnum.Server]: 'Серверы',
                 [VaultTypeEnum.ConnectionString]: 'Строки подключения',
                 [VaultTypeEnum.AsymmetricKey]: 'Ассиметричные ключи',
+                [VaultTypeEnum.RecoveryKeys]: 'Ключи восстановления',
             };
 
             const groups = new Map<string, VaultItemDisplay[]>();

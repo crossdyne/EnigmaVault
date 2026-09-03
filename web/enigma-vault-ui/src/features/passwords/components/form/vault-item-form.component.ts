@@ -20,6 +20,8 @@ import { ApiKey } from "../../models/domain/api-key";
 import { ConnectionString } from "../../models/domain/connection-string";
 import { AsymmetricKey } from "../../models/domain/asymmetric-key";
 import { VaultItemCommon } from "../../models/modal/vault-item-common.modal";
+import { RecoveryKeysFormComponent } from "./types/recovery-keys/recovery-keys.component";
+import { RecoveryKeys } from "../../models/domain/recovery-keys";
 
 @Component({
     selector: 'create-vault',
@@ -34,8 +36,9 @@ import { VaultItemCommon } from "../../models/modal/vault-item-common.modal";
         ServerComponent,
         ApiKeyFormComponent,
         ConnectionStringComponent,
-        AsymmetricKeyComponent
-    ]
+        AsymmetricKeyComponent,
+        RecoveryKeysFormComponent
+]
 })
 export class VaultItemFormComponent {
     private dialogRef = inject(DialogRef<FormVaultItemResult>);
@@ -65,6 +68,16 @@ export class VaultItemFormComponent {
                             Phone: sp.Phone, 
                             SecretWord: sp.SecretWord, 
                             RecoveryKey: sp.RecoveryKey,
+                        });
+                        break;
+
+                    case VaultTypeEnum.RecoveryKeys:
+                        const recoveryKeys = this.data.decryptedDetails as RecoveryKeys;
+                        this.recoveryKeys.set({
+                            Application: recoveryKeys.Application,
+                            DateCreation: recoveryKeys.DateCreation,
+                            DateExpire: recoveryKeys.DateExpire,
+                            Keys: recoveryKeys.Keys,
                         });
                         break;
 
@@ -169,6 +182,7 @@ export class VaultItemFormComponent {
         4: "Апи ключа",
         5: "Строки подключения",
         6: "Ассиметричных ключей",
+        7: "Ключей восстановления"
     } 
 
     title = computed(() => this.vaultTypeEnToRu[this.activeTab()]);
@@ -180,12 +194,13 @@ export class VaultItemFormComponent {
 
     overview = signal<OverviewPayload>({ ServiceName: '', Note: '', Url: '' });
     standardPassword = signal<StandardPassword>({ Login: '', Password: '', Email: '', Phone: '', SecretWord: '', RecoveryKey: '' });
+    recoveryKeys = signal<RecoveryKeys>({ Application: '', DateCreation: '', DateExpire: '', Keys: [] });
     server = signal<Server>({ IpAddress: '', Port: '', Domain: '', Login: '', RootPassword: '', SshKey: '' });
     creditCard = signal<CreditCard>({ CardNumber: '', CardHolder: '',  ExpireDate: '', CvvCode: '', PinCode: '', BankName: '', PaymentSystem: '' });
     apiKey = signal<ApiKey>({ Key: '', BaseUrl: '', ClientId: '', ClientSecret: '', ExpirationDate: '', Environment: '', Scope: '' });
     connectionString = signal<ConnectionString>({ Value: '', Application: '' });
     asymmetricKey = signal<AsymmetricKey>({ PublicKey: '', PrivateKey: '', Application: '', Algorithm: '', KeySize: '', Passphrase: '', Format: '', Fingerprint: '', DateCreation: '', DateExpire: '' });
-    
+
     confirm() {
         let result: FormVaultItemResult;
 
@@ -207,6 +222,18 @@ export class VaultItemFormComponent {
                         Phone: this.standardPassword().Phone,
                         SecretWord: this.standardPassword().SecretWord,
                         RecoveryKey: this.standardPassword().RecoveryKey
+                    }
+                }
+                break;
+            case VaultTypeEnum.RecoveryKeys:
+                result = {
+                    type: VaultTypeEnum.RecoveryKeys,
+                    common,
+                    details: {
+                        Application: this.recoveryKeys().Application,
+                        DateCreation: this.recoveryKeys().DateCreation,
+                        DateExpire: this.recoveryKeys().DateExpire,
+                        Keys: this.recoveryKeys().Keys,
                     }
                 }
                 break;
@@ -298,6 +325,7 @@ export class VaultItemFormComponent {
     private wipeAllSensitiveData(): void {
         this.overview.set({ ServiceName: '', Note: '', Url: '' });
         this.standardPassword.set({ Login: '', Password: '', Email: '', Phone: '', SecretWord: '', RecoveryKey: '' });
+        this.recoveryKeys.set({ Application: '', DateCreation: '', DateExpire: '', Keys: [] });
         this.server.set({ IpAddress: '', Port: '', Domain: '', Login: '', RootPassword: '', SshKey: '' });
         this.creditCard.set({ CardNumber: '', CardHolder: '', ExpireDate: '', CvvCode: '', PinCode: '', BankName: '', PaymentSystem: '' });
         this.apiKey.set({ Key: '', BaseUrl: '', ClientId: '', ClientSecret: '', ExpirationDate: '', Environment: '', Scope: '' });

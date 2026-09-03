@@ -9,6 +9,7 @@ import { CryptoConstants } from "../../../core/constants/security.constants";
 import { CryptoWorkerService } from "../../../core/services/crypto-worker.service";
 import { ConnectionString } from "../models/domain/connection-string";
 import { AsymmetricKey } from "../models/domain/asymmetric-key";
+import { RecoveryKey } from "../models/domain/recovery-keys";
 
 @Injectable({ providedIn: 'root' })
 export class VaultCryptoService {
@@ -21,13 +22,15 @@ export class VaultCryptoService {
         return this.worker.decrypt<OverviewPayload>(encrypted);
     }
 
-    async decryptDetails(type: VaultTypeEnum, encrypted: string): Promise<StandardPassword | CreditCard | Server | ApiKey | ConnectionString | AsymmetricKey | null> {
+    async decryptDetails(type: VaultTypeEnum, encrypted: string): Promise<StandardPassword | CreditCard | Server | ApiKey | ConnectionString | AsymmetricKey | RecoveryKey | null> {
         if (!encrypted) 
             return null;
 
         switch (type as number) {
             case VaultTypeEnum.Password:
                 return await this.worker.decrypt<StandardPassword>(encrypted);
+            case VaultTypeEnum.RecoveryKeys:
+                return await this.worker.decrypt<RecoveryKey>(encrypted);
             case VaultTypeEnum.CreditCard:
                 return await this.worker.decrypt<CreditCard>(encrypted);
             case VaultTypeEnum.Server:

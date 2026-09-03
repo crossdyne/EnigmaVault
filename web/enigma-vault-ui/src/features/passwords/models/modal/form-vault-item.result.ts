@@ -2,6 +2,7 @@ import { ApiKey } from "../domain/api-key";
 import { AsymmetricKey } from "../domain/asymmetric-key";
 import { ConnectionString } from "../domain/connection-string";
 import { CreditCard } from "../domain/credit-card";
+import { RecoveryKeys } from "../domain/recovery-keys";
 import { Server } from "../domain/server";
 import { StandardPassword } from "../domain/standard-password";
 import { VaultTypeEnum } from "../domain/vault-type.enum";
@@ -19,4 +20,5 @@ export type FormVaultItemResult =
   | (FormVaultItemBase & { type: VaultTypeEnum.Server;           details: Server })
   | (FormVaultItemBase & { type: VaultTypeEnum.ApiKey;           details: ApiKey })
   | (FormVaultItemBase & { type: VaultTypeEnum.ConnectionString; details: ConnectionString})
-  | (FormVaultItemBase & { type: VaultTypeEnum.AsymmetricKey;    details: AsymmetricKey});
+  | (FormVaultItemBase & { type: VaultTypeEnum.AsymmetricKey;    details: AsymmetricKey})
+  | (FormVaultItemBase & { type: VaultTypeEnum.RecoveryKeys;     details: RecoveryKeys});

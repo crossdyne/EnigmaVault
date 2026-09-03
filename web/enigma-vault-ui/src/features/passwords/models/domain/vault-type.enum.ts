@@ -5,4 +5,5 @@ export enum VaultTypeEnum {
     ApiKey = 4,
     ConnectionString = 5,
     AsymmetricKey = 6,
+    RecoveryKeys = 7,
 }

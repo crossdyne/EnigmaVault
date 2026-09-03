@@ -10,6 +10,7 @@ import { ServerViewComponent } from "./types/server-view/server-view.component";
 import { ApiKeyViewComponent } from "./types/api-key-view/api-key-view.component";
 import { ConnectionStringViewComponent } from "./types/connection-string-view/connection-string-view.component";
 import { AsymmetricKeyViewComponent } from "./types/asymmetric-key-view/asymmetric-key-view.component";
+import { RecoveryKeysViewComponent } from "./types/recovery-keys/recovery-keys-view.component";
 
 @Component({
     selector: 'vault-item-view',
@@ -24,7 +25,8 @@ import { AsymmetricKeyViewComponent } from "./types/asymmetric-key-view/asymmetr
         ServerViewComponent,
         ApiKeyViewComponent,
         ConnectionStringViewComponent,
-        AsymmetricKeyViewComponent
+        AsymmetricKeyViewComponent,
+        RecoveryKeysViewComponent
     ]
 })
 export class VaultItemViewComponent {
@@ -37,7 +39,8 @@ export class VaultItemViewComponent {
         3: "Доступ к серверу",
         4: "Апи ключ",
         5: "Строки подключения",
-        6: "Ассиметричных ключей",
+        6: "Ассиметричный ключ",
+        7: "Ключи восстановления"
     } 
 
     data = inject(DIALOG_DATA) as VaultItemView;
