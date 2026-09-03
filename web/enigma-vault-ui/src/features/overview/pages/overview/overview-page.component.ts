@@ -1,16 +1,16 @@
 import { Component, computed, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { CountRecordsResponse } from "../models/count-records.response";
-import { OverviewService } from "../services/overview.service";
+import { CountRecordsResponse } from "../../models/count-records.response";
+import { OverviewService } from "../../services/overview.service";
 import { Result } from "@crossdyne/toolkit";
 
 @Component({
     selector: 'overview-page',
-    templateUrl: './overview.page.html',
-    styleUrls: ['./overview.page.scss'],
+    templateUrl: './overview-page.component.html',
+    styleUrls: ['./overview-page.component.scss'],
     standalone: true
 })
-export class OverviewPage {
+export class OverviewPageComponent {
     private router = inject(Router);
     private overviewService = inject(OverviewService);
 

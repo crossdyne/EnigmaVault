@@ -55,7 +55,7 @@ import { GroupingFactory } from "../../lib/grouping/grouping.factory";
         CdkContextMenuTrigger
     ]
 })
-export class PasswordsPage {
+export class PasswordsPageComponent {
     private router = inject(Router);
     private dialog = inject(Dialog);
     private clipboard = inject(Clipboard);

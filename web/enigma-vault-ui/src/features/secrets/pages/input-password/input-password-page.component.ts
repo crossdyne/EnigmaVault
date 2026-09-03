@@ -11,7 +11,7 @@ import { Router } from "@angular/router";
     styleUrls: ['./input-password-page.component.scss'],
     standalone: true
 })
-export class InputPasswordPage {
+export class InputPasswordPageComponent {
     private router = inject(Router);
     private cryptoHttp = inject(CryptoHttpService);
     private cryptoWorker = inject(CryptoWorkerService);
