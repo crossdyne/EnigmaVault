@@ -1,0 +1,1 @@
+type GroupBy = 'none' | 'alphabet' | 'type' | 'date' | 'history' | 'tags' | 'favorite';

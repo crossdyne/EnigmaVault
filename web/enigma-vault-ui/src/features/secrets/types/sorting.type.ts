@@ -1,0 +1,1 @@
+type SortBy = 'none' | 'ascending' | 'descending';
