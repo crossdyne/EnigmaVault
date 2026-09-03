@@ -1,9 +1,10 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
+import { vaultsByServiceName } from "../../sorting/vaults-by-service-name.sort";
 import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class FavoritesGroupingStrategy implements GroupingStrategy {
-    group(vaults: VaultItemDisplay[]): GroupingVaultsResult[] {
+    group(vaults: VaultItemDisplay[], sorting: SortBy): GroupingVaultsResult[] {
         const favorite = 'В избранном';
         const notFavorite = 'Не в избранном';
 
@@ -19,7 +20,6 @@ export class FavoritesGroupingStrategy implements GroupingStrategy {
 
         return Array.from(groups.entries())
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([title, vaults]) => ({ title, vaults }));
-
+            .map(([title, vaults]) => ({ title, vaults: vaultsByServiceName(vaults, sorting) }));
     }
 }

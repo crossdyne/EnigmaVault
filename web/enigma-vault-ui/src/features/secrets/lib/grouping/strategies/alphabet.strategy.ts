@@ -3,7 +3,7 @@ import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class AlphabetGroupingStrategy implements GroupingStrategy {
-    group(vaults: VaultItemDisplay[]): GroupingVaultsResult[] {
+    group(vaults: VaultItemDisplay[], sorting: SortBy): GroupingVaultsResult[] {
         const groups = new Map<string, VaultItemDisplay[]>();
         for (const vault of vaults) {
             const letter = vault.serviceName[0]?.toUpperCase() || '#';
@@ -16,5 +16,10 @@ export class AlphabetGroupingStrategy implements GroupingStrategy {
         return Array.from(groups.entries())
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([title, vaults]) => ({ title, vaults }))
+            .sort((a, b) => {
+                const titleA = a.title;
+                const titleB = b.title;
+                return sorting === 'ascending' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA);
+            })
     }
 }

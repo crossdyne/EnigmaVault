@@ -1,9 +1,10 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
+import { vaultsByServiceName } from "../../sorting/vaults-by-service-name.sort";
 import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class HistoryGroupingStrategy implements GroupingStrategy {
-    group(vaults: VaultItemDisplay[]): GroupingVaultsResult[] {
+    group(vaults: VaultItemDisplay[], sorting: SortBy): GroupingVaultsResult[] {
         let result: GroupingVaultsResult[];
 
         const updatedVaults = vaults.filter(vault => {
@@ -48,15 +49,9 @@ export class HistoryGroupingStrategy implements GroupingStrategy {
                 }
             }
 
-            const sortDesc = (a: VaultItemDisplay, b: VaultItemDisplay) => {
-                const da = a.dateUpdate instanceof Date ? a.dateUpdate : new Date(a.dateUpdate!);
-                const db = b.dateUpdate instanceof Date ? b.dateUpdate : new Date(b.dateUpdate!);
-                return db.getTime() - da.getTime();
-            };
-
             result = Object.entries(groups)
                 .filter(([, vaults]) => vaults.length > 0)
-                .map(([title, vaults]) => ({ title, vaults: vaults.sort(sortDesc) }));
+                .map(([title, vaults]) => ({ title, vaults: vaultsByServiceName(vaults, sorting) }));
         }
 
         return result;

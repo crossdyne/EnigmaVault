@@ -1,9 +1,10 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
+import { vaultsByServiceName } from "../../sorting/vaults-by-service-name.sort";
 import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class DateGroupingStrategy implements GroupingStrategy {
-    group(vaults: VaultItemDisplay[]): GroupingVaultsResult[] {
+    group(vaults: VaultItemDisplay[], sorting: SortBy): GroupingVaultsResult[] {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const todayTime = today.getTime();
@@ -44,8 +45,6 @@ export class DateGroupingStrategy implements GroupingStrategy {
             }
         }
 
-        return Object.entries(groups)
-            .filter(([, vaults]) => vaults.length > 0)
-            .map(([title, vaults]) => ({ title, vaults }));
+        return Object.entries(groups).filter(([, vaults]) => vaults.length > 0).map(([title, vaults]) => ({ title, vaults: vaultsByServiceName(vaults, sorting) }));
     }
 }

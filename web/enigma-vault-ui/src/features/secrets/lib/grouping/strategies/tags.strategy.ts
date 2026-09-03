@@ -1,9 +1,11 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
+import { vaultsByServiceName } from "../../sorting/vaults-by-service-name.sort";
+import { vaultsGroupByTitle } from "../../sorting/vaults-group-by-title.sort";
 import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class TagsGroupingStrategy implements GroupingStrategy {
-    group(vaults: VaultItemDisplay[]): GroupingVaultsResult[] {
+    group(vaults: VaultItemDisplay[], sorting: SortBy): GroupingVaultsResult[] {
         let result: GroupingVaultsResult[];
 
         const groups = new Map<string, VaultItemDisplay[]>();
@@ -23,12 +25,12 @@ export class TagsGroupingStrategy implements GroupingStrategy {
             }
         }
 
-        result = Array.from(groups.entries())
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([title, vaults]) => ({ title, vaults }));
+        result = vaultsGroupByTitle(
+            Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([title, vaults]) => ({ title, vaults: vaultsByServiceName(vaults, sorting) })), 
+            sorting);
 
         if (untagged.length > 0) {
-            result.push({ title: 'Без тегов', vaults: untagged });
+            result.push({ title: 'Без тегов', vaults: vaultsByServiceName(untagged, sorting) });
         }
 
         return result;

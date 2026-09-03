@@ -102,30 +102,9 @@ export class PasswordsPage {
         const group = this.groupBy();
         const sort = this.sortBy();
 
-        const applySort = (items: VaultItemDisplay[]) => {
-            if (sort === 'none')
-                return items;
-
-            return [...items].sort((a, b) => {
-                const nameA = a.serviceName.toLowerCase();
-                const nameB = b.serviceName.toLowerCase();
-                return sort === 'ascending' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-            });
-        };
-
         const groupStrategy = GroupingFactory.create(group);
 
-        const groupedVaults = groupStrategy.group(vaults);
-        const resultGroupedVaults = groupedVaults.map(g => ({ ...g, vaults: applySort(g.vaults) }));
-
-        if (group === 'history' || group === 'date')
-            return resultGroupedVaults;
-
-        return resultGroupedVaults.sort((a, b) => {
-            const titleA = a.title;
-            const titleB = b.title;
-            return sort === 'ascending' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA);
-        });
+        return groupStrategy.group(vaults, sort);
     });
 
     // ============================================================================
