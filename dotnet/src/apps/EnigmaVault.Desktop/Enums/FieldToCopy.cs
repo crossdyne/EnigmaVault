@@ -17,5 +17,10 @@
         CreditCardCVV,
 
         ApiKey,
+
+        ConnectionStringValue,
+
+        AsymmetricKeyPublicKey,
+        AsymmetricKeyPrivateKey,
     }
 }

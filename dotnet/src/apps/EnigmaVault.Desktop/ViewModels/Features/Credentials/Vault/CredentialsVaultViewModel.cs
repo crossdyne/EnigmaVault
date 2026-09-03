@@ -4,7 +4,7 @@ using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models.Vaults;
 using EnigmaVault.Desktop.ViewModels.Base;
 using EnigmaVault.Desktop.ViewModels.Common.Organization;
-using Shared.Contracts.PasswordService.Responses;
+using Shared.Contracts.SecretService.Responses;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
@@ -120,10 +120,12 @@ namespace EnigmaVault.Desktop.ViewModels.Features.Credentials.Vault
             {
                 Func<string> func = Type switch
                 {
-                    VaultType.Password => () => "Стандартный пароль",
-                    VaultType.Server => () => "Сервер",
-                    VaultType.CreditCard => () => "Банковская карта",
+                    VaultType.Password => () => "Стандартныйе пароли",
+                    VaultType.Server => () => "Серверные данные",
+                    VaultType.CreditCard => () => "Банковские карты",
                     VaultType.ApiKey => () => "API",
+                    VaultType.ConnectionString => () => "Строки подключения",
+                    VaultType.AsymmetricKey => () => "Ассеметричные ключи",
                     _ => () => "#"
                 };
 

@@ -1,90 +1,97 @@
 <div class="modal-overlay">
-  <div class="modal-container" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <h2>{{ fullTitle() }}</h2>
-      <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
-    </div>
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-form">
-      
-      <div class="template-selector">
-        <div class="type-record">
-          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Password" (click)="setActiveTab(VaultTypeEnum.Password)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-keyhole-icon lucide-lock-keyhole"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
-          </button>
-          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Server" (click)="setActiveTab(VaultTypeEnum.Server)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server-icon lucide-server"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
-          </button>
-          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.CreditCard" (click)="setActiveTab(VaultTypeEnum.CreditCard)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-          </button>
-          <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.ApiKey" (click)="setActiveTab(VaultTypeEnum.ApiKey)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round-icon lucide-key-round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-body"> 
-        <div class="form-group">
-          <input id="name" type="text" formControlName="name" placeholder="Название" />
-          <input id="url" type="text" formControlName="url" placeholder="Ссылка на ресурс" />
+    <div class="modal-container" role="dialog" aria-modal="true">
+        <div class="modal-header">
+            <h2>{{ fullTitle() }}</h2>
+            <button class="close-btn" (click)="onCancel()" aria-label="Закрыть">×</button>
         </div>
 
-        <div class="form-group"> 
-          @switch (activeTab()) {
-            @case (VaultTypeEnum.Password) {
-              <input formControlName="login" placeholder="Логин" />
-              <input formControlName="password" placeholder="Пароль" />
-              <input formControlName="email" placeholder="Почта" />
-              <input formControlName="phone" placeholder="Номер телефона" />
-              <input formControlName="secretWord" placeholder="Секретное слово" />
-              <input formControlName="recoveryKey" placeholder="Ключ восстановления" />
-            }
-            @case (VaultTypeEnum.CreditCard) {
-              <input formControlName="cardNumber" placeholder="Номер" />
-              <input formControlName="cardHolder" placeholder="Владелец" />
-              <input formControlName="expireDate" placeholder="Дата окончания" />
-              <input formControlName="cvvCode" placeholder="CVV" />
-              <input formControlName="pinCode" placeholder="PIN" />
-              <input formControlName="bankName" placeholder="Банк" />
-              <input formControlName="paymentSystem" placeholder="Платежная система" />
-            }
-            @case (VaultTypeEnum.Server) {
-              <input formControlName="ipAddress" placeholder="Адрес" />
-              <input formControlName="port" placeholder="Порт" />
-              <input formControlName="domain" placeholder="Домен" />
-              <input formControlName="serverLogin" placeholder="Логин" />
-              <input formControlName="rootPassword" placeholder="Root пароль" />
-              <input formControlName="sshKey" placeholder="SSH ключ" />
-            }
-            @case (VaultTypeEnum.ApiKey) {
-              <input formControlName="key" placeholder="Ключ" />
-              <input formControlName="baseUrl" placeholder="Сайт" />
-              <input formControlName="clientId" placeholder="Идентификатор клиента" />
-              <input formControlName="clientSecret" placeholder="Секрет клиента" />
-              <input formControlName="expirationDate" placeholder="Дата окончания" />
-              <input formControlName="environment" placeholder="Окружение" />
-              <input formControlName="scope" placeholder="Область" />
-            }
-            @default {
-              <div class="empty-state">Выберите категорию выше, чтобы заполнить данные</div>
-            }
-          }
+        <div class="modal-form">
+            <div class="template-selector">
+                <div class="type-record">
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Password" (click)="setActiveTab(VaultTypeEnum.Password)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="16" r="1" /> <rect x="3" y="10" width="18" height="12" rx="2" /> <path d="M7 10V7a5 5 0 0 1 10 0v3" /></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.RecoveryKeys" (click)="setActiveTab(VaultTypeEnum.RecoveryKeys)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-key-icon lucide-rotate-ccw-key"><path d="M12 7v6"/><path d="M12 9h2"/><path d="M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><circle cx="12" cy="15" r="2"/></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.Server" (click)="setActiveTab(VaultTypeEnum.Server)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="8" x="2" y="2" rx="2" ry="2" /> <rect width="20" height="8" x="2" y="14" rx="2" ry="2" /> <line x1="6" x2="6.01" y1="6" y2="6" /> <line x1="6" x2="6.01" y1="18" y2="18" /></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.CreditCard" (click)="setActiveTab(VaultTypeEnum.CreditCard)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="20" height="14" x="2" y="5" rx="2" /> <line x1="2" x2="22" y1="10" y2="10" /></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.ApiKey" (click)="setActiveTab(VaultTypeEnum.ApiKey)"> 
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 91.26" style="enable-background:new 0 0 122.88 91.26" xml:space="preserve"><style type="text/css">.st0 { fill: #ffffff; fill-rule: evenodd; clip-rule: evenodd;} </style><g><path class="st0" d="M8.32,0h106.24c4.58,0,8.32,3.74,8.32,8.32v74.62c0,4.57-3.74,8.32-8.32,8.32H8.32C3.74,91.26,0,87.51,0,82.94 V8.32C0,3.74,3.74,0,8.32,0L8.32,0z M43.7,64.74H32.8l-1.57,5.14H21.4l11.73-31.16h10.54l11.68,31.16H45.26L43.7,64.74L43.7,64.74z M41.67,58l-3.4-11.2L34.85,58H41.67L41.67,58z M59.15,38.72h16.02c3.49,0,6.1,0.83,7.84,2.49c1.73,1.66,2.6,4.03,2.6,7.09 c0,3.15-0.95,5.61-2.84,7.38c-1.89,1.78-4.79,2.66-8.68,2.66h-5.28v11.53h-9.66V38.72L59.15,38.72z M68.81,52.03h2.37 c1.87,0,3.18-0.33,3.94-0.97c0.75-0.65,1.13-1.47,1.13-2.48c0-0.98-0.33-1.81-0.99-2.49c-0.65-0.68-1.89-1.02-3.7-1.02h-2.76V52.03 L68.81,52.03z M91.82,38.72h9.66v31.16h-9.66V38.72L91.82,38.72z M117.97,23.29H5.29v60.46c0,0.64,0.25,1.2,0.67,1.63 c0.42,0.42,0.99,0.67,1.63,0.67h108.04c0.64,0,1.2-0.25,1.63-0.67c0.43-0.43,0.67-0.99,0.67-1.63V23.29H117.97L117.97,23.29z M106.64,9.35c2.27,0,4.11,1.84,4.11,4.11c0,2.27-1.84,4.11-4.11,4.11c-2.27,0-4.11-1.84-4.11-4.11 C102.54,11.19,104.38,9.35,106.64,9.35L106.64,9.35z M78.8,9.35c2.27,0,4.11,1.84,4.11,4.11c0,2.27-1.84,4.11-4.11,4.11 c-2.27,0-4.11-1.84-4.11-4.11C74.69,11.19,76.53,9.35,78.8,9.35L78.8,9.35z M92.72,9.35c2.27,0,4.11,1.84,4.11,4.11 c0,2.27-1.84,4.11-4.11,4.11c-2.27,0-4.11-1.84-4.11-4.11C88.61,11.19,90.45,9.35,92.72,9.35L92.72,9.35z" /></g></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.ConnectionString" (click)="setActiveTab(VaultTypeEnum.ConnectionString)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+                    </button>
+                    <button class="side-bar-button" type="button" [class.active]="activeTab() === VaultTypeEnum.AsymmetricKey" (click)="setActiveTab(VaultTypeEnum.AsymmetricKey)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(6, 12) scale(0.8) translate(-12, -12) rotate(135, 12, 12)" stroke-width="2.5"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></g><g transform="translate(18, 12) scale(0.8) translate(-12, -12) rotate(-45, 12, 12)" stroke-width="2.5"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /> <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></g></svg>
+                    </button>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-          <label for="description">Описание</label>
-          <textarea id="description" formControlName="description" rows="3" placeholder="Введите описание">
+
+        <div class="modal-body">
+            <div class="form-group">
+                <input 
+                [value]="overview().ServiceName" 
+                (input)="overview.update(v => ({...v, ServiceName: $any($event.target).value}))" 
+                placeholder="Название"/>
+
+                <input 
+                [value]="overview().Url"
+                (input)="overview.update(v => ({...v, Url: $any($event.target).value, ServiceName: overview().ServiceName}))" 
+                placeholder="Ссылка на ресурс"/>
+            </div>
+
+            <div class="form-group">
+                @switch (activeTab()) {
+                    @case (VaultTypeEnum.Password) {
+                        <password-form [(data)]="standardPassword"></password-form>
+                    }
+                    @case (VaultTypeEnum.RecoveryKeys) {
+                        <recovery-keys-form [(data)]="recoveryKeys"></recovery-keys-form>
+                    }
+                    @case (VaultTypeEnum.Server) {
+                        <server-form [(data)]="server"></server-form>
+                    }
+                    @case (VaultTypeEnum.CreditCard) {
+                        <credit-card-form [(data)]="creditCard"></credit-card-form>
+                    }
+                    @case (VaultTypeEnum.ApiKey) {
+                        <api-key-form [(data)]="apiKey"></api-key-form>
+                    }
+                    @case (VaultTypeEnum.ConnectionString) {
+                        <connection-string-form [(data)]="connectionString"></connection-string-form>
+                    }
+                    @case (VaultTypeEnum.AsymmetricKey) {
+                        <asymmetric-key-form [(data)]="asymmetricKey"></asymmetric-key-form>
+                    }
+                    @default {
+                        <div class="empty-state">Выберите категорию выше, чтобы заполнить данные</div>
+                    }
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea 
+                [value]="overview().Note" 
+                (input)="overview.update(v => ({...v, Note: $any($event.target).value, ServiceName: overview().ServiceName}))" 
+                placeholder="Введите описание" 
+                rows="3">
           </textarea>
-        </div>
-      </div>
+            </div>
 
-      <div class="modal-footer">
-        <button type="button" class="modal-button-cancel" (click)="onCancel()">Отмена</button>
-        <button type="submit" class="modal-button-save" [disabled]="form.invalid">
-          {{ isEdit() ? 'Сохранить' : 'Добавить' }}
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+            <div class="modal-footer">
+                <button class="modal-button-cancel" (click)="onCancel()">
+                    Отмена
+                </button>
+                <button class="modal-button-save" (click)="confirm()" [disabled]="!overview().ServiceName || overview().ServiceName.length < 2">
+                    {{ isEdit() ? 'Сохранить' : 'Добавить' }}
+                </button>
+            </div>
+        </div>
+    </div>

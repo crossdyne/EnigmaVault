@@ -1,8 +1,8 @@
 using Crossdyne.Toolkit.Results;
 using EnigmaVault.Web.Bff.Features.Overviews.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.PasswordService.Clients;
-using Shared.Contracts.PasswordService.Responses;
+using Shared.Contracts.SecretService.Clients;
+using Shared.Contracts.SecretService.Responses;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.Overviews

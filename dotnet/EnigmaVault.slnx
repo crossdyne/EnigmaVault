@@ -8,14 +8,14 @@
     <Project Path="src/clients/EnigmaVault.AssetsService.Client/EnigmaVault.AssetsService.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.Authentication.Client/EnigmaVault.Authentication.Client.csproj" />
     <Project Path="src/clients/EnigmaVault.FileService.Client/EnigmaVault.FileService.Client.csproj" />
-    <Project Path="src/clients/EnigmaVault.PasswordService.Client/EnigmaVault.PasswordService.Client.csproj" />
+    <Project Path="src/clients/EnigmaVault.SecretService.Client/EnigmaVault.SecretService.Client.csproj" />
   </Folder>
   <Folder Name="/src/services/" />
-  <Folder Name="/src/services/Password/">
-    <Project Path="src/services/Password/EnigmaVault.Password.Service.Api/EnigmaVault.Password.Service.Api.csproj" />
-    <Project Path="src/services/Password/EnigmaVault.Password.Service.Application/EnigmaVault.Password.Service.Application.csproj" />
-    <Project Path="src/services/Password/EnigmaVault.Password.Service.Domain/EnigmaVault.Password.Service.Domain.csproj" />
-    <Project Path="src/services/Password/EnigmaVault.Password.Service.Infrastructure/EnigmaVault.Password.Service.Infrastructure.csproj" />
+  <Folder Name="/src/services/Secret/">
+    <Project Path="src/services/Secret/EnigmaVault.Secret.Service.Api/EnigmaVault.Secret.Service.Api.csproj" />
+    <Project Path="src/services/Secret/EnigmaVault.Secret.Service.Application/EnigmaVault.Secret.Service.Application.csproj" />
+    <Project Path="src/services/Secret/EnigmaVault.Secret.Service.Domain/EnigmaVault.Secret.Service.Domain.csproj" />
+    <Project Path="src/services/Secret/EnigmaVault.Secret.Service.Infrastructure/EnigmaVault.Secret.Service.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/shared/" />
   <Folder Name="/src/shared/contracts/">
@@ -38,9 +38,9 @@
   </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tests/integration/">
-    <Project Path="tests/integration/EnigmaVault.Password.Service.Integration.Tests/EnigmaVault.Password.Service.Integration.Tests.csproj" />
+    <Project Path="tests/integration/EnigmaVault.Secret.Service.Integration.Tests/EnigmaVault.Secret.Service.Integration.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/unit/">
-    <Project Path="tests/unit/EnigmaVault.Password.Service.Unit.Tests/EnigmaVault.Password.Service.Unit.Tests.csproj" />
+    <Project Path="tests/unit/EnigmaVault.Secret.Service.Unit.Tests/EnigmaVault.Secret.Service.Unit.Tests.csproj" />
   </Folder>
 </Solution>

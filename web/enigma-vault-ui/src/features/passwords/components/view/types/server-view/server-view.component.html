@@ -1,0 +1,42 @@
+<div class="display-field">
+    <label>Адрес</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().IpAddress }}</span>
+        <copy-button [value]="data().IpAddress" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Порт</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().Port }}</span>
+        <copy-button [value]="data().Port" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Домен</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().Domain }}</span>
+        <copy-button [value]="data().Domain" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Логин</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().Login }}</span>
+        <copy-button [value]="data().Login" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Root пароль</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().RootPassword }}</span>
+        <copy-button [value]="data().RootPassword" />
+    </div>
+</div>
+<div class="display-field">
+    <label>SSH ключ</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().SshKey }}</span>
+        <copy-button [value]="data().SshKey" />
+    </div>
+</div>

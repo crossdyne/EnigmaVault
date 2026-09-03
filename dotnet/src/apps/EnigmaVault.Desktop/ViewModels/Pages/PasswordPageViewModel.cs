@@ -21,9 +21,9 @@ using Shared.Contracts.AssetsService.Responses;
 using Shared.Contracts.FileService.Clients;
 using Shared.Contracts.FileService.Requests;
 using Shared.Contracts.FileService.Responses;
-using Shared.Contracts.PasswordService.Clients;
-using Shared.Contracts.PasswordService.Requests;
-using Shared.Contracts.PasswordService.Responses;
+using Shared.Contracts.SecretService.Requests;
+using Shared.Contracts.SecretService.Responses;
+using Shared.Contracts.SecretService.Clients;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -156,7 +156,9 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
             new KeyValuePair<VaultType, string>(VaultType.Password, "Пароль"),
             new KeyValuePair<VaultType, string>(VaultType.Server, "Данные сервера"),
             new KeyValuePair<VaultType, string>(VaultType.CreditCard, "Банковские карты"),
-            new KeyValuePair<VaultType, string>(VaultType.ApiKey, "Апи Ключи"),
+            new KeyValuePair<VaultType, string>(VaultType.ApiKey, "Апи Ключ"),
+            new KeyValuePair<VaultType, string>(VaultType.ConnectionString, "Строка подключения"),
+            new KeyValuePair<VaultType, string>(VaultType.AsymmetricKey, "Ассеметричные ключи"),
         ];
 
         // ====================================================================================
@@ -906,6 +908,40 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                     Clipboard.SetText(apiKey.ApiKey!);
                 }
                 ,
+                VaultType.ConnectionString => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var connectionString = SelectedCredentialItemBaseViewModel as ConnectionStringViewModel;
+
+                    if (connectionString is null)
+                        return;
+
+                    Clipboard.SetText(connectionString.Value!);
+                }
+                ,
+                VaultType.AsymmetricKey => () =>
+                {
+                    CreateViewModelForType(SelectedEncryptedOverview.Type, SelectedEncryptedOverview);
+                    SelectedCredentialItemBaseViewModel?.Decrypt(SelectedEncryptedOverview.EncryptedOverview, SelectedEncryptedOverview.EncryptedDetails, _cryptoServices, _userContext);
+                    var asymmetricKey = SelectedCredentialItemBaseViewModel as AsymmetricKeyViewModel;
+
+                    if (asymmetricKey is null)
+                        return;
+
+                    switch (field)
+                    {
+                        case FieldToCopy.AsymmetricKeyPublicKey:
+                            Clipboard.SetText(asymmetricKey.PublicKey!);
+                            break;
+                        case FieldToCopy.AsymmetricKeyPrivateKey:
+                            Clipboard.SetText(asymmetricKey.PrivateKey!);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ,
                 _ => () => throw new Exception("Выбранный формат не поддерживается")
             };
 
@@ -1127,6 +1163,8 @@ namespace EnigmaVault.Desktop.ViewModels.Pages
                 VaultType.Server => new ServerPasswordViewModel(encrypted),
                 VaultType.ApiKey => new ApiKeyViewModel(encrypted),
                 VaultType.CreditCard => new CreditCardViewModel(encrypted),
+                VaultType.ConnectionString => new ConnectionStringViewModel(encrypted),
+                VaultType.AsymmetricKey => new AsymmetricKeyViewModel(encrypted),
                 _ => null,
             };
         }

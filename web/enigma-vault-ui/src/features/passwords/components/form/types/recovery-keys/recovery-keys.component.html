@@ -1,0 +1,42 @@
+<div class="form-body">
+    <input 
+        [value]="data().Application"
+        (input)="data.update(v => ({ ...v, Application: $any($event.target).value }))" 
+        placeholder="Приложение" />
+
+    <input 
+        [value]="data().DateCreation"
+        (input)="data.update(v => ({...v, DateCreation: $any($event.target).value}))" 
+        placeholder="Дата создания" />
+    
+    <input 
+        [value]="data().DateExpire"
+        (input)="data.update(v => ({...v, DateExpire: $any($event.target).value}))" 
+        placeholder="Дата окончания" />
+    
+    <div class="keys-list">
+        @for (recoveryKey of data().Keys; track $index) {
+            <div class="key-row">
+                <input 
+                    [value]="recoveryKey.Key"
+                    (input)="updateKey($index, $any($event.target).value)" 
+                    placeholder="Ключ восстановления" />
+                <button type="button" class="btn-remove" (click)="removeKey($index)" title="Удалить ключ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        }
+    </div>
+
+    <button type="button" class="btn-add" (click)="addKey()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Добавить ключ
+    </button>
+</div>

@@ -1,0 +1,33 @@
+<div class="display-field">
+    <label>Приложение</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().Application }}</span>
+        <copy-button [value]="data().Application" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Дата создания</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().DateCreation }}</span>
+        <copy-button [value]="data().DateCreation" />
+    </div>
+</div>
+<div class="display-field">
+    <label>Дата окончания</label>
+    <div class="display-value">
+        <span class="display-text">{{ data().DateExpire }}</span>
+        <copy-button [value]="data().DateExpire" />
+    </div>
+</div>
+
+<div class="keys-list">
+    @for (recoveryKey of data().Keys; track $index) {
+        <div class="display-field">
+            <label>Ключ #{{ $index + 1 }}</label>
+            <div class="display-value">
+                <span class="display-text">{{ recoveryKey.Key }}</span>
+                <copy-button [value]="recoveryKey.Key" />
+            </div>
+        </div>
+    }
+</div>

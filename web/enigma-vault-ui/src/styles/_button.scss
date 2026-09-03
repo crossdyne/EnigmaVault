@@ -61,6 +61,11 @@
         background: #1E2F3A;
         color: #e2e8f0;
     }
+    
+    &:disabled {
+        opacity: 0.4; 
+        cursor: not-allowed; 
+    }
 }
 
 .modal-button-cancel {
