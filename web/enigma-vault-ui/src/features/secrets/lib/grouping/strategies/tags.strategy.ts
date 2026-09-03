@@ -1,7 +1,7 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
+import { GroupingVaultsResult } from "../../../types/grouping-vault.result";
 import { vaultsByServiceName } from "../../sorting/vaults-by-service-name.sort";
 import { vaultsGroupByTitle } from "../../sorting/vaults-group-by-title.sort";
-import { GroupingVaultsResult } from "../grouping.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class TagsGroupingStrategy implements GroupingStrategy {

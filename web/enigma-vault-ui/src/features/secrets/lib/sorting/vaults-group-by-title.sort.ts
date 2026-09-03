@@ -1,4 +1,5 @@
-import { GroupingVaultsResult } from "../grouping/grouping.result";
+import { GroupingVaultsResult } from "../../types/grouping-vault.result";
+
 
 export const vaultsGroupByTitle = (grouped: GroupingVaultsResult[], sorting: SortBy) => {
     if (sorting === 'none')

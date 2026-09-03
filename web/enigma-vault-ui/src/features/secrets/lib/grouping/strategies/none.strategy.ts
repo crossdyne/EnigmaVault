@@ -1,5 +1,5 @@
 import { VaultItemDisplay } from "../../../models/domain/vault-item-display";
-import { GroupingVaultsResult } from "../grouping.result";
+import { GroupingVaultsResult } from "../../../types/grouping-vault.result";
 import { GroupingStrategy } from "../grouping.strategy";
 
 export class NoneGroupingStrategy implements GroupingStrategy {
