@@ -1,6 +1,6 @@
 services:
   enigma-vault-bff:
-    image: enigma-vault/bff:1.0.0
+    image: enigma-vault/bff:1.1.0
     container_name: enigma-vault-bff
     ports:
       - "7007:80" 
@@ -11,7 +11,7 @@ services:
       - Redis__DataEncryptionKey=Base64 32+ bit key, generate this command - openssl rand -base64 32
       - Urls__AuthService=http://nexus-auth-api:80
       - Urls__UserManagementService=http://nexus-user-management-api:80
-      - Urls__PasswordService=http://enigma-vault-password-api:80
+      - Urls__SecretService=http://enigma-vault-secret-api:80
       - Urls__AssetsService=http://glyph-assets-api:80
       - Urls__FileService=http://flex-io:4000
     restart: unless-stopped
@@ -21,8 +21,8 @@ services:
       - enigma-vault-network
 
   enigma-vault-api:
-    image: enigma-vault/password-api:1.0.0
-    container_name: enigma-vault-password-api
+    image: enigma-vault/secret-api:1.1.0
+    container_name: enigma-vault-secret-api
     ports:
       - "7008:80" 
     environment:
@@ -33,19 +33,19 @@ services:
       - JwtSettings__Issuer=
       - JwtSettings__Audience=
       - Kafka__Consumer__BootstrapServers=
-      - Kafka__Consumer__GroupId=enigma-vault-password-service-consumer-group
+      - Kafka__Consumer__GroupId=enigma-vault-secret-service-consumer-group
       - Kafka__Consumer__AutoOffsetReset=Latest
       - Kafka__Consumer__EnableAutoCommit=false
       - Kafka__Consumer__EnablePartitionEof=false
       - AutoMapper__AutoMapperKey=
     restart: unless-stopped
     volumes:
-      - ./logs/password:/logs
+      - ./logs/secret:/logs
     networks:
       - enigma-vault-network
 
   enigma-vault-ui:
-    image: enigma-vault/ui:1.0.0
+    image: enigma-vault/ui:1.1.0
     container_name: enigma-vault-ui
     ports:
       - "7009:80"

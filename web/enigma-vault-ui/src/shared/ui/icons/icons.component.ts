@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { AssetUrlResponse } from '../../../features/passwords/models/dto/asset-urls.response';
-import { IconCategoryResponse } from '../../../features/passwords/models/dto/icon-category.response';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { AssetUrlResponse } from '../../../features/secrets/models/dto/asset-urls.response';
+import { IconCategoryResponse } from '../../../features/secrets/models/dto/icon-category.response';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeIconData } from './modal/change-icon.data';

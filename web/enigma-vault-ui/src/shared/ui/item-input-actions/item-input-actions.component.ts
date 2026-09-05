@@ -1,5 +1,4 @@
 import { Component, effect, input, output, signal } from '@angular/core';
-import { TagResponse } from '../../../features/passwords/models/dto/tag.response';
 
 @Component({
   selector: 'item-input-actions',

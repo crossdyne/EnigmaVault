@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Crossdyne.Security.Abstractions;
 using Crossdyne.Security.Configuration;
-using EnigmaVault.Authentication.Client.HttpClients;
 using EnigmaVault.Desktop.Enums;
 using EnigmaVault.Desktop.Models;
 using EnigmaVault.Desktop.Services;
@@ -11,8 +10,10 @@ using EnigmaVault.Desktop.Services.PageNavigation;
 using EnigmaVault.Desktop.Services.Secure;
 using EnigmaVault.Desktop.Services.WindowNavigation;
 using EnigmaVault.Desktop.ViewModels.Base;
-using Shared.Contracts.Requests.Authentication;
-using Shared.Contracts.Responses.Authentication;
+using Shared.Contracts.AuthenticationService.Clients;
+using Shared.Contracts.AuthenticationService.Requests;
+using Shared.Contracts.AuthenticationService.Responses;
+using Shared.Contracts.UserManagementService.Clients;
 using System.Security.Cryptography;
 using System.Windows;
 

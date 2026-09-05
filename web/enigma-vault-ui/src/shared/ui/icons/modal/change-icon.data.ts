@@ -1,5 +1,5 @@
-import { AssetUrlResponse } from "../../../../features/passwords/models/dto/asset-urls.response";
-import { IconCategoryResponse } from "../../../../features/passwords/models/dto/icon-category.response";
+import { AssetUrlResponse } from "../../../../features/secrets/models/dto/asset-urls.response";
+import { IconCategoryResponse } from "../../../../features/secrets/models/dto/icon-category.response";
 
 
 export interface ChangeIconData {

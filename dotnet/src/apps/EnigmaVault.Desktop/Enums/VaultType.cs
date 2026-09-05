@@ -6,5 +6,7 @@
         CreditCard = 2,
         Server = 3,
         ApiKey = 4,
+        ConnectionString = 5,
+        AsymmetricKey = 6,
     }
 }

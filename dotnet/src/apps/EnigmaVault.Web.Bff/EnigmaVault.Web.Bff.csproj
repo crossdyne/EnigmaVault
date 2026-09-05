@@ -14,13 +14,14 @@
     <PackageReference Include="DistributedLock.Redis" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="Crossdyne.Security.Cryptography"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\clients\EnigmaVault.AssetsService.Client\EnigmaVault.AssetsService.Client.csproj" />
     <ProjectReference Include="..\..\clients\EnigmaVault.Authentication.Client\EnigmaVault.Authentication.Client.csproj" />
     <ProjectReference Include="..\..\clients\EnigmaVault.FileService.Client\EnigmaVault.FileService.Client.csproj" />
-    <ProjectReference Include="..\..\clients\EnigmaVault.PasswordService.Client\EnigmaVault.PasswordService.Client.csproj" />
+    <ProjectReference Include="..\..\clients\EnigmaVault.SecretService.Client\EnigmaVault.SecretService.Client.csproj" />
     <ProjectReference Include="..\..\shared\contracts\Shared.Contracts\Shared.Contracts.csproj" />
     <ProjectReference Include="..\..\shared\infrastructure\Shared.Redis\Shared.Redis.csproj" />
     <ProjectReference Include="..\..\shared\observability\Shared.Logging\Shared.Logging.csproj" />

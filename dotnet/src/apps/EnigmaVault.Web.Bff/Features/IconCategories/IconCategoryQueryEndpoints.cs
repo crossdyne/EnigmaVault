@@ -1,5 +1,5 @@
-using EnigmaVault.AssetsService.Client.Clients;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Contracts.AssetsService.Clients;
 using Shared.Web.Extensions;
 
 namespace EnigmaVault.Web.Bff.Features.IconCategories
@@ -8,7 +8,7 @@ namespace EnigmaVault.Web.Bff.Features.IconCategories
     {
         public static void MapIconCategoryEndpoints(this IEndpointRouteBuilder builder)
         {
-            builder.MapGet("api/v1/icon/category", async ([FromServices] IAssetCategoryClient client) 
+            builder.MapGet("api/v1/icon/category", async ([FromServices] IAssetCategoryService client) 
                 => await client.GetIconCategories().MapErrorOrOkAsync()).RequireAuthorization();
         }
     }
